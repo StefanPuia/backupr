@@ -21,7 +21,7 @@ public class BackupEngine {
         .forEach(
             source -> {
               log.info("Backing up source '{}'", source.name());
-              final var files = sourceHandlerFactory.getInstance(source, config).getFiles();
+              final var files = sourceHandlerFactory.getInstance(source).getFiles();
 
               if (files.isEmpty()) {
                 log.warn("No files found for source '{}'", source.name());

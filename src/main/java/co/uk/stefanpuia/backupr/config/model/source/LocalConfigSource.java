@@ -36,4 +36,8 @@ public record LocalConfigSource(
               }
             });
   }
+
+  public List<String> files() {
+    return files.stream().map(pattern -> pattern.replaceAll("[\\\\/]", "/")).toList();
+  }
 }

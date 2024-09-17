@@ -14,6 +14,7 @@ import co.uk.stefanpuia.backupr.source.SourceHandler;
 import co.uk.stefanpuia.backupr.source.SourceHandlerFactory;
 import com.github.valfirst.slf4jtest.LoggingEvent;
 import com.github.valfirst.slf4jtest.TestLogger;
+import java.io.File;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class BackupEngineTest {
   @Test
   void shouldNotUploadToRemoteWhenNoFilesFound() {
     // Given
-    doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource, backuprConfig);
+    doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(List.of()).when(sourceHandler).getFiles();
     LOGGER.clear();
 
@@ -63,17 +64,17 @@ public class BackupEngineTest {
   @Test
   void shouldUploadWhenFilesFound() {
     // Given
-    doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource, backuprConfig);
+    doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(List.of(configRemote)).when(configSource).remotes(backuprConfig);
     doReturn(remoteHandler).when(remoteHandlerFactory).getInstance(configRemote);
-    doReturn(List.of("aa")).when(sourceHandler).getFiles();
+    doReturn(List.of(new File("aa"))).when(sourceHandler).getFiles();
     LOGGER.clear();
 
     // When
     backupEngine.execute(backuprConfig);
 
     // Then
-    verify(remoteHandler).upload(List.of("aa"));
+    verify(remoteHandler).upload(List.of(new File("aa")));
     then(LOGGER.getLoggingEvents())
         .isNotEmpty()
         .extracting(LoggingEvent::getMessage)
