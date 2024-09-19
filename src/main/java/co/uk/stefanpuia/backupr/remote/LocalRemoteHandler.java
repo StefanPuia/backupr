@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,19 +17,24 @@ public class LocalRemoteHandler implements RemoteHandler {
   private final LocalConfigRemote remote;
 
   @Override
-  public void upload(final ConfigSource source, final List<File> files) {
+  public void upload(final ConfigSource source, final Set<File> files) {
     try {
       final var root = ensureRootDirectory(source);
       final var target = createTargetDirectory(root, generateBackupName());
 
       for (final var file : files) {
-        final var targetPath = Path.of(target.getAbsolutePath(), file.getName());
-        log.debug("Backing up '{}' to '{}'", file.getName(), targetPath);
+        final var targetPath = Path.of(target.getAbsolutePath(), getRelativePath(source, file));
+        log.debug("Backing up '{}' to '{}'", file, targetPath);
+        mkdirp(targetPath.getParent(), "Could not create parent directory: '%s'");
         Files.copy(file.toPath(), targetPath);
       }
     } catch (final IOException e) {
       throw new RemoteHandlerException(e);
     }
+  }
+
+  private String getRelativePath(final ConfigSource source, final File file) {
+    return source.getBasePath().relativize(file.toPath()).toString();
   }
 
   private File ensureRootDirectory(final ConfigSource source) {
@@ -38,11 +43,7 @@ public class LocalRemoteHandler implements RemoteHandler {
     final var dir = path.toFile();
     if (!dir.exists()) {
       log.debug("Root directory not found, trying to create");
-      final var created = dir.mkdirs();
-      if (!created) {
-        throw new RemoteHandlerException(
-            "Could not create target directory: '%s'".formatted(remote.location()));
-      }
+      mkdirp(dir.toPath(), "Could not create target directory: '%s'");
     }
     if (!dir.isDirectory()) {
       throw new RemoteHandlerException(
@@ -57,11 +58,7 @@ public class LocalRemoteHandler implements RemoteHandler {
     final var dir = new File(backupDirPath.toString());
     if (!dir.exists()) {
       log.debug("Backup directory not found, trying to create");
-      final var created = dir.mkdirs();
-      if (!created) {
-        throw new RemoteHandlerException(
-            "Could not create backup directory: '%s'".formatted(remote.location()));
-      }
+      mkdirp(dir.toPath(), "Could not create backup directory: '%s'");
     } else {
       throw new RemoteHandlerException(
           "Backup directory already exists: '%s'".formatted(remote.location()));
@@ -75,5 +72,15 @@ public class LocalRemoteHandler implements RemoteHandler {
 
   private String generateBackupName() {
     return LocalDateTime.now().withNano(0).toString().replaceAll("\\W", "-");
+  }
+
+  private void mkdirp(final Path path, final String exceptionMessage) {
+    final var directory = path.toFile();
+    if (!directory.exists()) {
+      final var created = directory.mkdirs();
+      if (!created) {
+        throw new RemoteHandlerException(exceptionMessage.formatted(remote.location()));
+      }
+    }
   }
 }

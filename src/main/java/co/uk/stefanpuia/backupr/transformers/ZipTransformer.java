@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import lombok.AllArgsConstructor;
@@ -18,11 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ZipTransformer implements Transformer {
 
   @Override
-  public List<File> transform(final ConfigSource source, final List<File> files) {
+  public Set<File> transform(final ConfigSource source, final Set<File> files) {
     try {
       final var zip = createZipFile(source);
       createZipContents(files, zip);
-      return List.of(zip);
+      return Set.of(zip);
     } catch (final IOException e) {
       throw new TransformerException(e);
     }
@@ -34,7 +34,7 @@ public class ZipTransformer implements Transformer {
     return Path.of(tempDir.toString(), source.name() + ".zip").toFile();
   }
 
-  private void createZipContents(final List<File> files, final File zip) throws IOException {
+  private void createZipContents(final Set<File> files, final File zip) throws IOException {
     try (final var out = new ZipOutputStream(new FileOutputStream(zip))) {
       for (final var file : files) {
         log.debug("Appending file to archive '{}'", file);

@@ -6,8 +6,9 @@ import co.uk.stefanpuia.backupr.remote.RemoteHandlerFactory;
 import co.uk.stefanpuia.backupr.source.SourceHandlerFactory;
 import co.uk.stefanpuia.backupr.transformers.TransformerFactory;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class BackupEngine {
     log.debug("Backup process completed");
   }
 
-  private List<File> discoverSources(final ConfigSource source) {
+  private Set<File> discoverSources(final ConfigSource source) {
     log.debug("Backing up source '{}'", source.name());
     final var sourceFiles = sourceHandlerFactory.getInstance(source).getFiles();
 
@@ -42,13 +43,14 @@ public class BackupEngine {
       log.warn("No files found for source '{}'", source.name());
       return null;
     }
-    log.debug("Found {} source files: {}", sourceFiles.size(), sourceFiles);
+    log.debug("Found {} source files:", sourceFiles.size());
+    logFiles(sourceFiles);
     return sourceFiles;
   }
 
-  private List<File> getTransformedFiles(
-      final boolean dry, final ConfigSource source, final List<File> sourceFiles) {
-    List<File> transformedFiles = new ArrayList<>(sourceFiles);
+  private Set<File> getTransformedFiles(
+      final boolean dry, final ConfigSource source, final Set<File> sourceFiles) {
+    Set<File> transformedFiles = new HashSet<>(sourceFiles);
     for (final var transformerType : source.transformers()) {
       final var transformer = transformerFactory.getInstance(transformerType);
       log.debug("Transforming using '{}' transformer", transformerType);
@@ -65,8 +67,9 @@ public class BackupEngine {
       final boolean dry,
       final BackuprConfig config,
       final ConfigSource source,
-      final List<File> remoteFiles) {
-    log.debug("Backing up {} files: {}", remoteFiles.size(), remoteFiles);
+      final Set<File> remoteFiles) {
+    log.debug("Backing up {} files:", remoteFiles.size());
+    logFiles(remoteFiles);
     source
         .remotes(config)
         .forEach(
@@ -77,5 +80,9 @@ public class BackupEngine {
               }
               log.debug("Finished backup to remote '{}'", remote.name());
             });
+  }
+
+  private void logFiles(final Collection<File> files) {
+    files.stream().map(File::toString).forEach(log::debug);
   }
 }

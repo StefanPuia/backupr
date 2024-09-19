@@ -1,8 +1,8 @@
 package co.uk.stefanpuia.backupr.source;
 
 import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 public interface SourceHandler {
-  List<File> getFiles();
+  Set<File> getFiles();
 }

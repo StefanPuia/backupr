@@ -5,9 +5,9 @@ import static org.apache.commons.io.IOCase.INSENSITIVE;
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.FileUtils;
@@ -21,18 +21,18 @@ public class LocalSourceHandler implements SourceHandler {
   private final LocalConfigSource source;
 
   @Override
-  public List<File> getFiles() {
-    final File directory = new File(source.directory());
+  public Set<File> getFiles() {
+    final File directory = source.getBasePath().toFile();
     if (!directory.exists() || !directory.isDirectory()) {
       throw new SourceHandlerException(
-          "'%s' does not exist or is not a directory".formatted(source.directory()));
+          "'%s' does not exist or is not a directory".formatted(directory));
     }
 
     if (source.files().isEmpty()) {
-      return List.of(directory);
+      return Set.of(directory);
     }
 
-    final List<File> foundFiles = new ArrayList<>();
+    final Set<File> foundFiles = new HashSet<>();
 
     source
         .files()

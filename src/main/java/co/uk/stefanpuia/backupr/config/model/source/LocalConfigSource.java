@@ -8,6 +8,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.nio.file.Path;
 import java.util.List;
 
 public record LocalConfigSource(
@@ -46,5 +47,9 @@ public record LocalConfigSource(
 
   public List<SourceTransformer> transformers() {
     return transformers == null ? List.of() : transformers;
+  }
+
+  public Path getBasePath() {
+    return Path.of(directory);
   }
 }

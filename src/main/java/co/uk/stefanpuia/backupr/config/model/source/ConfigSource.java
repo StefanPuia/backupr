@@ -5,6 +5,7 @@ import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.nio.file.Path;
 import java.util.List;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = LocalConfigSource.class)
@@ -21,4 +22,6 @@ public interface ConfigSource {
   List<SourceTransformer> transformers();
 
   void checkValid(BackuprConfig config);
+
+  Path getBasePath();
 }

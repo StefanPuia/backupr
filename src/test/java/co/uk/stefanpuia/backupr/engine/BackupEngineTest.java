@@ -16,6 +16,7 @@ import com.github.valfirst.slf4jtest.LoggingEvent;
 import com.github.valfirst.slf4jtest.TestLogger;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,7 +78,7 @@ public class BackupEngineTest {
     backupEngine.execute(false, backuprConfig);
 
     // Then
-    verify(remoteHandler).upload(List.of(new File("aa")));
+    verify(remoteHandler).upload(configSource, Set.of(new File("aa")));
     then(LOGGER.getLoggingEvents())
         .isNotEmpty()
         .extracting(LoggingEvent::getMessage)
