@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "remotes": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "const": "LOCAL"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "const": "AZURE_STORAGE"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          }
+        ]
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "directory": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "remotes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transformers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "const": "ZIP"
+            }
+          },
+          "@type": {
+            "const": "LocalConfigSource"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.shell;
 
+import co.uk.stefanpuia.backupr.config.JsonSchemaWriter;
 import co.uk.stefanpuia.backupr.engine.BackupDelegate;
 import lombok.AllArgsConstructor;
 import org.springframework.shell.command.annotation.Command;
@@ -18,6 +19,7 @@ public class ConsoleCommands {
       "Print verbose output throughout the process.";
 
   private final BackupDelegate backupDelegate;
+  private final JsonSchemaWriter schemaWriter;
 
   @Command(description = "Start the backup process.")
   public String backup(
@@ -51,5 +53,10 @@ public class ConsoleCommands {
               description = OPTION_VERBOSE_DESCRIPTION) boolean verbose) {
     final var validConfigPath = backupDelegate.validateConfig(configPath);
     return "Configuration file at '%s' is valid.".formatted(validConfigPath);
+  }
+
+  @Command(command = "schema", description = "Get the JSON schema for the configuration file.")
+  public String generateJSONSchema() {
+    return schemaWriter.generate();
   }
 }
