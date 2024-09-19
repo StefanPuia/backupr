@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class ZipTransformer implements Transformer {
+public class ZipTransformer extends AbstractTransformer {
 
   @Override
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
@@ -38,7 +38,9 @@ public class ZipTransformer implements Transformer {
       throws IOException {
     try (final var out = new ZipOutputStream(new FileOutputStream(zip))) {
       for (final var file : files) {
-        log.debug("Appending file to archive '{}'", file);
+        log.debug("Appending file '{}' to archive", file);
+        if (isDryRun()) continue;
+
         final var zipEntry = new ZipEntry(getRelativePath(source, file));
         out.putNextEntry(zipEntry);
 

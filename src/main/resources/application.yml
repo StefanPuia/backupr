@@ -6,10 +6,11 @@ spring:
     banner-mode: off
     log-startup-info: false
   shell:
+    noninteractive:
+#      primary-command: backup -d -v
+      primary-command: validate -v
 #    interactive:
 #      enabled: true
-    noninteractive:
-      primary-command: backup -v
   profiles:
     active: "${SPRING_PROFILES_ACTIVE:}"
 
@@ -19,3 +20,4 @@ logging:
     co.uk.stefanpuia.backupr: warn
     org.jline: error
     com.azure.core.http.netty.implementation.NettyUtility: warn
+    com.azure.spring.cloud.core.implementation.util.AzureSpringIdentifier: error

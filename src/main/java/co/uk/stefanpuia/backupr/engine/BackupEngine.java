@@ -52,13 +52,12 @@ public class BackupEngine {
       final boolean dry, final ConfigSource source, final Set<File> sourceFiles) {
     Set<File> transformedFiles = new HashSet<>(sourceFiles);
     for (final var transformerType : source.transformers()) {
-      final var transformer = transformerFactory.getInstance(transformerType);
+      final var transformer = transformerFactory.getInstance(transformerType).setDry(dry);
       log.debug("Transforming using '{}' transformer", transformerType);
 
-      if (!dry) {
-        transformedFiles = transformer.transform(source, transformedFiles);
-      }
-      log.debug("Transformed to {} files {}", transformedFiles.size(), transformedFiles);
+      transformedFiles = transformer.transform(source, transformedFiles);
+      log.debug("Transformed to {} files:", transformedFiles.size());
+      logFiles(transformedFiles);
     }
     return transformedFiles;
   }
@@ -75,9 +74,7 @@ public class BackupEngine {
         .forEach(
             remote -> {
               log.debug("Backing up to remote '{}'", remote.name());
-              if (!dry) {
-                remoteHandlerFactory.getInstance(remote).upload(source, remoteFiles);
-              }
+              remoteHandlerFactory.getInstance(remote).setDry(dry).upload(source, remoteFiles);
               log.debug("Finished backup to remote '{}'", remote.name());
             });
   }

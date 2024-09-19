@@ -5,5 +5,7 @@ import java.io.File;
 import java.util.Set;
 
 public interface RemoteHandler {
+  RemoteHandler setDry(boolean dry);
+
   void upload(ConfigSource source, Set<File> files);
 }

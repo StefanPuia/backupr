@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class LocalRemoteHandler implements RemoteHandler {
+public class LocalRemoteHandler extends AbstractRemoteHandler {
   private final LocalConfigRemote remote;
 
   @Override
@@ -25,6 +25,8 @@ public class LocalRemoteHandler implements RemoteHandler {
       for (final var file : files) {
         final var targetPath = Path.of(target.getAbsolutePath(), getRelativePath(source, file));
         log.debug("Backing up '{}' to '{}'", file, targetPath);
+        if (isDryRun()) continue;
+
         mkdirp(targetPath.getParent(), "Could not create parent directory: '%s'");
         Files.copy(file.toPath(), targetPath);
       }
@@ -42,9 +44,10 @@ public class LocalRemoteHandler implements RemoteHandler {
   }
 
   private File ensureRootDirectory(final ConfigSource source) {
-    final var path = Path.of(remote.location(), source.name());
-    log.debug("Verifying root directory '{}'", path);
-    final var dir = path.toFile();
+    final var dir = Path.of(remote.location(), source.name()).toFile();
+    log.debug("Verifying root directory '{}'", dir);
+    if (isDryRun()) return dir;
+
     if (!dir.exists()) {
       log.debug("Root directory not found, trying to create");
       mkdirp(dir.toPath(), "Could not create target directory: '%s'");
@@ -57,9 +60,10 @@ public class LocalRemoteHandler implements RemoteHandler {
   }
 
   private File createTargetDirectory(final File root, final String backupName) {
-    final var backupDirPath = Path.of(root.getAbsolutePath(), backupName);
-    log.debug("Verifying backup directory '{}'", backupDirPath);
-    final var dir = new File(backupDirPath.toString());
+    final var dir = Path.of(root.getAbsolutePath(), backupName).toFile();
+    log.debug("Verifying backup directory '{}'", dir);
+    if (isDryRun()) return dir;
+
     if (!dir.exists()) {
       log.debug("Backup directory not found, trying to create");
       mkdirp(dir.toPath(), "Could not create backup directory: '%s'");
