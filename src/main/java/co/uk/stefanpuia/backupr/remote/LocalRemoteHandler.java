@@ -34,7 +34,11 @@ public class LocalRemoteHandler implements RemoteHandler {
   }
 
   private String getRelativePath(final ConfigSource source, final File file) {
-    return source.getBasePath().relativize(file.toPath()).toString();
+    try {
+      return source.getBasePath().relativize(file.toPath()).toString();
+    } catch (IllegalArgumentException e) {
+      return file.getName();
+    }
   }
 
   private File ensureRootDirectory(final ConfigSource source) {

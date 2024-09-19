@@ -20,8 +20,8 @@
 
 ### ZIP
 
-* preserve folder structure
+* ~~preserve folder structure~~
 
 ## Bugs
 
-* file patterns without a directory will scan recursively
+* file patterns without a directory will scan recursively / feature?

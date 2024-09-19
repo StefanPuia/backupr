@@ -21,7 +21,7 @@ public class ZipTransformer implements Transformer {
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
     try {
       final var zip = createZipFile(source);
-      createZipContents(files, zip);
+      createZipContents(source, files, zip);
       return Set.of(zip);
     } catch (final IOException e) {
       throw new TransformerException(e);
@@ -34,11 +34,12 @@ public class ZipTransformer implements Transformer {
     return Path.of(tempDir.toString(), source.name() + ".zip").toFile();
   }
 
-  private void createZipContents(final Set<File> files, final File zip) throws IOException {
+  private void createZipContents(final ConfigSource source, final Set<File> files, final File zip)
+      throws IOException {
     try (final var out = new ZipOutputStream(new FileOutputStream(zip))) {
       for (final var file : files) {
         log.debug("Appending file to archive '{}'", file);
-        final var zipEntry = new ZipEntry(file.getName());
+        final var zipEntry = new ZipEntry(getRelativePath(source, file));
         out.putNextEntry(zipEntry);
 
         try (final var fileInputStream = new FileInputStream(file)) {
@@ -48,5 +49,9 @@ public class ZipTransformer implements Transformer {
         }
       }
     }
+  }
+
+  private String getRelativePath(final ConfigSource source, final File file) {
+    return source.getBasePath().relativize(file.toPath()).toString();
   }
 }
