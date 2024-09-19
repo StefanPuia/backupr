@@ -9,6 +9,8 @@ import java.util.List;
 public record BackuprConfig(
     @NotEmpty List<@Valid ConfigRemote> remotes, @NotEmpty List<@Valid ConfigSource> sources) {
 
+  public static final String VALID_IDENTIFIER_REGEX = "^[0-9a-zA-Z\\-_.]+$";
+
   public void checkValid() {
     remotes.forEach(remote -> remote.checkValid(this));
     sources.forEach(source -> source.checkValid(this));

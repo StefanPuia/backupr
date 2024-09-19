@@ -10,5 +10,8 @@ public record AzureStorageConfigRemote(@NotBlank String name) implements ConfigR
     return RemoteType.AZURE_STORAGE;
   }
 
-  public void checkValid(final BackuprConfig config) {}
+  @Override
+  public void checkValid(final BackuprConfig config) {
+    ConfigRemote.super.checkValid(config);
+  }
 }

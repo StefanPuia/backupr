@@ -1,5 +1,8 @@
 package co.uk.stefanpuia.backupr.config.model.remote;
 
+import static co.uk.stefanpuia.backupr.config.model.BackuprConfig.VALID_IDENTIFIER_REGEX;
+
+import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.RemoteType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -16,5 +19,11 @@ public interface ConfigRemote {
 
   RemoteType type();
 
-  void checkValid(BackuprConfig config);
+  default void checkValid(BackuprConfig config) {
+    if (!name().matches(VALID_IDENTIFIER_REGEX)) {
+      throw new ConfigValidationException(
+          "remote '%s': name must match the following pattern: '%s'"
+              .formatted(name(), VALID_IDENTIFIER_REGEX));
+    }
+  }
 }

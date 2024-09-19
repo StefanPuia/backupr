@@ -24,6 +24,7 @@ public record LocalConfigSource(
   }
 
   public void checkValid(final BackuprConfig config) {
+    ConfigSource.super.checkValid(config);
     checkRemotesValid(config);
   }
 

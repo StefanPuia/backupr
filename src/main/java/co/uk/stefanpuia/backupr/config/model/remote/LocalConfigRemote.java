@@ -11,5 +11,8 @@ public record LocalConfigRemote(@NotBlank String name, @NotBlank String location
     return RemoteType.LOCAL;
   }
 
-  public void checkValid(final BackuprConfig config) {}
+  @Override
+  public void checkValid(final BackuprConfig config) {
+    ConfigRemote.super.checkValid(config);
+  }
 }
