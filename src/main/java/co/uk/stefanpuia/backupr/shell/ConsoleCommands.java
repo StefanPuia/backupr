@@ -3,6 +3,8 @@ package co.uk.stefanpuia.backupr.shell;
 import co.uk.stefanpuia.backupr.config.JsonSchemaWriter;
 import co.uk.stefanpuia.backupr.engine.BackupDelegate;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.logging.LogLevel;
+import org.springframework.boot.logging.LoggingSystem;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 
@@ -37,6 +39,7 @@ public class ConsoleCommands {
               shortNames = OPTION_VERBOSE_SHORT,
               longNames = OPTION_VERBOSE_LONG,
               description = OPTION_VERBOSE_DESCRIPTION) boolean verbose) {
+    changeLogLevel(verbose);
     backupDelegate.executeBackup(dry, configPath);
     return "Backup successful";
   }
@@ -51,6 +54,7 @@ public class ConsoleCommands {
               shortNames = OPTION_VERBOSE_SHORT,
               longNames = OPTION_VERBOSE_LONG,
               description = OPTION_VERBOSE_DESCRIPTION) boolean verbose) {
+    changeLogLevel(verbose);
     final var validConfigPath = backupDelegate.validateConfig(configPath);
     return "Configuration file at '%s' is valid.".formatted(validConfigPath);
   }
@@ -58,5 +62,12 @@ public class ConsoleCommands {
   @Command(command = "schema", description = "Get the JSON schema for the configuration file.")
   public String generateJSONSchema() {
     return schemaWriter.generate();
+  }
+
+  private void changeLogLevel(final boolean verbose) {
+    if (verbose) {
+      LoggingSystem.get(this.getClass().getClassLoader())
+          .setLogLevel("co.uk.stefanpuia.backupr", LogLevel.DEBUG);
+    }
   }
 }

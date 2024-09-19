@@ -1,27 +1,31 @@
-# List of things to implement
+## List of things to implement
 
-## Config
+# Config
 
 * placeholders in config e.g. user home
 * handle com.fasterxml.jackson.databind.exc exceptions
 
-## CLI
+# CLI
 
-* verbose
+* ~~verbose~~
 * default command - run help?
 
-## Engine
+# Engine
 
 * do not fail fast on remote handling
 
-## Transformers
+# Transformers
 
 * add more data? - i.e. naming pattern, etc
 
-### ZIP
+## ZIP
 
 * ~~preserve folder structure~~
 
-## Bugs
+## TAR
+
+* implement
+
+# Bugs
 
 * file patterns without a directory will scan recursively / feature?

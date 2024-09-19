@@ -9,12 +9,13 @@ spring:
 #    interactive:
 #      enabled: true
     noninteractive:
-      primary-command: backup
+      primary-command: backup -v
   profiles:
     active: "${SPRING_PROFILES_ACTIVE:}"
 
 logging:
   level:
-#    root: error
-    co.uk.stefanpuia.backupr: debug
+    root: warn
+    co.uk.stefanpuia.backupr: warn
+    org.jline: error
     com.azure.core.http.netty.implementation.NettyUtility: warn
