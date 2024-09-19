@@ -7,6 +7,10 @@
 * do not fail fast on remote handling
 * handle com.fasterxml.jackson.databind.exc exceptions
 * default command - run help?
+* transformers
+  * add more data? - i.e. naming pattern, etc
+  * zip
+    * preserve folder structure
 
 
 

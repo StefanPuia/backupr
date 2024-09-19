@@ -2,12 +2,10 @@ package co.uk.stefanpuia.backupr.shell;
 
 import co.uk.stefanpuia.backupr.engine.BackupDelegate;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 
-@Slf4j
-@Command
+@Command(group = "Backupr")
 @AllArgsConstructor
 public class ConsoleCommands {
   private static final char OPTION_PATH_SHORT = 'p';

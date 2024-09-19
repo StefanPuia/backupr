@@ -6,10 +6,10 @@ spring:
     banner-mode: off
     log-startup-info: false
   shell:
-    interactive:
-      enabled: true
-#    noninteractive:
-#      primary-command: help
+#    interactive:
+#      enabled: true
+    noninteractive:
+      primary-command: validate
   profiles:
     active: "${SPRING_PROFILES_ACTIVE:}"
 

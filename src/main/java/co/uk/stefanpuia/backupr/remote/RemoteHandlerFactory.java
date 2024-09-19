@@ -10,7 +10,7 @@ public class RemoteHandlerFactory {
 
   public RemoteHandler getInstance(final ConfigRemote remote) {
     return switch (remote) {
-      case LocalConfigRemote local -> null;
+      case LocalConfigRemote local -> new LocalRemoteHandler(local);
       case AzureStorageConfigRemote azure -> null;
       default -> throw new IllegalArgumentException("Unsupported remote type: " + remote);
     };

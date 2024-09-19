@@ -30,7 +30,6 @@ ext {
 }
 
 dependencies {
-    implementation 'com.azure.spring:spring-cloud-azure-starter'
     implementation 'com.azure.spring:spring-cloud-azure-starter-active-directory'
     implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
     implementation 'org.springframework.shell:spring-shell-starter'

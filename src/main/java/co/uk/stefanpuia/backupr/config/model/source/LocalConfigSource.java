@@ -4,6 +4,7 @@ import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -12,8 +13,8 @@ import java.util.List;
 public record LocalConfigSource(
     @NotBlank String name,
     @NotBlank String directory,
-    List<@NotBlank String> files,
-    List<@NotNull SourceTransformer> transformers,
+    @Nullable List<@NotBlank String> files,
+    @Nullable List<@NotNull SourceTransformer> transformers,
     @NotEmpty List<@NotBlank String> remotes)
     implements ConfigSource {
 
@@ -38,6 +39,12 @@ public record LocalConfigSource(
   }
 
   public List<String> files() {
-    return files.stream().map(pattern -> pattern.replaceAll("[\\\\/]", "/")).toList();
+    return files == null
+        ? List.of()
+        : files.stream().map(pattern -> pattern.replaceAll("[\\\\/]", "/")).toList();
+  }
+
+  public List<SourceTransformer> transformers() {
+    return transformers == null ? List.of() : transformers;
   }
 }
