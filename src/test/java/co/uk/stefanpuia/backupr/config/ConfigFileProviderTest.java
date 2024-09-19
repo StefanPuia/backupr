@@ -5,6 +5,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.Mockito.doReturn;
 
+import co.uk.stefanpuia.backupr.config.exception.ConfigFileNotFoundException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class ConfigFileProviderTest {
 
     // When - Then
     thenThrownBy(() -> configFileProvider.getConfigInputStream())
-        .isInstanceOf(FileNotFoundException.class);
+        .isInstanceOf(ConfigFileNotFoundException.class);
   }
 
   @Test

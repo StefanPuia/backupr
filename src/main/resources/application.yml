@@ -1,3 +1,20 @@
 spring:
   application:
     name: backupr
+    version: 1.1
+  main:
+    banner-mode: off
+    log-startup-info: false
+  shell:
+    interactive:
+      enabled: true
+#    noninteractive:
+#      primary-command: help
+  profiles:
+    active: "${SPRING_PROFILES_ACTIVE:}"
+
+logging:
+  level:
+#    root: error
+    co.uk.stefanpuia.backupr: debug
+    com.azure.core.http.netty.implementation.NettyUtility: warn

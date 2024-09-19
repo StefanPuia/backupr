@@ -14,13 +14,13 @@ public class BackupEngine {
   private final SourceHandlerFactory sourceHandlerFactory;
   private final RemoteHandlerFactory remoteHandlerFactory;
 
-  public void execute(final BackuprConfig config) {
-    log.info("Beginning backup");
+  public void execute(final boolean dry, final BackuprConfig config) {
+    log.debug("Beginning backup process");
     config
         .sources()
         .forEach(
             source -> {
-              log.info("Backing up source '{}'", source.name());
+              log.debug("Backing up source '{}'", source.name());
               final var files = sourceHandlerFactory.getInstance(source).getFiles();
 
               if (files.isEmpty()) {
@@ -28,14 +28,17 @@ public class BackupEngine {
                 return;
               }
 
-              log.info("Backing up files '{}'", files);
+              log.debug("Backing up files '{}'", files);
               source
                   .remotes(config)
                   .forEach(
                       remote -> {
-                        log.info("Backing up to remote '{}'", remote.name());
-                        remoteHandlerFactory.getInstance(remote).upload(files);
+                        log.debug("Backing up to remote '{}'", remote.name());
+                        if (!dry) {
+                          remoteHandlerFactory.getInstance(remote).upload(files);
+                        }
                       });
             });
+    log.debug("Backup process completed");
   }
 }

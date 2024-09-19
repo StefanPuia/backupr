@@ -50,7 +50,7 @@ public class BackupEngineTest {
     LOGGER.clear();
 
     // When
-    backupEngine.execute(backuprConfig);
+    backupEngine.execute(false, backuprConfig);
 
     // Then
     verifyNoInteractions(remoteHandlerFactory);
@@ -58,7 +58,10 @@ public class BackupEngineTest {
         .isNotEmpty()
         .extracting(LoggingEvent::getMessage)
         .containsExactly(
-            "Beginning backup", "Backing up source '{}'", "No files found for source '{}'");
+            "Beginning backup process",
+            "Backing up source '{}'",
+            "No files found for source '{}'",
+            "Backup process completed");
   }
 
   @Test
@@ -71,7 +74,7 @@ public class BackupEngineTest {
     LOGGER.clear();
 
     // When
-    backupEngine.execute(backuprConfig);
+    backupEngine.execute(false, backuprConfig);
 
     // Then
     verify(remoteHandler).upload(List.of(new File("aa")));
@@ -79,9 +82,10 @@ public class BackupEngineTest {
         .isNotEmpty()
         .extracting(LoggingEvent::getMessage)
         .containsExactly(
-            "Beginning backup",
+            "Beginning backup process",
             "Backing up source '{}'",
             "Backing up files '{}'",
-            "Backing up to remote '{}'");
+            "Backing up to remote '{}'",
+            "Backup process completed");
   }
 }
