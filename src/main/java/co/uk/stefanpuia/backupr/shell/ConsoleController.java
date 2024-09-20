@@ -10,7 +10,7 @@ import org.springframework.shell.command.annotation.Option;
 
 @Command(group = "Backupr")
 @AllArgsConstructor
-public class ConsoleCommands {
+public class ConsoleController {
   private static final char OPTION_PATH_SHORT = 'p';
   private static final String OPTION_PATH_LONG = "path";
   private static final String OPTION_PATH_DESCRIPTION =

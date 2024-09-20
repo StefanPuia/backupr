@@ -4,15 +4,20 @@
 
 * placeholders in config e.g. user home
 * handle com.fasterxml.jackson.databind.exc exceptions
+* delete old backups?
 
 # CLI
 
-* ~~verbose~~
 * default command - run help?
+* generate config - later
 
 # Engine
 
-* do not fail fast on remote handling
+* do not fail fast on remote handling - or maybe config?
+
+# Sources
+
+* better file filtering
 
 # Transformers
 
@@ -20,11 +25,18 @@
 
 ## ZIP
 
-* ~~preserve folder structure~~
+*
 
 ## TAR
 
 * implement
+
+# Remotes
+
+* implement git
+* implement azure blob
+* implement aws?
+* implement google storage?
 
 # Bugs
 

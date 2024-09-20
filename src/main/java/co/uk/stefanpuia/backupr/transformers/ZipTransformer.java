@@ -21,6 +21,7 @@ public class ZipTransformer extends AbstractTransformer {
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
     try {
       final var zip = createZipFile(source);
+      zip.deleteOnExit();
       createZipContents(source, files, zip);
       return Set.of(zip);
     } catch (final IOException e) {

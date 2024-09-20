@@ -80,6 +80,6 @@ public class BackupEngine {
   }
 
   private void logFiles(final Collection<File> files) {
-    files.stream().map(File::toString).forEach(log::debug);
+    files.stream().map(File::toString).sorted().forEach(log::debug);
   }
 }
