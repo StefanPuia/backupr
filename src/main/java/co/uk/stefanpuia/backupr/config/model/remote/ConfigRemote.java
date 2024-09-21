@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
   @Type(value = LocalConfigRemote.class, name = "LOCAL"),
   @Type(value = AzureStorageConfigRemote.class, name = "AZURE_STORAGE"),
+  @Type(value = GitConfigRemote.class, name = "GIT"),
 })
 public interface ConfigRemote {
   String name();

@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.transformers;
 
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
+import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 public class ZipTransformer extends AbstractTransformer {
+  private final BackupHelper backupHelper;
 
   @Override
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
@@ -42,7 +44,7 @@ public class ZipTransformer extends AbstractTransformer {
         log.debug("Appending file '{}' to archive", file);
         if (isDryRun()) continue;
 
-        final var zipEntry = new ZipEntry(getRelativePath(source, file));
+        final var zipEntry = new ZipEntry(backupHelper.getRelativePath(source.getBasePath(), file));
         out.putNextEntry(zipEntry);
 
         try (final var fileInputStream = new FileInputStream(file)) {
@@ -52,9 +54,5 @@ public class ZipTransformer extends AbstractTransformer {
         }
       }
     }
-  }
-
-  private String getRelativePath(final ConfigSource source, final File file) {
-    return source.getBasePath().relativize(file.toPath()).toString();
   }
 }

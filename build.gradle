@@ -33,12 +33,17 @@ dependencies {
     implementation 'com.azure.spring:spring-cloud-azure-starter-active-directory'
     implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
     implementation 'org.springframework.shell:spring-shell-starter'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r'
+
     compileOnly 'org.projectlombok:lombok'
+
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.shell:spring-shell-starter-test'
     testImplementation 'com.github.valfirst:slf4j-test:3.0.1'
+
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

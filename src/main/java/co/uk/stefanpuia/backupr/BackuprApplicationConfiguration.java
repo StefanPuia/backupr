@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr;
 
+import co.uk.stefanpuia.backupr.shell.ShellExceptionResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,5 +14,10 @@ public class BackuprApplicationConfiguration {
   @Bean
   public ObjectMapper objectMapper() {
     return new ObjectMapper();
+  }
+
+  @Bean
+  public ShellExceptionResolver shellExceptionResolver() {
+    return new ShellExceptionResolver();
   }
 }

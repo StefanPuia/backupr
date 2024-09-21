@@ -11,9 +11,9 @@ import org.springframework.shell.command.annotation.Option;
 @Command(group = "Backupr")
 @AllArgsConstructor
 public class ConsoleController {
-  private static final char OPTION_PATH_SHORT = 'p';
-  private static final String OPTION_PATH_LONG = "path";
-  private static final String OPTION_PATH_DESCRIPTION =
+  private static final char OPTION_CONFIG_SHORT = 'c';
+  private static final String OPTION_CONFIG_LONG = "config";
+  private static final String OPTION_CONFIG_DESCRIPTION =
       "Configuration file location (defaults to '{user home}/.backupr.json'";
   private static final char OPTION_VERBOSE_SHORT = 'v';
   private static final String OPTION_VERBOSE_LONG = "verbose";
@@ -32,9 +32,9 @@ public class ConsoleController {
                   "Execute the backup process, scan for target files but skip uploading to any remotes.")
           boolean dry,
       final @Option(
-              shortNames = OPTION_PATH_SHORT,
-              longNames = OPTION_PATH_LONG,
-              description = OPTION_PATH_DESCRIPTION) String configPath,
+              shortNames = OPTION_CONFIG_SHORT,
+              longNames = OPTION_CONFIG_LONG,
+              description = OPTION_CONFIG_DESCRIPTION) String configPath,
       final @Option(
               shortNames = OPTION_VERBOSE_SHORT,
               longNames = OPTION_VERBOSE_LONG,
@@ -47,9 +47,9 @@ public class ConsoleController {
   @Command(command = "validate", description = "Tries to read and validate the configuration file.")
   public String validateConfig(
       final @Option(
-              shortNames = OPTION_PATH_SHORT,
-              longNames = OPTION_PATH_LONG,
-              description = OPTION_PATH_DESCRIPTION) String configPath,
+              shortNames = OPTION_CONFIG_SHORT,
+              longNames = OPTION_CONFIG_LONG,
+              description = OPTION_CONFIG_DESCRIPTION) String configPath,
       final @Option(
               shortNames = OPTION_VERBOSE_SHORT,
               longNames = OPTION_VERBOSE_LONG,

@@ -5,6 +5,7 @@ spring:
   main:
     banner-mode: off
     log-startup-info: false
+    web-application-type: none
   shell:
     noninteractive:
 #      primary-command: backup -d -v

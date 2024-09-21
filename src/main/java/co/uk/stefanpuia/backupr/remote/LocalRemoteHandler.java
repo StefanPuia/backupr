@@ -2,11 +2,11 @@ package co.uk.stefanpuia.backupr.remote;
 
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
+import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,31 +15,28 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class LocalRemoteHandler extends AbstractRemoteHandler {
   private final LocalConfigRemote remote;
+  private final BackupHelper backupHelper;
 
   @Override
   public void upload(final ConfigSource source, final Set<File> files) {
     try {
       final var root = ensureRootDirectory(source);
-      final var target = createTargetDirectory(root, generateBackupName());
+      final var target = createTargetDirectory(root, backupHelper.generateBackupName());
 
       for (final var file : files) {
-        final var targetPath = Path.of(target.getAbsolutePath(), getRelativePath(source, file));
+        final var targetPath =
+            Path.of(
+                target.getAbsolutePath(), backupHelper.getRelativePath(source.getBasePath(), file));
         log.debug("Backing up '{}' to '{}'", file, targetPath);
         if (isDryRun()) continue;
 
-        mkdirp(targetPath.getParent(), "Could not create parent directory: '%s'");
+        backupHelper.mkdirp(
+            targetPath.getParent(),
+            "Could not create parent directory: '%s'".formatted(targetPath.getParent()));
         Files.copy(file.toPath(), targetPath);
       }
     } catch (final IOException e) {
       throw new RemoteHandlerException(e);
-    }
-  }
-
-  private String getRelativePath(final ConfigSource source, final File file) {
-    try {
-      return source.getBasePath().relativize(file.toPath()).toString();
-    } catch (IllegalArgumentException e) {
-      return file.getName();
     }
   }
 
@@ -50,7 +47,8 @@ public class LocalRemoteHandler extends AbstractRemoteHandler {
 
     if (!dir.exists()) {
       log.debug("Root directory not found, trying to create");
-      mkdirp(dir.toPath(), "Could not create target directory: '%s'");
+      backupHelper.mkdirp(
+          dir.toPath(), "Could not create target directory: '%s'".formatted(remote.location()));
     }
     if (!dir.isDirectory()) {
       throw new RemoteHandlerException(
@@ -66,7 +64,8 @@ public class LocalRemoteHandler extends AbstractRemoteHandler {
 
     if (!dir.exists()) {
       log.debug("Backup directory not found, trying to create");
-      mkdirp(dir.toPath(), "Could not create backup directory: '%s'");
+      backupHelper.mkdirp(
+          dir.toPath(), "Could not create backup directory: '%s'".formatted(remote.location()));
     } else {
       throw new RemoteHandlerException(
           "Backup directory already exists: '%s'".formatted(remote.location()));
@@ -76,19 +75,5 @@ public class LocalRemoteHandler extends AbstractRemoteHandler {
           "Backup location is not a directory: '%s'".formatted(remote.location()));
     }
     return dir;
-  }
-
-  private String generateBackupName() {
-    return LocalDateTime.now().withNano(0).toString().replaceAll("\\W", "-");
-  }
-
-  private void mkdirp(final Path path, final String exceptionMessage) {
-    final var directory = path.toFile();
-    if (!directory.exists()) {
-      final var created = directory.mkdirs();
-      if (!created) {
-        throw new RemoteHandlerException(exceptionMessage.formatted(remote.location()));
-      }
-    }
   }
 }

@@ -6,7 +6,6 @@ import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.util.List;
@@ -16,7 +15,7 @@ public record LocalConfigSource(
     @NotBlank String directory,
     @Nullable List<@NotBlank String> files,
     @Nullable List<@NotNull SourceTransformer> transformers,
-    @NotEmpty List<@NotBlank String> remotes)
+    @Nullable List<@NotBlank String> remotes)
     implements ConfigSource {
 
   public List<ConfigRemote> remotes(final BackuprConfig config) {
@@ -48,6 +47,10 @@ public record LocalConfigSource(
 
   public List<SourceTransformer> transformers() {
     return transformers == null ? List.of() : transformers;
+  }
+
+  public List<String> remotes() {
+    return remotes == null ? List.of() : remotes;
   }
 
   public Path getBasePath() {

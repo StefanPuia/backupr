@@ -10,6 +10,7 @@
 
 * default command - run help?
 * generate config - later
+* create/instruct scheduled task
 
 # Engine
 
