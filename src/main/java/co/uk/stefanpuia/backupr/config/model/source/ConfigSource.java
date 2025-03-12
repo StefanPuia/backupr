@@ -18,6 +18,8 @@ import java.util.List;
 public interface ConfigSource {
   String name();
 
+  Boolean enabled();
+
   List<String> remotes();
 
   List<ConfigRemote> remotes(final BackuprConfig config);

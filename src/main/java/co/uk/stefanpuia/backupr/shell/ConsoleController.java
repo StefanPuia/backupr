@@ -24,7 +24,7 @@ public class ConsoleController {
   private final JsonSchemaWriter schemaWriter;
 
   @Command(description = "Start the backup process.")
-  public String backup(
+  public void backup(
       final @Option(
               shortNames = 'd',
               longNames = "dry",
@@ -41,7 +41,6 @@ public class ConsoleController {
               description = OPTION_VERBOSE_DESCRIPTION) boolean verbose) {
     changeLogLevel(verbose);
     backupDelegate.executeBackup(dry, configPath);
-    return "Backup successful";
   }
 
   @Command(command = "validate", description = "Tries to read and validate the configuration file.")

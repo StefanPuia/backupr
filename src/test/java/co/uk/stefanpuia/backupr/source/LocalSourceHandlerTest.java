@@ -19,7 +19,7 @@ public class LocalSourceHandlerTest {
     final var handler =
         new LocalSourceHandler(
             new LocalConfigSource(
-                "foo", tempDir.getAbsolutePath(), List.of(), List.of(), List.of()));
+                "foo", true, tempDir.getAbsolutePath(), List.of(), List.of(), List.of()));
 
     // When
     final var files = handler.getFiles();
@@ -36,7 +36,7 @@ public class LocalSourceHandlerTest {
     final var handler =
         new LocalSourceHandler(
             new LocalConfigSource(
-                "foo", tempDir.getAbsolutePath(), List.of("a.foo"), List.of(), List.of()));
+                "foo", true, tempDir.getAbsolutePath(), List.of("a.foo"), List.of(), List.of()));
 
     // When
     final var files = handler.getFiles();
@@ -55,7 +55,7 @@ public class LocalSourceHandlerTest {
     final var handler =
         new LocalSourceHandler(
             new LocalConfigSource(
-                "foo", tempDir.getAbsolutePath(), List.of("*.foo"), List.of(), List.of()));
+                "foo", true, tempDir.getAbsolutePath(), List.of("*.foo"), List.of(), List.of()));
 
     // When
     final var files = handler.getFiles();
@@ -76,7 +76,12 @@ public class LocalSourceHandlerTest {
     final var handler =
         new LocalSourceHandler(
             new LocalConfigSource(
-                "foo", tempDir.getAbsolutePath(), List.of("subdir/*.foo"), List.of(), List.of()));
+                "foo",
+                true,
+                tempDir.getAbsolutePath(),
+                List.of("subdir/*.foo"),
+                List.of(),
+                List.of()));
 
     // When
     final var files = handler.getFiles();
@@ -101,7 +106,7 @@ public class LocalSourceHandlerTest {
     final var handler =
         new LocalSourceHandler(
             new LocalConfigSource(
-                "foo", tempDir.getAbsolutePath(), List.of("**/*.foo"), List.of(), List.of()));
+                "foo", true, tempDir.getAbsolutePath(), List.of("**/*.foo"), List.of(), List.of()));
 
     // When
     final var files = handler.getFiles();

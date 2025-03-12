@@ -18,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public interface ConfigRemote {
   String name();
 
+  Boolean enabled();
+
   RemoteType type();
 
   default void checkValid(BackuprConfig config) {

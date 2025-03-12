@@ -16,6 +16,8 @@ spring:
     active: "${SPRING_PROFILES_ACTIVE:}"
 
 logging:
+  pattern:
+    console: "${LOGGING_PATTERN:%d{yyyy-MM-dd HH:mm:ss} | %-5level | %msg%n}"
   level:
     root: warn
     co.uk.stefanpuia.backupr: warn

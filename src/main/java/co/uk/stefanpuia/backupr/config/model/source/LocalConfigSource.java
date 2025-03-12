@@ -9,14 +9,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public record LocalConfigSource(
     @NotBlank String name,
+    @Nullable Boolean enabled,
     @NotBlank String directory,
     @Nullable List<@NotBlank String> files,
     @Nullable List<@NotNull SourceTransformer> transformers,
     @Nullable List<@NotBlank String> remotes)
     implements ConfigSource {
+
+  public Boolean enabled() {
+    return Optional.ofNullable(enabled).orElse(false);
+  }
 
   public List<ConfigRemote> remotes(final BackuprConfig config) {
     return config.remotes().stream().filter(remote -> remotes().contains(remote.name())).toList();

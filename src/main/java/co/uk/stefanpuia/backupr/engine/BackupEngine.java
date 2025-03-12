@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.engine;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.remote.RemoteHandlerFactory;
 import co.uk.stefanpuia.backupr.source.SourceHandlerFactory;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,9 +24,13 @@ public class BackupEngine {
   private final RemoteHandlerFactory remoteHandlerFactory;
 
   public void execute(final boolean dry, final BackuprConfig config) {
-    log.debug(dry ? "Beginning backup process (dry)" : "Beginning backup process");
-    config
-        .sources()
+    log.info(dry ? "Beginning backup process (dry)" : "Beginning backup process");
+    config.sources().stream()
+        .filter(Predicate.not(ConfigSource::enabled))
+        .map(ConfigSource::name)
+        .forEach(source -> log.debug("Ignoring source '{}' because it is disabled", source));
+    config.sources().stream()
+        .filter(ConfigSource::enabled)
         .forEach(
             source -> {
               final var sourceFiles = discoverSources(source);
@@ -32,7 +38,7 @@ public class BackupEngine {
               final var remoteFiles = getTransformedFiles(dry, source, sourceFiles);
               uploadToRemote(dry, config, source, remoteFiles);
             });
-    log.debug("Backup process completed");
+    log.info("Backup process completed");
   }
 
   private Set<File> discoverSources(final ConfigSource source) {
@@ -70,8 +76,12 @@ public class BackupEngine {
       final Set<File> remoteFiles) {
     log.debug("Backing up {} files to remotes:", remoteFiles.size());
     logFiles(remoteFiles);
-    source
-        .remotes(config)
+    source.remotes(config).stream()
+        .filter(Predicate.not(ConfigRemote::enabled))
+        .map(ConfigRemote::name)
+        .forEach(remote -> log.debug("Ignoring remote '{}' because it is disabled", remote));
+    source.remotes(config).stream()
+        .filter(ConfigRemote::enabled)
         .forEach(
             remote -> {
               log.debug("Backing up to {} remote '{}'", remote.type(), remote.name());

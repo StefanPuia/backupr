@@ -43,14 +43,15 @@ public class BackupEngineTest {
   @BeforeEach
   void setUp() {
     backuprConfig = new BackuprConfig(List.of(configRemote), List.of(configSource));
+    LOGGER.clear();
   }
 
   @Test
   void shouldNotUploadToRemoteWhenNoFilesFound() {
     // Given
+    doReturn(true).when(configSource).enabled();
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(Set.of()).when(sourceHandler).getFiles();
-    LOGGER.clear();
 
     // When
     backupEngine.execute(false, backuprConfig);
@@ -72,12 +73,13 @@ public class BackupEngineTest {
   void shouldUploadWhenFilesFound(final boolean dryRun) {
     // Given
     final var sourceFilePath = "foo-bar-123.json";
+    doReturn(true).when(configSource).enabled();
+    doReturn(true).when(configRemote).enabled();
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(List.of(configRemote)).when(configSource).remotes(backuprConfig);
     doReturn(remoteHandler).when(remoteHandlerFactory).getInstance(configRemote);
     doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
     doReturn(remoteHandler).when(remoteHandler).setDry(dryRun);
-    LOGGER.clear();
 
     // When
     backupEngine.execute(dryRun, backuprConfig);
@@ -97,6 +99,53 @@ public class BackupEngineTest {
             sourceFilePath,
             "Backing up to {} remote '{}'",
             "Finished backup to {} remote '{}'",
+            "Backup process completed");
+  }
+
+  @Test
+  void shouldNotUploadWhenRemoteDisabled() {
+    // Given
+    final var sourceFilePath = "foo-bar-123.json";
+    doReturn(true).when(configSource).enabled();
+    doReturn(false).when(configRemote).enabled();
+    doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
+    doReturn(List.of(configRemote)).when(configSource).remotes(backuprConfig);
+    doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
+
+    // When
+    backupEngine.execute(false, backuprConfig);
+
+    // Then
+    then(LOGGER.getLoggingEvents())
+        .isNotEmpty()
+        .extracting(LoggingEvent::getMessage)
+        .containsExactly(
+            "Beginning backup process",
+            "Backing up source '{}'",
+            "Found {} source files:",
+            sourceFilePath,
+            "Executing transformations",
+            "Backing up {} files to remotes:",
+            sourceFilePath,
+            "Ignoring remote '{}' because it is disabled",
+            "Backup process completed");
+  }
+
+  @Test
+  void shouldNotReadWhenSourceDisabled() {
+    // Given
+    doReturn(false).when(configSource).enabled();
+
+    // When
+    backupEngine.execute(false, backuprConfig);
+
+    // Then
+    then(LOGGER.getLoggingEvents())
+        .isNotEmpty()
+        .extracting(LoggingEvent::getMessage)
+        .containsExactly(
+            "Beginning backup process",
+            "Ignoring source '{}' because it is disabled",
             "Backup process completed");
   }
 }
