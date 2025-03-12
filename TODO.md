@@ -31,6 +31,8 @@
 ## TAR
 
 * implement
+  * https://commons.apache.org/proper/commons-compress/
+  * https://mkyong.com/java/how-to-create-tar-gz-in-java/
 
 # Remotes
 
@@ -42,3 +44,7 @@
 # Bugs
 
 * file patterns without a directory will scan recursively / feature?
+
+# Future
+
+* restore backup

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doReturn;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileNotFoundException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -32,10 +31,25 @@ public class ConfigFileProviderTest {
     final var tempFile = File.createTempFile("backupr-", ".json");
     tempFile.deleteOnExit();
     IOUtil.writeText(contents, tempFile);
+
+    // When
+    final var stream = configFileProvider.getConfigInputStream(tempFile.getAbsolutePath());
+
+    // Then
+    then(stream).asString(UTF_8).isEqualTo(contents);
+  }
+
+  @Test
+  void shouldReadConfigFileFromEnvironment() throws IOException {
+    // Given
+    final var contents = RandomString.make();
+    final var tempFile = File.createTempFile("backupr-", ".json");
+    tempFile.deleteOnExit();
+    IOUtil.writeText(contents, tempFile);
     doReturn(Optional.of(tempFile.getAbsolutePath())).when(environmentReader).getConfigLocation();
 
     // When
-    final var stream = configFileProvider.getConfigInputStream();
+    final var stream = configFileProvider.getConfigInputStream(null);
 
     // Then
     then(stream).asString(UTF_8).isEqualTo(contents);
@@ -47,7 +61,7 @@ public class ConfigFileProviderTest {
     doReturn(Optional.of("foo.json")).when(environmentReader).getConfigLocation();
 
     // When - Then
-    thenThrownBy(() -> configFileProvider.getConfigInputStream())
+    thenThrownBy(() -> configFileProvider.getConfigInputStream(""))
         .isInstanceOf(ConfigFileNotFoundException.class);
   }
 
@@ -62,7 +76,7 @@ public class ConfigFileProviderTest {
     doReturn(tempFile.getAbsolutePath()).when(configFileProvider).getDefaultLocation();
 
     // When
-    final var stream = configFileProvider.getConfigInputStream();
+    final var stream = configFileProvider.getConfigInputStream(null);
 
     // Then
     then(stream).asString(UTF_8).isEqualTo(contents);

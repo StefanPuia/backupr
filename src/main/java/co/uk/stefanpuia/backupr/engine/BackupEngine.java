@@ -22,7 +22,7 @@ public class BackupEngine {
   private final RemoteHandlerFactory remoteHandlerFactory;
 
   public void execute(final boolean dry, final BackuprConfig config) {
-    log.debug("Beginning backup process");
+    log.debug(dry ? "Beginning backup process (dry)" : "Beginning backup process");
     config
         .sources()
         .forEach(

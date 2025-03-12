@@ -61,7 +61,7 @@ public class LocalSourceHandlerTest {
     final var files = handler.getFiles();
 
     // Then
-    then(files).hasSize(2).containsExactly(file1, file2);
+    then(files).hasSize(2).containsExactlyInAnyOrder(file1, file2);
   }
 
   @Test
@@ -82,7 +82,7 @@ public class LocalSourceHandlerTest {
     final var files = handler.getFiles();
 
     // Then
-    then(files).hasSize(2).containsExactly(file1, file2);
+    then(files).hasSize(2).containsExactlyInAnyOrder(file1, file2);
   }
 
   @Test
@@ -107,6 +107,6 @@ public class LocalSourceHandlerTest {
     final var files = handler.getFiles();
 
     // Then
-    then(files).hasSize(3).containsExactly(file1, file2, file3);
+    then(files).hasSize(3).containsExactlyInAnyOrder(file1, file2, file3);
   }
 }

@@ -20,6 +20,8 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,7 +49,7 @@ public class BackupEngineTest {
   void shouldNotUploadToRemoteWhenNoFilesFound() {
     // Given
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
-    doReturn(List.of()).when(sourceHandler).getFiles();
+    doReturn(Set.of()).when(sourceHandler).getFiles();
     LOGGER.clear();
 
     // When
@@ -65,28 +67,36 @@ public class BackupEngineTest {
             "Backup process completed");
   }
 
-  @Test
-  void shouldUploadWhenFilesFound() {
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void shouldUploadWhenFilesFound(final boolean dryRun) {
     // Given
+    final var sourceFilePath = "foo-bar-123.json";
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(List.of(configRemote)).when(configSource).remotes(backuprConfig);
     doReturn(remoteHandler).when(remoteHandlerFactory).getInstance(configRemote);
-    doReturn(List.of(new File("aa"))).when(sourceHandler).getFiles();
+    doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
+    doReturn(remoteHandler).when(remoteHandler).setDry(dryRun);
     LOGGER.clear();
 
     // When
-    backupEngine.execute(false, backuprConfig);
+    backupEngine.execute(dryRun, backuprConfig);
 
     // Then
-    verify(remoteHandler).upload(configSource, Set.of(new File("aa")));
+    verify(remoteHandler).upload(configSource, Set.of(new File(sourceFilePath)));
     then(LOGGER.getLoggingEvents())
         .isNotEmpty()
         .extracting(LoggingEvent::getMessage)
         .containsExactly(
-            "Beginning backup process",
+            dryRun ? "Beginning backup process (dry)" : "Beginning backup process",
             "Backing up source '{}'",
-            "Backing up files '{}'",
-            "Backing up to remote '{}'",
+            "Found {} source files:",
+            sourceFilePath,
+            "Executing transformations",
+            "Backing up {} files to remotes:",
+            sourceFilePath,
+            "Backing up to {} remote '{}'",
+            "Finished backup to {} remote '{}'",
             "Backup process completed");
   }
 }

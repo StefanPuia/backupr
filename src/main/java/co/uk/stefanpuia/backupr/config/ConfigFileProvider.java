@@ -34,11 +34,6 @@ public class ConfigFileProvider {
     return Strings.isNotBlank(configPath) ? configPath : getConfigLocation();
   }
 
-  @Deprecated
-  public InputStream getConfigInputStream() {
-    return getConfigInputStream(getConfigLocation());
-  }
-
   public InputStream getConfigInputStream(final String configPath)
       throws ConfigFileNotFoundException {
     try {

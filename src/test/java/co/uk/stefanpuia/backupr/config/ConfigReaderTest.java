@@ -2,7 +2,6 @@ package co.uk.stefanpuia.backupr.config;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
-import static org.mockito.Mockito.doReturn;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
@@ -10,68 +9,67 @@ import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
 import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.aot.DisabledInAotMode;
 
-@SpringBootTest
+@SuppressWarnings("resource")
+@SpringBootTest(
+    classes = {ConfigReader.class, ObjectMapper.class, ValidationAutoConfiguration.class})
 @DisabledInAotMode
 public class ConfigReaderTest {
   @Autowired private ConfigReader configReader;
-  @MockBean private ConfigFileProvider configFileProvider;
 
   private InputStream toInputStream(final String input) {
     return new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
   }
 
   @Test
-  void shouldReadConfig() throws FileNotFoundException {
+  void shouldReadConfig() {
     // Given
-    doReturn(
-            toInputStream(
-                """
-                    {
-                      "remotes": [
-                        {
-                          "name": "foo",
-                          "type": "LOCAL",
-                          "location": "/home/foo"
-                        },
-                        {
-                          "name": "azure",
-                          "type": "AZURE_STORAGE"
-                        }
-                      ],
-                      "sources": [
-                        {
-                          "name": "ff",
-                          "directory": "/foo",
-                          "files": [
-                            "**/*.json"
-                          ],
-                          "transformers": [
-                            "ZIP"
-                          ],
-                          "remotes": [
-                            "foo",
-                            "azure"
-                          ]
-                        }
-                      ]
-                    }
-                    """))
-        .when(configFileProvider)
-        .getConfigInputStream();
+    final var configStream =
+        toInputStream(
+            """
+            {
+              "remotes": [
+                {
+                  "name": "foo",
+                  "type": "LOCAL",
+                  "location": "/home/foo"
+                },
+                {
+                  "name": "azure",
+                  "type": "AZURE_STORAGE"
+                }
+              ],
+              "sources": [
+                {
+                  "name": "ff",
+                  "directory": "/foo",
+                  "files": [
+                    "**/*.json"
+                  ],
+                  "transformers": [
+                    "ZIP"
+                  ],
+                  "remotes": [
+                    "foo",
+                    "azure"
+                  ]
+                }
+              ]
+            }
+            """);
 
     // When
-    final var config = configReader.readConfig();
+    final var config = configReader.readConfig(configStream);
 
     // Then
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
@@ -94,101 +92,95 @@ public class ConfigReaderTest {
   }
 
   @Test
-  void shouldFailValidationWhenRemotesEmpty() throws FileNotFoundException {
+  void shouldFailValidationWhenRemotesEmpty() {
     // Given
-    doReturn(
-            toInputStream(
-                """
-                {
-                  "remotes": [],
-                  "sources": [
-                    {
-                      "name": "ff",
-                      "directory": "/foo",
-                      "files": [
-                        "**/*.json"
-                      ],
-                      "transformers": [
-                        "ZIP"
-                      ],
-                      "remotes": [
-                        "azure"
-                      ]
-                    }
-                  ]
-                }
-                """))
-        .when(configFileProvider)
-        .getConfigInputStream();
+    final var configStream =
+        toInputStream(
+            """
+        {
+          "remotes": [],
+          "sources": [
+            {
+              "name": "ff",
+              "directory": "/foo",
+              "files": [
+                "**/*.json"
+              ],
+              "transformers": [
+                "ZIP"
+              ],
+              "remotes": [
+                "azure"
+              ]
+            }
+          ]
+        }
+        """);
 
     // When - Then
-    thenThrownBy(() -> configReader.readConfig())
+    thenThrownBy(() -> configReader.readConfig(configStream))
         .isInstanceOf(ConfigValidationException.class)
         .hasMessageContainingAll("remotes: must not be empty");
   }
 
   @Test
-  void shouldFailValidationWhenSourcesEmpty() throws FileNotFoundException {
+  void shouldFailValidationWhenSourcesEmpty() {
     // Given
-    doReturn(
-            toInputStream(
-                """
-                {
-                  "remotes": [
-                    {
-                      "name": "foo",
-                      "type": "LOCAL",
-                      "location": "/home/foo"
-                    }
-                  ],
-                  "sources": []
-                }
-                """))
-        .when(configFileProvider)
-        .getConfigInputStream();
+    final var configStream =
+        toInputStream(
+            """
+        {
+          "remotes": [
+            {
+              "name": "foo",
+              "type": "LOCAL",
+              "location": "/home/foo"
+            }
+          ],
+          "sources": []
+        }
+        """);
 
     // When - Then
-    thenThrownBy(() -> configReader.readConfig())
+    thenThrownBy(() -> configReader.readConfig(configStream))
         .isInstanceOf(ConfigValidationException.class)
         .hasMessageContainingAll("sources: must not be empty");
   }
 
   @Test
-  void shouldFailValidationWhenRemoteNotExists() throws FileNotFoundException {
+  void shouldFailValidationWhenRemoteNotExists() {
     // Given
-    doReturn(
-            toInputStream(
-                """
-                    {
-                      "remotes": [
-                        {
-                          "name": "foo",
-                          "type": "LOCAL",
-                          "location": "/home/foo"
-                        }
-                      ],
-                      "sources": [
-                        {
-                          "name": "ff",
-                          "directory": "/foo",
-                          "files": [
-                            "**/*.json"
-                          ],
-                          "transformers": [
-                            "ZIP"
-                          ],
-                          "remotes": [
-                            "azure"
-                          ]
-                        }
-                      ]
-                    }
-                    """))
-        .when(configFileProvider)
-        .getConfigInputStream();
+    final var configStream =
+        toInputStream(
+            """
+            {
+              "remotes": [
+                {
+                  "name": "foo",
+                  "type": "LOCAL",
+                  "location": "/home/foo"
+                }
+              ],
+              "sources": [
+                {
+                  "name": "ff",
+                  "directory": "/foo",
+                  "files": [
+                    "**/*.json"
+                  ],
+                  "transformers": [
+                    "ZIP"
+                  ],
+                  "remotes": [
+                    "azure"
+                  ]
+                }
+              ]
+            }
+            """);
 
     // When - Then
-    thenThrownBy(() -> configReader.readConfig())
+    thenThrownBy(() -> configReader.readConfig(configStream))
         .isInstanceOf(ConfigValidationException.class)
         .hasMessageContainingAll("in source 'ff'", "no remote named 'azure' defined");
   }

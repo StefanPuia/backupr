@@ -18,14 +18,8 @@ import org.springframework.web.util.BindErrorUtils;
 @AllArgsConstructor
 public class ConfigReader {
 
-  private final ConfigFileProvider configFileProvider;
   private final ObjectMapper objectMapper;
   private final Validator validator;
-
-  @Deprecated
-  public BackuprConfig readConfig() {
-    return readConfig(configFileProvider.getConfigInputStream());
-  }
 
   public BackuprConfig readConfig(final InputStream inputStream) {
     try {
