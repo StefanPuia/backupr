@@ -2,9 +2,11 @@
 
 # Config
 
+* split config dto and model to handle post-parsing processing separately
 * placeholders in config e.g. user home
-* handle com.fasterxml.jackson.databind.exc exceptions
-* delete old backups?
+* variables in config defined separately
+* environment variables in config?
+* handle com.fasterxml.jackson.databind.exc exceptions - may need a custom exception to string converter
 
 # CLI
 
@@ -14,7 +16,7 @@
 
 # Engine
 
-* do not fail fast on remote handling - or maybe config?
+* do not fail fast on remote handling - or add to config how fast to fail
 
 # Sources
 
@@ -40,6 +42,7 @@
 * implement azure blob
 * implement aws?
 * implement google storage?
+* delete old backups?
 
 # Bugs
 

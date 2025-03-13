@@ -20,6 +20,7 @@
               }
             },
             "required": [
+              "name",
               "type"
             ]
           },
@@ -31,6 +32,20 @@
               },
               "type": {
                 "const": "AZURE_STORAGE"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "const": "GIT"
               }
             },
             "required": [

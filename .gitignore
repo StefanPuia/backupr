@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 *.log
 .env
+.backupr.json
 
 ### STS ###
 .apt_generated
