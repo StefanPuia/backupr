@@ -41,18 +41,18 @@ public class LocalRemoteHandler extends AbstractRemoteHandler {
   }
 
   private File ensureRootDirectory(final ConfigSource source) {
-    final var dir = Path.of(remote.location(), source.name()).toFile();
+    final var dir = Path.of(remote.getLocation(), source.getName()).toFile();
     log.debug("Verifying root directory '{}'", dir);
     if (isDryRun()) return dir;
 
     if (!dir.exists()) {
       log.debug("Root directory not found, trying to create");
       backupHelper.mkdirp(
-          dir.toPath(), "Could not create target directory: '%s'".formatted(remote.location()));
+          dir.toPath(), "Could not create target directory: '%s'".formatted(remote.getLocation()));
     }
     if (!dir.isDirectory()) {
       throw new RemoteHandlerException(
-          "Target location is not a directory: '%s'".formatted(remote.location()));
+          "Target location is not a directory: '%s'".formatted(remote.getLocation()));
     }
     return dir;
   }
@@ -65,14 +65,14 @@ public class LocalRemoteHandler extends AbstractRemoteHandler {
     if (!dir.exists()) {
       log.debug("Backup directory not found, trying to create");
       backupHelper.mkdirp(
-          dir.toPath(), "Could not create backup directory: '%s'".formatted(remote.location()));
+          dir.toPath(), "Could not create backup directory: '%s'".formatted(remote.getLocation()));
     } else {
       throw new RemoteHandlerException(
-          "Backup directory already exists: '%s'".formatted(remote.location()));
+          "Backup directory already exists: '%s'".formatted(remote.getLocation()));
     }
     if (!dir.isDirectory()) {
       throw new RemoteHandlerException(
-          "Backup location is not a directory: '%s'".formatted(remote.location()));
+          "Backup location is not a directory: '%s'".formatted(remote.getLocation()));
     }
     return dir;
   }

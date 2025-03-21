@@ -8,8 +8,8 @@ spring:
     web-application-type: none
   shell:
     noninteractive:
-#      primary-command: backup -d -v
-      primary-command: validate -v
+      primary-command: "${PRIMARY_COMMAND:backup --dry --verbose}"
+#      primary-command: validate --verbose
 #    interactive:
 #      enabled: true
   profiles:

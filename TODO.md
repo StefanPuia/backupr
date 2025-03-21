@@ -2,7 +2,6 @@
 
 # Config
 
-* split config dto and model to handle post-parsing processing separately
 * placeholders in config e.g. user home
 * variables in config defined separately
 * environment variables in config?

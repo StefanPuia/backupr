@@ -34,7 +34,7 @@ public class ZipTransformer extends AbstractTransformer {
   private File createZipFile(final ConfigSource source) throws IOException {
     log.debug("Creating temporary zip file");
     final var tempDir = Files.createTempDirectory("zip-temp");
-    return Path.of(tempDir.toString(), source.name() + ".zip").toFile();
+    return Path.of(tempDir.toString(), source.getName() + ".zip").toFile();
   }
 
   private void createZipContents(final ConfigSource source, final Set<File> files, final File zip)

@@ -28,6 +28,8 @@ repositories {
 ext {
     set('springCloudAzureVersion', "5.16.0")
     set('springShellVersion', "3.3.2")
+    set('immutablesVersion', "2.10.1")
+    set('mapstructVersion', "1.6.3")
 }
 
 dependencies {
@@ -35,11 +37,15 @@ dependencies {
     implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
     implementation 'org.springframework.shell:spring-shell-starter'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 
     compileOnly 'org.projectlombok:lombok'
+    compileOnly "org.immutables:value:${immutablesVersion}"
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.immutables:value:${immutablesVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.shell:spring-shell-starter-test'

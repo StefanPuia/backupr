@@ -47,22 +47,22 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
       log.debug("Setting remote to '{}'", remote.originUri());
       git.remoteAdd().setName(REMOTE_NAME).setUri(remote.originUri()).call();
 
-      log.debug("Fetching '{}' shallowly", remote.branch());
+      log.debug("Fetching '{}' shallowly", remote.getBranch());
       git.fetch()
           .setCredentialsProvider(credentialsProvider())
           .setForceUpdate(true)
           .setRemote(REMOTE_NAME)
           .setRecurseSubmodules(FetchRecurseSubmodulesMode.NO)
-          .setInitialBranch(remote.branch())
+          .setInitialBranch(remote.getBranch())
           .setRefSpecs(
-              new RefSpec("refs/heads/" + remote.branch() + ":refs/heads/" + remote.branch()))
+              new RefSpec("refs/heads/" + remote.getBranch() + ":refs/heads/" + remote.getBranch()))
           .setDepth(1)
           .call();
 
-      log.debug("Checking out branch '{}'", remote.branch());
+      log.debug("Checking out branch '{}'", remote.getBranch());
       git.checkout()
           .setForced(true)
-          .setName(remote.branch())
+          .setName(remote.getBranch())
           .setUpstreamMode(SetupUpstreamMode.TRACK)
           .call();
 
@@ -95,13 +95,14 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
   }
 
   private CredentialsProvider credentialsProvider() {
-    if (remote.credentials() == null) return CredentialsProvider.getDefault();
+    if (remote.getCredentials().isEmpty()) return CredentialsProvider.getDefault();
 
-    if (remote.credentials().basic() != null) {
-      return new UsernamePasswordCredentialsProvider(
-          remote.credentials().basic().username(),
-          ofNullable(remote.credentials().basic().password()).orElse(""));
-    }
+    // TODO:
+    // if (remote.getCredentials().get().basic() != null) {
+    //   return new UsernamePasswordCredentialsProvider(
+    //       remote.getCredentials().get().basic().username(),
+    //       ofNullable(remote.getCredentials().get().basic().password()).orElse(""));
+    // }
 
     return CredentialsProvider.getDefault();
   }

@@ -1,7 +1,7 @@
 package co.uk.stefanpuia.backupr.engine;
 
 import co.uk.stefanpuia.backupr.config.ConfigFileProvider;
-import co.uk.stefanpuia.backupr.config.ConfigReader;
+import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -28,14 +28,14 @@ public class LocalSourceHandler implements SourceHandler {
           "'%s' does not exist or is not a directory".formatted(directory));
     }
 
-    if (source.files().isEmpty()) {
+    if (source.getFiles().isEmpty()) {
       return Set.of(directory);
     }
 
     final Set<File> foundFiles = new HashSet<>();
 
     source
-        .files()
+        .getFiles()
         .forEach(
             pattern -> {
               final var matcher = PATH_PATTERN.matcher(pattern);

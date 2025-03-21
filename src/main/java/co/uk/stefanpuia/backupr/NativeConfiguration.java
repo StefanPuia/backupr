@@ -28,7 +28,7 @@ public class NativeConfiguration {
 
   public static class RestRuntimeHints implements RuntimeHintsRegistrar {
     @Override
-    @SneakyThrows
+    // @SneakyThrows
     public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
       // hints
       //     .reflection()

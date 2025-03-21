@@ -10,6 +10,7 @@ import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
 import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
+import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
