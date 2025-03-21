@@ -72,6 +72,7 @@ tasks.named('test') {
 bootRun {
     jvmArgs('-Djava.security.properties=' + file("$rootDir/custom.security").absolutePath)
     environment(System.getenv() + env.allVariables())
+    outputs.upToDateWhen { false }
 }
 
 graalvmNative {
