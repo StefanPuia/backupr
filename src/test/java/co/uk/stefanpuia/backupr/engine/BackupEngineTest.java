@@ -49,7 +49,7 @@ public class BackupEngineTest {
   @Test
   void shouldNotUploadToRemoteWhenNoFilesFound() {
     // Given
-    doReturn(true).when(configSource).enabled();
+    doReturn(true).when(configSource).isEnabled();
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(Set.of()).when(sourceHandler).getFiles();
 
@@ -73,10 +73,10 @@ public class BackupEngineTest {
   void shouldUploadWhenFilesFound(final boolean dryRun) {
     // Given
     final var sourceFilePath = "foo-bar-123.json";
-    doReturn(true).when(configSource).enabled();
-    doReturn(true).when(configRemote).enabled();
+    doReturn(true).when(configSource).isEnabled();
+    doReturn(true).when(configRemote).isEnabled();
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
-    doReturn(List.of(configRemote)).when(configSource).remotes(backuprConfig);
+    doReturn(List.of(configRemote)).when(configSource).getRemotes();
     doReturn(remoteHandler).when(remoteHandlerFactory).getInstance(configRemote);
     doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
     doReturn(remoteHandler).when(remoteHandler).setDry(dryRun);
@@ -106,10 +106,10 @@ public class BackupEngineTest {
   void shouldNotUploadWhenRemoteDisabled() {
     // Given
     final var sourceFilePath = "foo-bar-123.json";
-    doReturn(true).when(configSource).enabled();
-    doReturn(false).when(configRemote).enabled();
+    doReturn(true).when(configSource).isEnabled();
+    doReturn(false).when(configRemote).isEnabled();
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
-    doReturn(List.of(configRemote)).when(configSource).remotes(backuprConfig);
+    doReturn(List.of(configRemote)).when(configSource).getRemotes();
     doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
 
     // When
@@ -134,7 +134,7 @@ public class BackupEngineTest {
   @Test
   void shouldNotReadWhenSourceDisabled() {
     // Given
-    doReturn(false).when(configSource).enabled();
+    doReturn(false).when(configSource).isEnabled();
 
     // When
     backupEngine.execute(false, backuprConfig);

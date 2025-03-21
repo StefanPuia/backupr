@@ -2,7 +2,7 @@ package co.uk.stefanpuia.backupr.source;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
-import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
+import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
 import java.nio.file.Path;
 import java.util.List;
 import org.assertj.core.util.Files;
@@ -18,8 +18,11 @@ public class LocalSourceHandlerTest {
     final var tempDir = Files.newTemporaryFolder();
     final var handler =
         new LocalSourceHandler(
-            new LocalConfigSource(
-                "foo", true, tempDir.getAbsolutePath(), List.of(), List.of(), List.of()));
+            ImmutableLocalConfigSource.builder()
+                .setName("foo")
+                .setEnabled(true)
+                .setDirectory(tempDir.getAbsolutePath())
+                .build());
 
     // When
     final var files = handler.getFiles();
@@ -35,8 +38,12 @@ public class LocalSourceHandlerTest {
     final var file1 = Files.newFile(Path.of(tempDir.getAbsolutePath(), "a.foo").toString());
     final var handler =
         new LocalSourceHandler(
-            new LocalConfigSource(
-                "foo", true, tempDir.getAbsolutePath(), List.of("a.foo"), List.of(), List.of()));
+            ImmutableLocalConfigSource.builder()
+                .setName("foo")
+                .setEnabled(true)
+                .setDirectory(tempDir.getAbsolutePath())
+                .setFiles(List.of("a.foo"))
+                .build());
 
     // When
     final var files = handler.getFiles();
@@ -54,8 +61,12 @@ public class LocalSourceHandlerTest {
     Files.newFile(Path.of(tempDir.getAbsolutePath(), "a.bar").toString());
     final var handler =
         new LocalSourceHandler(
-            new LocalConfigSource(
-                "foo", true, tempDir.getAbsolutePath(), List.of("*.foo"), List.of(), List.of()));
+            ImmutableLocalConfigSource.builder()
+                .setName("foo")
+                .setEnabled(true)
+                .setDirectory(tempDir.getAbsolutePath())
+                .setFiles(List.of("*.foo"))
+                .build());
 
     // When
     final var files = handler.getFiles();
@@ -75,13 +86,12 @@ public class LocalSourceHandlerTest {
     Files.newFile(Path.of(tempDir.getAbsolutePath(), "q.bar").toString());
     final var handler =
         new LocalSourceHandler(
-            new LocalConfigSource(
-                "foo",
-                true,
-                tempDir.getAbsolutePath(),
-                List.of("subdir/*.foo"),
-                List.of(),
-                List.of()));
+            ImmutableLocalConfigSource.builder()
+                .setName("foo")
+                .setEnabled(true)
+                .setDirectory(tempDir.getAbsolutePath())
+                .setFiles(List.of("subdir/*.foo"))
+                .build());
 
     // When
     final var files = handler.getFiles();
@@ -105,8 +115,12 @@ public class LocalSourceHandlerTest {
     Files.newFile(Path.of(tempDir.getAbsolutePath(), "q.bar").toString());
     final var handler =
         new LocalSourceHandler(
-            new LocalConfigSource(
-                "foo", true, tempDir.getAbsolutePath(), List.of("**/*.foo"), List.of(), List.of()));
+            ImmutableLocalConfigSource.builder()
+                .setName("foo")
+                .setEnabled(true)
+                .setDirectory(tempDir.getAbsolutePath())
+                .setFiles(List.of("**/*.foo"))
+                .build());
 
     // When
     final var files = handler.getFiles();

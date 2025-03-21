@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
+import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
@@ -30,15 +31,28 @@ public abstract class ConfigSourceMapper {
 
   @Named("convertLocalConfigSource")
   @Mapping(target = "basePath", ignore = true)
-  @Mapping(target = "remotes", expression = "java(pickRemotes(source.getRemotes(), remotes))")
+  @Mapping(
+      target = "remotes",
+      expression = "java(pickRemotes(source.getName(), source.getRemotes(), remotes))")
   @Mapping(target = "files", source = "files", qualifiedByName = "normalizeFilePaths")
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   protected abstract LocalConfigSource convertLocalConfigSource(
       LocalConfigSourceDto source, @Context List<ConfigRemote> remotes);
 
   protected List<ConfigRemote> pickRemotes(
-      final List<String> remoteNames, final List<ConfigRemote> remotes) {
-    return remotes.stream().filter(remote -> remoteNames.contains(remote.getName())).toList();
+      final String sourceName, final List<String> remoteNames, final List<ConfigRemote> remotes) {
+    return remoteNames.stream()
+        .map(
+            remoteName ->
+                remotes.stream()
+                    .filter(remote -> remote.getName().equals(remoteName))
+                    .findFirst()
+                    .orElseThrow(
+                        () ->
+                            new ConfigValidationException(
+                                "in source '%s': no remote named '%s' defined"
+                                    .formatted(sourceName, remoteName))))
+        .toList();
   }
 
   @Named("normalizeFilePaths")

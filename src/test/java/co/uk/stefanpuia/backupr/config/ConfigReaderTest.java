@@ -7,10 +7,15 @@ import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
-import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
+import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageConfigRemote;
+import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
+import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
 import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigCredentialsMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigDtoMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigRemoteMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigSourceMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.CoreDtoMapperImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -25,7 +30,16 @@ import org.springframework.test.context.aot.DisabledInAotMode;
 
 @SuppressWarnings("resource")
 @SpringBootTest(
-    classes = {ConfigReader.class, ObjectMapper.class, ValidationAutoConfiguration.class})
+    classes = {
+      ConfigReader.class,
+      ObjectMapper.class,
+      ValidationAutoConfiguration.class,
+      ConfigDtoMapperImpl.class,
+      ConfigRemoteMapperImpl.class,
+      ConfigSourceMapperImpl.class,
+      CoreDtoMapperImpl.class,
+      ConfigCredentialsMapperImpl.class
+    })
 @DisabledInAotMode
 public class ConfigReaderTest {
   @Autowired private ConfigReader configReader;
@@ -57,7 +71,6 @@ public class ConfigReaderTest {
                 "sources": [
                   {
                     "name": "ff",
-                    "enabled": true,
                     "directory": "/foo",
                     "files": [
                       "**/*.json"
@@ -73,6 +86,14 @@ public class ConfigReaderTest {
                 ]
               }
               """);
+      final var localConfigRemote =
+          ImmutableLocalConfigRemote.builder()
+              .setName("foo")
+              .setLocation("/home/foo")
+              .setEnabled(true)
+              .build();
+      final var azureConfigRemote =
+          ImmutableAzureStorageConfigRemote.builder().setName("azure").setEnabled(true).build();
 
       // When
       final var config = configReader.readConfig(configStream);
@@ -82,21 +103,20 @@ public class ConfigReaderTest {
       then(config.remotes())
           .isNotNull()
           .hasSize(2)
-          .containsExactlyInAnyOrder(
-              new LocalConfigRemote("foo", null, "/home/foo"),
-              new AzureStorageConfigRemote("azure", null));
+          .containsExactlyInAnyOrder(localConfigRemote, azureConfigRemote);
 
       then(config.sources())
           .isNotNull()
           .hasSize(1)
           .containsExactlyInAnyOrder(
-              new LocalConfigSource(
-                  "ff",
-                  true,
-                  "/foo",
-                  List.of("**/*.json"),
-                  List.of(SourceTransformer.ZIP),
-                  List.of("foo", "azure")));
+              ImmutableLocalConfigSource.builder()
+                  .setName("ff")
+                  .setEnabled(true)
+                  .setDirectory("/foo")
+                  .setFiles(List.of("**/*.json"))
+                  .setTransformers(List.of(SourceTransformer.ZIP))
+                  .setRemotes(List.of(localConfigRemote, azureConfigRemote))
+                  .build());
     }
 
     @Test
