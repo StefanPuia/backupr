@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.remote;
+package co.uk.stefanpuia.backupr.engine.remote;
 
 public abstract class AbstractRemoteHandler implements RemoteHandler {
   private boolean isDryRun = false;

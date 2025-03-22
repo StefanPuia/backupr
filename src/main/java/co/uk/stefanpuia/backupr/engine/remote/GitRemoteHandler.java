@@ -1,6 +1,4 @@
-package co.uk.stefanpuia.backupr.remote;
-
-import static java.util.Optional.ofNullable;
+package co.uk.stefanpuia.backupr.engine.remote;
 
 import co.uk.stefanpuia.backupr.config.model.remote.GitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
@@ -19,7 +17,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.SubmoduleConfig.FetchRecurseSubmodulesMode;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.RefSpec;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 @Slf4j
 @AllArgsConstructor

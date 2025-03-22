@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.remote;
+package co.uk.stefanpuia.backupr.engine.remote;
 
 public class RemoteHandlerException extends RuntimeException {
   public RemoteHandlerException(String message) {

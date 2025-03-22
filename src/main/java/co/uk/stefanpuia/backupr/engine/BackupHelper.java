@@ -1,6 +1,6 @@
 package co.uk.stefanpuia.backupr.engine;
 
-import co.uk.stefanpuia.backupr.remote.RemoteHandlerException;
+import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDateTime;

@@ -1,7 +1,7 @@
 package co.uk.stefanpuia.backupr.shell;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
-import co.uk.stefanpuia.backupr.remote.RemoteHandlerException;
+import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.springframework.shell.command.CommandExceptionResolver;
 import org.springframework.shell.command.CommandHandlingResult;

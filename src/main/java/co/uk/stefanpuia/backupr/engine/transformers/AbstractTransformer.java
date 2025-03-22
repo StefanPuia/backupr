@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.transformers;
+package co.uk.stefanpuia.backupr.engine.transformers;
 
 public abstract class AbstractTransformer implements Transformer {
   private boolean isDryRun = false;

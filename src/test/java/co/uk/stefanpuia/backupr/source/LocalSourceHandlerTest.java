@@ -3,6 +3,7 @@ package co.uk.stefanpuia.backupr.source;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
+import co.uk.stefanpuia.backupr.engine.source.LocalSourceHandler;
 import java.nio.file.Path;
 import java.util.List;
 import org.assertj.core.util.Files;
