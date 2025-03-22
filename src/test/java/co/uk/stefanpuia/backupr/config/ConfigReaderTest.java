@@ -75,6 +75,7 @@ public class ConfigReaderTest {
                 "sources": [
                   {
                     "name": "ff",
+                    "type": "LOCAL",
                     "directory": "/foo",
                     "files": [
                       "**/*.json"
@@ -168,6 +169,7 @@ public class ConfigReaderTest {
                     "sources": [
                       {
                         "name": "ff",
+                        "type": "LOCAL",
                         "directory": "<localBackupSource>/foo",
                         "files": [
                           "<valueBeforeSomeProject>",
@@ -244,6 +246,7 @@ public class ConfigReaderTest {
                 "sources": [
                   {
                     "name": "ff",
+                    "type": "LOCAL",
                     "directory": "/foo",
                     "files": [
                       "**/*.json"
@@ -280,6 +283,7 @@ public class ConfigReaderTest {
             "sources": [
               {
                 "name": "ff",
+                "type": "LOCAL",
                 "directory": "/foo",
                 "files": [
                   "**/*.json"
@@ -344,6 +348,7 @@ public class ConfigReaderTest {
             "sources": [
               {
                 "name": "$$$",
+                "type": "LOCAL",
                 "directory": "/foo"
               }
             ]
@@ -374,6 +379,7 @@ public class ConfigReaderTest {
                 "sources": [
                   {
                     "name": "ff",
+                    "type": "LOCAL",
                     "directory": "/foo",
                     "files": [
                       "**/*.json"

@@ -11,9 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = LocalConfigSourceDto.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
-  @JsonSubTypes.Type(value = LocalConfigSourceDto.class),
+  @JsonSubTypes.Type(value = LocalConfigSourceDto.class, name = "LOCAL"),
 })
 public interface ConfigSourceDto {
   @NotBlank

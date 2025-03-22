@@ -1,55 +1,87 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
+  "required": [
+    "remotes",
+    "sources"
+  ],
   "properties": {
+    "variables": {
+      "type": "object",
+      "description": "A set of <String, String> key-value pairs that can be reused in the configuration. These variables can reference each other, but only in the order they are defined."
+    },
     "remotes": {
       "type": "array",
       "items": {
         "anyOf": [
           {
             "type": "object",
-            "properties": {
-              "location": {
-                "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/definitions/remote"
               },
-              "name": {
-                "type": "string"
-              },
-              "type": {
-                "const": "LOCAL"
+              {
+                "properties": {
+                  "type": {
+                    "const": "LOCAL"
+                  },
+                  "location": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Base directory to be used for backup storage. Supports templating."
+                  }
+                },
+                "required": [
+                  "location"
+                ]
               }
-            },
-            "required": [
-              "name",
-              "type"
             ]
           },
           {
             "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/definitions/remote"
               },
-              "type": {
-                "const": "AZURE_STORAGE"
+              {
+                "properties": {
+                  "type": {
+                    "const": "AZURE_STORAGE"
+                  }
+                }
               }
-            },
-            "required": [
-              "type"
             ]
           },
           {
             "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
+            "allOf": [
+              {
+                "$ref": "#/definitions/remote"
               },
-              "type": {
-                "const": "GIT"
+              {
+                "properties": {
+                  "type": {
+                    "const": "GIT"
+                  },
+                  "url": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Git remote URL. Supports templating."
+                  },
+                  "branch": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Git branch name. Supports templating."
+                  },
+                  "credentials": {
+                    "$ref": "#/definitions/credentials"
+                  }
+                },
+                "required": [
+                  "url",
+                  "branch"
+                ]
               }
-            },
-            "required": [
-              "type"
             ]
           }
         ]
@@ -58,38 +90,137 @@
     "sources": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "directory": {
-            "type": "string"
-          },
-          "files": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "name": {
-            "type": "string"
-          },
-          "remotes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "transformers": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "const": "ZIP"
-            }
-          },
-          "@type": {
-            "const": "LocalConfigSource"
+        "anyOf": [
+          {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/definitions/source"
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "LOCAL"
+                  },
+                  "directory": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Base directory of the sources. Supports templating."
+                  },
+                  "files": {
+                    "type": "array",
+                    "description": "File patterns, relative to `directory`. Supports templating.",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[0-9a-zA-Z\\-_.]+$"
+    },
+    "remote": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "remotes": {
+          "type": "array",
+          "description": "List of remotes where this source should be backed up to. These must reference existing remotes defined in this configuration.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "transformers": {
+          "type": "array",
+          "description": "List of transformers to be applied to the sources before being sent to the remotes.",
+          "items": {
+            "$ref": "#/definitions/transformer"
           }
         }
-      }
+      },
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    "credentials": {
+      "type": "object",
+      "anyOf": [
+        {
+          "properties": {
+            "none": {
+              "type": "object",
+              "description": "No authentication"
+            }
+          },
+          "required": [
+            "none"
+          ]
+        },
+        {
+          "properties": {
+            "basic": {
+              "description": "Basic authentication",
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Basic auth username. Supports templating."
+                },
+                "password": {
+                  "type": "string",
+                  "description": "Basic auth password. Supports templating."
+                }
+              },
+              "required": [
+                "username"
+              ]
+            }
+          },
+          "required": [
+            "basic"
+          ]
+        }
+      ]
+    },
+    "transformer": {
+      "type": "string",
+      "enum": [
+        "ZIP"
+      ]
     }
   }
 }

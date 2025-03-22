@@ -18,7 +18,10 @@ import org.immutables.value.Value;
 public abstract class BackuprConfigDto {
   public static final String VALID_IDENTIFIER_REGEX = "^[0-9a-zA-Z\\-_.]+$";
 
-  public abstract LinkedHashMap<@NotBlank String, @NotBlank String> getVariables();
+  @Value.Default
+  public LinkedHashMap<@NotBlank String, @NotBlank String> getVariables() {
+    return new LinkedHashMap<>();
+  }
 
   @NotEmpty
   public abstract List<@Valid ConfigRemoteDto> getRemotes();
