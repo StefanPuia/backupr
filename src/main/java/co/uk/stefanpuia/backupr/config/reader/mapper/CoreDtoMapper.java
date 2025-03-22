@@ -20,9 +20,14 @@ public abstract class CoreDtoMapper {
   @Named("applyTemplateToString")
   protected String applyTemplate(
       final @Nullable String source, final @Context VariablesWrapper variables) {
-    final var template = new ST(source);
-    variables.variables().forEach(template::add);
-    template.add("env", variables.environment());
-    return template.render();
+    return Optional.ofNullable(source)
+        .map(ST::new)
+        .map(
+            template -> {
+              variables.variables().forEach(template::add);
+              template.add("env", variables.environment());
+              return template.render();
+            })
+        .orElse(null);
   }
 }

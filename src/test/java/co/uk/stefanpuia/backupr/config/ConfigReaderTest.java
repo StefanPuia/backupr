@@ -11,6 +11,8 @@ import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageConfigR
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.BasicCredentials;
+import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.remote.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
 import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigCredentialsMapperImpl;
@@ -399,6 +401,96 @@ public class ConfigReaderTest {
       thenThrownBy(() -> configReader.readConfig(configStream))
           .isInstanceOf(ConfigValidationException.class)
           .hasMessageContainingAll("in source 'ff'", "no remote named 'azure' defined");
+    }
+  }
+
+  @Nested
+  class ReadConfigCredentials {
+    void shouldReadConfigWithCredentials(final String credentialsJson, final Credentials expected) {
+      // Given
+      // language=JSON
+      final var configStream =
+          toInputStream(
+              """
+                  {
+                    "remotes": [
+                      {
+                        "name": "git",
+                        "type": "GIT",
+                        "url": "git://github.com/abc123/bar.git",
+                        "branch": "main",
+                        "credentials": %s
+                      }
+                    ],
+                    "sources": [
+                      {
+                        "name": "local",
+                        "type": "LOCAL",
+                        "directory": "/foo",
+                        "remotes": [
+                          "git"
+                        ]
+                      }
+                    ]
+                  }
+                  """
+                  .formatted(credentialsJson));
+      final var gitConfigRemote =
+          ImmutableGitConfigRemote.builder()
+              .setName("git")
+              .setEnabled(true)
+              .setUrl("git://github.com/abc123/bar.git")
+              .setBranch("main")
+              .setCredentials(expected)
+              .build();
+
+      // When
+      final var config = configReader.readConfig(configStream);
+
+      // Then
+      then(config).isNotNull().isInstanceOf(BackuprConfig.class);
+      then(config.remotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
+    }
+
+    @Test
+    void shouldReadConfigCredentialsNone() {
+      shouldReadConfigWithCredentials(
+          // language=JSON
+          """
+                {
+                   "none": {}
+                }
+              """,
+          new NoneCredentials());
+    }
+
+    @Test
+    void shouldReadConfigCredentialsBasicJustUsername() {
+      shouldReadConfigWithCredentials(
+          // language=JSON
+          """
+                {
+                   "basic": {
+                      "username": "foo"
+                   }
+                }
+              """,
+          new BasicCredentials("foo", null));
+    }
+
+    @Test
+    void shouldReadConfigCredentialsBasic() {
+      shouldReadConfigWithCredentials(
+          // language=JSON
+          """
+                {
+                   "basic": {
+                      "username": "foo",
+                      "password": "bar"
+                   }
+                }
+              """,
+          new BasicCredentials("foo", "bar"));
     }
   }
 }
