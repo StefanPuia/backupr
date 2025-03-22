@@ -2,9 +2,7 @@
 
 # Config
 
-* placeholders in config e.g. user home
-* variables in config defined separately
-* environment variables in config?
+* placeholders in config e.g. user home - this may already be possible with env vars
 * handle com.fasterxml.jackson.databind.exc exceptions - may need a custom exception to string converter
 
 # CLI
@@ -20,6 +18,8 @@
 # Sources
 
 * better file filtering
+* more sources:
+  * databases?
 
 # Transformers
 

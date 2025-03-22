@@ -13,7 +13,6 @@ public abstract class LocalConfigSource implements ConfigSource {
 
   public abstract List<String> getFiles();
 
-  @Value.Default
   public Path getBasePath() {
     return Path.of(getDirectory());
   }

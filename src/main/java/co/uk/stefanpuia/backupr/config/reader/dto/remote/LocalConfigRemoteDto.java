@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.config.reader.dto.remote;
 
 import co.uk.stefanpuia.backupr.config.reader.dto.DtoStyle;
+import co.uk.stefanpuia.backupr.config.reader.dto.SupportsTemplate;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import org.immutables.value.Value;
@@ -10,5 +11,6 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = ImmutableLocalConfigRemoteDto.Builder.class)
 public interface LocalConfigRemoteDto extends ConfigRemoteDto {
   @NotBlank
+  @SupportsTemplate
   String getLocation();
 }

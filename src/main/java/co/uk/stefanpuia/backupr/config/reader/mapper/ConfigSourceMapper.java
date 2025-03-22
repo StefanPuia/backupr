@@ -14,30 +14,35 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(
     config = MapstructConfig.class,
     uses = CoreDtoMapper.class,
     subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public abstract class ConfigSourceMapper {
-  @Mapping(target = "basePath", ignore = true)
-  @Mapping(target = "remotes", ignore = true)
+  @Autowired private CoreDtoMapper coreMapper;
+
   @SubclassMapping(
       target = LocalConfigSource.class,
       source = LocalConfigSourceDto.class,
       qualifiedByName = "convertLocalConfigSource")
   protected abstract ConfigSource mapSource(
-      ConfigSourceDto source, @Context List<ConfigRemote> remotes);
+      ConfigSourceDto source,
+      @Context List<ConfigRemote> remotes,
+      @Context VariablesWrapper variables);
 
   @Named("convertLocalConfigSource")
-  @Mapping(target = "basePath", ignore = true)
   @Mapping(
       target = "remotes",
       expression = "java(pickRemotes(source.getName(), source.getRemotes(), remotes))")
-  @Mapping(target = "files", source = "files", qualifiedByName = "normalizeFilePaths")
+  @Mapping(target = "files", source = "files", qualifiedByName = "mapFilePaths")
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
+  @Mapping(target = "directory", source = "directory", qualifiedByName = "applyTemplateToString")
   protected abstract LocalConfigSource convertLocalConfigSource(
-      LocalConfigSourceDto source, @Context List<ConfigRemote> remotes);
+      LocalConfigSourceDto source,
+      @Context List<ConfigRemote> remotes,
+      @Context VariablesWrapper variables);
 
   protected List<ConfigRemote> pickRemotes(
       final String sourceName, final List<String> remoteNames, final List<ConfigRemote> remotes) {
@@ -55,8 +60,12 @@ public abstract class ConfigSourceMapper {
         .toList();
   }
 
-  @Named("normalizeFilePaths")
-  protected List<String> normalizeFilePaths(final List<String> filePaths) {
-    return filePaths.stream().map(pattern -> pattern.replaceAll("[\\\\/]", "/")).toList();
+  @Named("mapFilePaths")
+  protected List<String> mapFilePaths(
+      final List<String> filePaths, final @Context VariablesWrapper variables) {
+    return filePaths.stream()
+        .map(pattern -> coreMapper.applyTemplate(pattern, variables))
+        .map(pattern -> pattern.replaceAll("[\\\\/]", "/"))
+        .toList();
   }
 }
