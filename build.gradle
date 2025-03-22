@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.2.0.202503040940-r'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 
+    compileOnly 'org.antlr:ST4:4.3.4'
     compileOnly 'org.projectlombok:lombok'
     compileOnly "org.immutables:value:${immutablesVersion}"
 
