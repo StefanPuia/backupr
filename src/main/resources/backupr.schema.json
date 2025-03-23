@@ -217,9 +217,27 @@
       ]
     },
     "transformer": {
-      "type": "string",
-      "enum": [
-        "ZIP"
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ZIP"
+          ]
+        },
+        {
+          "$ref": "#/definitions/zipTransformer"
+        }
+      ]
+    },
+    "zipTransformer": {
+      "type": "object",
+      "properties": {
+        "zip": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "zip"
       ]
     }
   }

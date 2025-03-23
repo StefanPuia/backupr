@@ -6,7 +6,6 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
-import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
@@ -14,17 +13,21 @@ import co.uk.stefanpuia.backupr.config.model.remote.credentials.BasicCredentials
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
+import co.uk.stefanpuia.backupr.config.model.source.transformer.ConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigCredentialsMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigDtoMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigRemoteMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigSourceMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigTransformerMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.CoreDtoMapperImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
@@ -43,7 +46,8 @@ import org.springframework.test.context.aot.DisabledInAotMode;
       ConfigRemoteMapperImpl.class,
       ConfigSourceMapperImpl.class,
       CoreDtoMapperImpl.class,
-      ConfigCredentialsMapperImpl.class
+      ConfigCredentialsMapperImpl.class,
+      ConfigTransformerMapperImpl.class
     })
 @DisabledInAotMode
 public class ConfigReaderTest {
@@ -120,7 +124,7 @@ public class ConfigReaderTest {
                   .setEnabled(true)
                   .setDirectory("/foo")
                   .setFiles(List.of("**/*.json"))
-                  .setTransformers(List.of(SourceTransformer.ZIP))
+                  .setTransformers(List.of(ImmutableZipConfigTransformerOptions.builder().build()))
                   .setRemotes(List.of(localConfigRemote, azureConfigRemote))
                   .build());
     }
@@ -224,7 +228,7 @@ public class ConfigReaderTest {
                   .setEnabled(true)
                   .setDirectory("/etc/sources/foo")
                   .setFiles(List.of("/aaa//", "**/abc123/*.json", "**/*.json"))
-                  .setTransformers(List.of(SourceTransformer.ZIP))
+                  .setTransformers(List.of(ImmutableZipConfigTransformerOptions.builder().build()))
                   .setRemotes(List.of(localConfigRemote, gitConfigRemote))
                   .build());
     }
@@ -408,6 +412,8 @@ public class ConfigReaderTest {
   class ReadConfigCredentials {
     void shouldReadConfigWithCredentials(final String credentialsJson, final Credentials expected) {
       // Given
+      final var credentialsInsert =
+          credentialsJson != null ? ",\"credentials\": %s".formatted(credentialsJson) : "";
       // language=JSON
       final var configStream =
           toInputStream(
@@ -418,8 +424,8 @@ public class ConfigReaderTest {
                         "name": "git",
                         "type": "GIT",
                         "url": "git://github.com/abc123/bar.git",
-                        "branch": "main",
-                        "credentials": %s
+                        "branch": "main"
+                        %s
                       }
                     ],
                     "sources": [
@@ -434,14 +440,14 @@ public class ConfigReaderTest {
                     ]
                   }
                   """
-                  .formatted(credentialsJson));
+                  .formatted(credentialsInsert));
       final var gitConfigRemote =
           ImmutableGitConfigRemote.builder()
               .setName("git")
               .setEnabled(true)
               .setUrl("git://github.com/abc123/bar.git")
               .setBranch("main")
-              .setCredentials(expected)
+              .setCredentials(Optional.ofNullable(expected))
               .build();
 
       // When
@@ -450,6 +456,11 @@ public class ConfigReaderTest {
       // Then
       then(config).isNotNull().isInstanceOf(BackuprConfig.class);
       then(config.remotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
+    }
+
+    @Test
+    void shouldReadConfigWithNoCredentials() {
+      shouldReadConfigWithCredentials(null, null);
     }
 
     @Test
@@ -491,6 +502,107 @@ public class ConfigReaderTest {
                 }
               """,
           new BasicCredentials("foo", "bar"));
+    }
+  }
+
+  @Nested
+  class ReadConfigTransformerOptions {
+    final ConfigTransformerOptions defaultZip =
+        ImmutableZipConfigTransformerOptions.builder().build();
+
+    void shouldReadConfigWithTransformers(
+        final String transformersJsonArray, final List<ConfigTransformerOptions> expected) {
+      // Given
+      final var transformersInsert =
+          transformersJsonArray != null
+              ? ",\"transformers\": %s".formatted(transformersJsonArray)
+              : "";
+      // language=JSON
+      final var configStream =
+          toInputStream(
+              """
+                  {
+                    "remotes": [
+                      {
+                        "name": "local",
+                        "type": "LOCAL",
+                        "location": "/local"
+                      }
+                    ],
+                    "sources": [
+                      {
+                        "name": "local",
+                        "type": "LOCAL",
+                        "directory": "/foo",
+                        "remotes": [
+                          "local"
+                        ]
+                        %s
+                      }
+                    ]
+                  }
+                  """
+                  .formatted(transformersInsert));
+
+      // When
+      final var config = configReader.readConfig(configStream);
+
+      // Then
+      then(config).isNotNull().isInstanceOf(BackuprConfig.class);
+      then(config.sources()).isNotNull().hasSize(1);
+      then(config.sources().get(0).getTransformers()).containsExactlyElementsOf(expected);
+    }
+
+    @Test
+    void shouldReadConfigWithNoTransformers() {
+      shouldReadConfigWithTransformers(null, List.of());
+    }
+
+    @Test
+    void shouldReadConfigWithZipTransformerEnum() {
+      shouldReadConfigWithTransformers(
+          // language=JSON
+          """
+                ["ZIP"]
+              """, List.of(defaultZip));
+    }
+
+    @Test
+    void shouldReadConfigWithZipTransformerDefault() {
+      shouldReadConfigWithTransformers(
+          // language=JSON
+          """
+                [{"zip": {}}]
+              """, List.of(defaultZip));
+    }
+
+    @Test
+    void shouldReadConfigWithMultipleTransformerEnum() {
+      shouldReadConfigWithTransformers(
+          // language=JSON
+          """
+                ["ZIP", "ZIP"]
+              """, List.of(defaultZip, defaultZip));
+    }
+
+    @Test
+    void shouldReadConfigWithMultipleTransformerDefault() {
+      shouldReadConfigWithTransformers(
+          // language=JSON
+          """
+                [{"zip": {}}, {"zip": {}}]
+              """,
+          List.of(defaultZip, defaultZip));
+    }
+
+    @Test
+    void shouldReadConfigWithMultipleCombined() {
+      shouldReadConfigWithTransformers(
+          // language=JSON
+          """
+                ["ZIP", {"zip": {}}, {"zip": {}}, "ZIP"]
+              """,
+          List.of(defaultZip, defaultZip, defaultZip, defaultZip));
     }
   }
 }

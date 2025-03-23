@@ -2,9 +2,11 @@ package co.uk.stefanpuia.backupr.config.reader.dto.source;
 
 import static co.uk.stefanpuia.backupr.config.reader.dto.BackuprConfigDto.VALID_IDENTIFIER_REGEX;
 
-import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.MixedTransformerArrayDeserializer;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.TransformerOptionsDto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,5 +27,6 @@ public interface ConfigSourceDto {
 
   List<@NotBlank String> getRemotes();
 
-  List<@NotNull SourceTransformer> getTransformers();
+  @JsonDeserialize(using = MixedTransformerArrayDeserializer.class)
+  List<@NotNull TransformerOptionsDto> getTransformers();
 }

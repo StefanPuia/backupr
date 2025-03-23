@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.engine.transformers;
 
-import co.uk.stefanpuia.backupr.config.model.SourceTransformer;
+import co.uk.stefanpuia.backupr.config.model.source.transformer.ConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.source.transformer.ZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Component;
 public class TransformerFactory {
   private final BackupHelper helper;
 
-  public Transformer getInstance(final SourceTransformer type) {
-    return switch (type) {
-      case ZIP -> new ZipTransformer(helper);
+  @SuppressWarnings("SwitchStatementWithTooFewBranches")
+  public Transformer getInstance(final ConfigTransformerOptions transformerOptions) {
+    return switch (transformerOptions) {
+      case ZipConfigTransformerOptions zipOptions -> new ZipTransformer(zipOptions, helper);
+      default -> throw new IllegalStateException("Unexpected value: " + transformerOptions);
     };
   }
 }

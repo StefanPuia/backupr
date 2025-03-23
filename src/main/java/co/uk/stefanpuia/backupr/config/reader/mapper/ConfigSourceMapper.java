@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(
     config = MapstructConfig.class,
-    uses = CoreDtoMapper.class,
+    uses = {CoreDtoMapper.class, ConfigTransformerMapper.class},
     subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public abstract class ConfigSourceMapper {
   @Autowired private CoreDtoMapper coreMapper;

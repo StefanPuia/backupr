@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.engine.transformers;
 
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
+import co.uk.stefanpuia.backupr.config.model.source.transformer.ZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 public class ZipTransformer extends AbstractTransformer {
+  private final ZipConfigTransformerOptions options;
   private final BackupHelper backupHelper;
 
   @Override
@@ -34,7 +37,8 @@ public class ZipTransformer extends AbstractTransformer {
   private File createZipFile(final ConfigSource source) throws IOException {
     log.debug("Creating temporary zip file");
     final var tempDir = Files.createTempDirectory("zip-temp");
-    return Path.of(tempDir.toString(), source.getName() + ".zip").toFile();
+    final var filename = "%s-%s.zip".formatted(source.getName(), LocalDateTime.now());
+    return Path.of(tempDir.toString(), filename).toFile();
   }
 
   private void createZipContents(final ConfigSource source, final Set<File> files, final File zip)
