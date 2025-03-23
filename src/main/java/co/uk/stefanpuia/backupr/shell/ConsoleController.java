@@ -29,8 +29,8 @@ public class ConsoleController {
               shortNames = 'd',
               longNames = "dry",
               description =
-                  "Execute the backup process, scan for target files but skip uploading to any remotes.")
-          boolean dry,
+                  "Execute the backup process, scan for target files but skip uploading to any"
+                      + " remotes.") boolean dry,
       final @Option(
               shortNames = OPTION_CONFIG_SHORT,
               longNames = OPTION_CONFIG_LONG,

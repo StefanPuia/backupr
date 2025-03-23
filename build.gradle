@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.graalvm.buildtools.native' version '0.10.6'
     id 'co.uzzu.dotenv.gradle' version '4.0.0'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 group = 'co.uk.stefanpuia'
@@ -77,6 +78,17 @@ bootRun {
     jvmArgs('-Djava.security.properties=' + file("$rootDir/custom.security").absolutePath)
     environment(System.getenv() + env.allVariables())
     outputs.upToDateWhen { false }
+}
+
+spotless {
+    java {
+        target 'src/main/java/**/*.java', 'src/test/java/**/*.java'
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat('1.19.2')
+                .reflowLongStrings()
+                .groupArtifact('com.google.googlejavaformat:google-java-format')
+    }
 }
 
 graalvmNative {

@@ -5,7 +5,6 @@ import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
 import com.azure.spring.cloud.autoconfigure.implementation.context.properties.AzureGlobalProperties;
-import lombok.SneakyThrows;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
