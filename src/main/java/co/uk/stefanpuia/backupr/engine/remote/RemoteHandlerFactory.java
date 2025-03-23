@@ -5,6 +5,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.GitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
+import co.uk.stefanpuia.backupr.engine.remote.mapper.JgitCredentialsProviderMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +13,12 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class RemoteHandlerFactory {
   private final BackupHelper helper;
+  private final JgitCredentialsProviderMapper jgitCredentialsProviderMapper;
 
   public RemoteHandler getInstance(final ConfigRemote remote) {
     return switch (remote) {
       case LocalConfigRemote local -> new LocalRemoteHandler(local, helper);
-      case GitConfigRemote git -> new GitRemoteHandler(git, helper);
+      case GitConfigRemote git -> new GitRemoteHandler(git, helper, jgitCredentialsProviderMapper);
       case AzureStorageConfigRemote azure -> null;
       default -> throw new IllegalArgumentException("Unsupported remote type: " + remote);
     };
