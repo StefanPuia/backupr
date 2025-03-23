@@ -5,6 +5,6 @@ import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public interface ZipConfigTransformerOptions extends ConfigTransformerOptions {
+public interface TarGzConfigTransformerOptions extends ConfigTransformerOptions {
   String getFilenamePattern();
 }

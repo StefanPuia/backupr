@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.springframework.shell:spring-shell-starter'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.2.0.202503040940-r'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation 'org.apache.commons:commons-compress:1.27.1'
 
     compileOnly 'org.antlr:ST4:4.3.4'
     compileOnly 'org.projectlombok:lombok'

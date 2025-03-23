@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.config;
 
+import static net.bytebuddy.utility.RandomString.make;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
@@ -14,6 +15,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.transformer.ConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableTarGzConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigCredentialsMapperImpl;
@@ -22,11 +24,14 @@ import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigRemoteMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigSourceMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigTransformerMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.CoreDtoMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.VariablesWrapper;
+import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,10 +52,12 @@ import org.springframework.test.context.aot.DisabledInAotMode;
       ConfigSourceMapperImpl.class,
       CoreDtoMapperImpl.class,
       ConfigCredentialsMapperImpl.class,
-      ConfigTransformerMapperImpl.class
+      ConfigTransformerMapperImpl.class,
+      StringTemplateRenderer.class
     })
 @DisabledInAotMode
 public class ConfigReaderTest {
+  final VariablesWrapper defaultVars = new VariablesWrapper(Map.of(), System.getenv());
   @Autowired private ConfigReader configReader;
 
   private InputStream toInputStream(final String input) {
@@ -124,7 +131,12 @@ public class ConfigReaderTest {
                   .setEnabled(true)
                   .setDirectory("/foo")
                   .setFiles(List.of("**/*.json"))
-                  .setTransformers(List.of(ImmutableZipConfigTransformerOptions.builder().build()))
+                  .setTransformers(
+                      List.of(
+                          ImmutableZipConfigTransformerOptions.builder()
+                              .setFilenamePattern("<context.sourceName>-<context.now>.zip")
+                              .setVariables(defaultVars)
+                              .build()))
                   .setRemotes(List.of(localConfigRemote, azureConfigRemote))
                   .build());
     }
@@ -228,7 +240,23 @@ public class ConfigReaderTest {
                   .setEnabled(true)
                   .setDirectory("/etc/sources/foo")
                   .setFiles(List.of("/aaa//", "**/abc123/*.json", "**/*.json"))
-                  .setTransformers(List.of(ImmutableZipConfigTransformerOptions.builder().build()))
+                  .setTransformers(
+                      List.of(
+                          ImmutableZipConfigTransformerOptions.builder()
+                              .setFilenamePattern("<context.sourceName>-<context.now>.zip")
+                              .setVariables(
+                                  new VariablesWrapper(
+                                      Map.of(
+                                          "valueBeforeSomeProject", "/aaa//",
+                                          "someProject", "abc123",
+                                          "localBackupSource", "/etc/sources",
+                                          "localBackupDestination", "/var/backups",
+                                          "gitRemoteUrlRoot", "git://github.com/abc123",
+                                          "defaultGitBranch", "main",
+                                          "defaultUsername", "user",
+                                          "defaultPassword", "fooBaz2566"),
+                                      System.getenv()))
+                              .build()))
                   .setRemotes(List.of(localConfigRemote, gitConfigRemote))
                   .build());
     }
@@ -508,7 +536,10 @@ public class ConfigReaderTest {
   @Nested
   class ReadConfigTransformerOptions {
     final ConfigTransformerOptions defaultZip =
-        ImmutableZipConfigTransformerOptions.builder().build();
+        ImmutableZipConfigTransformerOptions.builder()
+            .setFilenamePattern("<context.sourceName>-<context.now>.zip")
+            .setVariables(defaultVars)
+            .build();
 
     void shouldReadConfigWithTransformers(
         final String transformersJsonArray, final List<ConfigTransformerOptions> expected) {
@@ -550,30 +581,35 @@ public class ConfigReaderTest {
       // Then
       then(config).isNotNull().isInstanceOf(BackuprConfig.class);
       then(config.sources()).isNotNull().hasSize(1);
-      then(config.sources().get(0).getTransformers()).containsExactlyElementsOf(expected);
+      final var actual = config.sources().get(0).getTransformers()
+          // .stream()
+          // .map(
+          //     t -> {
+          //       final var variables =
+          //           new VariablesWrapper(
+          //               t.getVariables().variables(), Map.of(), t.getVariables().context());
+          //       return switch (t) {
+          //         case ZipConfigTransformerOptions zip ->
+          //             ImmutableZipConfigTransformerOptions.builder()
+          //                 .from(zip)
+          //                 .setVariables(variables)
+          //                 .build();
+          //         case TarGzConfigTransformerOptions targz ->
+          //             ImmutableTarGzConfigTransformerOptions.builder()
+          //                 .from(targz)
+          //                 .setVariables(variables)
+          //                 .build();
+          //         default -> throw new IllegalStateException("Unexpected value: " + t);
+          //       };
+          //     })
+          // .toList()
+          ;
+      then(actual).containsExactlyElementsOf(expected);
     }
 
     @Test
     void shouldReadConfigWithNoTransformers() {
       shouldReadConfigWithTransformers(null, List.of());
-    }
-
-    @Test
-    void shouldReadConfigWithZipTransformerEnum() {
-      shouldReadConfigWithTransformers(
-          // language=JSON
-          """
-                ["ZIP"]
-              """, List.of(defaultZip));
-    }
-
-    @Test
-    void shouldReadConfigWithZipTransformerDefault() {
-      shouldReadConfigWithTransformers(
-          // language=JSON
-          """
-                [{"zip": {}}]
-              """, List.of(defaultZip));
     }
 
     @Test
@@ -603,6 +639,90 @@ public class ConfigReaderTest {
                 ["ZIP", {"zip": {}}, {"zip": {}}, "ZIP"]
               """,
           List.of(defaultZip, defaultZip, defaultZip, defaultZip));
+    }
+
+    @Nested
+    class Zip {
+      @Test
+      void shouldReadConfigWithZipTransformerEnum() {
+        shouldReadConfigWithTransformers(
+            // language=JSON
+            """
+                  ["ZIP"]
+                """, List.of(defaultZip));
+      }
+
+      @Test
+      void shouldReadConfigWithZipTransformerDefault() {
+        shouldReadConfigWithTransformers(
+            // language=JSON
+            """
+                  [{"zip": {}}]
+                """, List.of(defaultZip));
+      }
+
+      @Test
+      void shouldReadConfigWithZipTransformerAllOptions() {
+        final String pattern = make();
+        shouldReadConfigWithTransformers(
+            // language=JSON
+            """
+                  [{"zip": { "filenamePattern": "%s" }}]
+                """
+                .formatted(pattern),
+            List.of(
+                ImmutableZipConfigTransformerOptions.builder()
+                    .setFilenamePattern(pattern)
+                    .setVariables(defaultVars)
+                    .build()));
+      }
+    }
+
+    @Nested
+    class TarGz {
+      @Test
+      void shouldReadConfigWithTarGzTransformerEnum() {
+        shouldReadConfigWithTransformers(
+            // language=JSON
+            """
+                  ["TARGZ"]
+                """,
+            List.of(
+                ImmutableTarGzConfigTransformerOptions.builder()
+                    .setFilenamePattern("<context.sourceName>-<context.now>.tar.gz")
+                    .setVariables(defaultVars)
+                    .build()));
+      }
+
+      @Test
+      void shouldReadConfigWithTarGzTransformerDefault() {
+        shouldReadConfigWithTransformers(
+            // language=JSON
+            """
+                  [{"targz": {}}]
+                """,
+            List.of(
+                ImmutableTarGzConfigTransformerOptions.builder()
+                    .setFilenamePattern("<context.sourceName>-<context.now>.tar.gz")
+                    .setVariables(defaultVars)
+                    .build()));
+      }
+
+      @Test
+      void shouldReadConfigWithTarGzTransformerAllOptions() {
+        final String pattern = make();
+        shouldReadConfigWithTransformers(
+            // language=JSON
+            """
+                  [{"targz": { "filenamePattern": "%s" }}]
+                """
+                .formatted(pattern),
+            List.of(
+                ImmutableTarGzConfigTransformerOptions.builder()
+                    .setFilenamePattern(pattern)
+                    .setVariables(defaultVars)
+                    .build()));
+      }
     }
   }
 }

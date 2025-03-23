@@ -6,5 +6,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
 @JsonSubTypes({
   @JsonSubTypes.Type(value = ZipTransformerOptionsDto.class, name = "zip"),
+  @JsonSubTypes.Type(value = TarGzTransformerOptionsDto.class, name = "targz"),
 })
 public interface TransformerOptionsDto {}

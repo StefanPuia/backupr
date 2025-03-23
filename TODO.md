@@ -15,29 +15,21 @@
 
 * do not fail fast on remote handling - or add to config how fast to fail
 * notifications on success/failures?
-  * webhook?
+    * webhook?
 
 # Sources
 
 * better file filtering
 * more sources:
-  * databases?
+    * databases?
 
 # Transformers
 
-* add more data? - i.e. naming pattern, etc
-
 ## ZIP
 
-*
+## TARGZ
 
-## TAR
-
-* implement
-  * https://commons.apache.org/proper/commons-compress/
-  * https://mkyong.com/java/how-to-create-tar-gz-in-java/
-
-## 7Zip
+## 7ZIP
 
 * implement
 

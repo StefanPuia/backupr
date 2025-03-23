@@ -221,11 +221,15 @@
         {
           "type": "string",
           "enum": [
-            "ZIP"
+            "ZIP",
+            "TARGZ"
           ]
         },
         {
           "$ref": "#/definitions/zipTransformer"
+        },
+        {
+          "$ref": "#/definitions/targzTransformer"
         }
       ]
     },
@@ -246,6 +250,25 @@
       },
       "required": [
         "zip"
+      ]
+    },
+    "targzTransformer": {
+      "type": "object",
+      "properties": {
+        "targz": {
+          "type": "object",
+          "properties": {
+            "filenamePattern": {
+              "type": "string",
+              "default": "<context.sourceName>-<context.now>.tar.gz",
+              "description": "Pattern to be used as filename for the created archive file. Supports templating with context. Context includes: default context, sourceName (Name of current source)",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "required": [
+        "targz"
       ]
     }
   }

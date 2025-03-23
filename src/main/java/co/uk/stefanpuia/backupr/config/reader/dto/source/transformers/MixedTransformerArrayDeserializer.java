@@ -37,6 +37,7 @@ public class MixedTransformerArrayDeserializer
   private TransformerOptionsDto getDefaultOptions(final SourceTransformer sourceTransformer) {
     return switch (sourceTransformer) {
       case ZIP -> ImmutableZipTransformerOptionsDto.builder().build();
+      case TARGZ -> ImmutableTarGzTransformerOptionsDto.builder().build();
     };
   }
 }
