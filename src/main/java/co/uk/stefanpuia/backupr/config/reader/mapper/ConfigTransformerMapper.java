@@ -8,6 +8,7 @@ import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import java.util.List;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
 
@@ -25,5 +26,7 @@ public interface ConfigTransformerMapper {
   ConfigTransformerOptions mapZipTransformerOptions(
       TransformerOptionsDto source, @Context VariablesWrapper variables);
 
-  ZipConfigTransformerOptions convert(ZipTransformerOptionsDto source);
+  @Mapping(target = "variables", expression = "java(variables)")
+  ZipConfigTransformerOptions convert(
+      ZipTransformerOptionsDto source, @Context VariablesWrapper variables);
 }

@@ -233,7 +233,15 @@
       "type": "object",
       "properties": {
         "zip": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "filenamePattern": {
+              "type": "string",
+              "default": "<context.sourceName>-<context.now>.zip",
+              "description": "Pattern to be used as filename for the created zip file. Supports templating with context. Context includes: default context, sourceName (Name of current source)",
+              "minLength": 1
+            }
+          }
         }
       },
       "required": [

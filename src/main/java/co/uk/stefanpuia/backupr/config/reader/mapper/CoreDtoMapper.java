@@ -1,15 +1,17 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
+import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import jakarta.annotation.Nullable;
 import java.util.Optional;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
-import org.stringtemplate.v4.ST;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(config = MapstructConfig.class)
 public abstract class CoreDtoMapper {
+  @Autowired private StringTemplateRenderer stringTemplateRenderer;
 
   @Named("mapDisabledToEnabled")
   protected boolean mapDisabledToEnabled(final @Nullable Boolean disabled) {
@@ -20,14 +22,6 @@ public abstract class CoreDtoMapper {
   @Named("applyTemplateToString")
   protected String applyTemplate(
       final @Nullable String source, final @Context VariablesWrapper variables) {
-    return Optional.ofNullable(source)
-        .map(ST::new)
-        .map(
-            template -> {
-              variables.variables().forEach(template::add);
-              template.add("env", variables.environment());
-              return template.render();
-            })
-        .orElse(null);
+    return stringTemplateRenderer.applyTemplate(source, variables);
   }
 }
