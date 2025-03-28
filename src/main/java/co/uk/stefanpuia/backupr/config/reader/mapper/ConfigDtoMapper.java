@@ -1,12 +1,12 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.reader.dto.BackuprConfigDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.credentials.CredentialsDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteDto;
-import co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials.CredentialsDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import java.util.HashMap;

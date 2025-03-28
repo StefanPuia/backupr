@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.reader.dto.source.transformers;
+package co.uk.stefanpuia.backupr.config.reader.dto.transformers;
 
 import co.uk.stefanpuia.backupr.config.reader.dto.DtoStyle;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

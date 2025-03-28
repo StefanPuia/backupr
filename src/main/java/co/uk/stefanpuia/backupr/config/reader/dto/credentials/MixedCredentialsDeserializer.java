@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials;
+package co.uk.stefanpuia.backupr.config.reader.dto.credentials;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

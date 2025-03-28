@@ -3,8 +3,8 @@ package co.uk.stefanpuia.backupr.config.reader;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableBasicCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableNoneCredentials;
 import java.util.Optional;

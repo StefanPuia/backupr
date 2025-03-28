@@ -1,8 +1,7 @@
 package co.uk.stefanpuia.backupr.config.model.remote;
 
 import co.uk.stefanpuia.backupr.config.model.ModelStyle;
-import co.uk.stefanpuia.backupr.config.model.RemoteType;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import org.eclipse.jgit.transport.URIish;

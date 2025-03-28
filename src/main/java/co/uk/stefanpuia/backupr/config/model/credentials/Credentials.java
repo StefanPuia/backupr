@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.model.remote.credentials;
+package co.uk.stefanpuia.backupr.config.model.credentials;
 
 import jakarta.annotation.Nullable;
 

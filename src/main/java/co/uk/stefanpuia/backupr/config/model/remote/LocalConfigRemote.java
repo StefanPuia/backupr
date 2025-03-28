@@ -1,7 +1,6 @@
 package co.uk.stefanpuia.backupr.config.model.remote;
 
 import co.uk.stefanpuia.backupr.config.model.ModelStyle;
-import co.uk.stefanpuia.backupr.config.model.RemoteType;
 import org.immutables.value.Value;
 
 @ModelStyle

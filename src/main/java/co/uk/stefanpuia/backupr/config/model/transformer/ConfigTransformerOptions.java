@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.model.source.transformer;
+package co.uk.stefanpuia.backupr.config.model.transformer;
 
 import co.uk.stefanpuia.backupr.config.reader.mapper.VariablesWrapper;
 

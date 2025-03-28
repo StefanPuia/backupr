@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.model;
+package co.uk.stefanpuia.backupr.config.model.remote;
 
 public enum RemoteType {
   LOCAL,

@@ -1,11 +1,11 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.BasicCredentials;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.NoneCredentials;
-import co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials.BasicCredentialsDto;
-import co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials.CredentialsDto;
-import co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials.NoneCredentialsDto;
+import co.uk.stefanpuia.backupr.config.model.credentials.BasicCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
+import co.uk.stefanpuia.backupr.config.reader.dto.credentials.BasicCredentialsDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.credentials.CredentialsDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.credentials.NoneCredentialsDto;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;

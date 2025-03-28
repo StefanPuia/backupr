@@ -4,8 +4,8 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteDto;

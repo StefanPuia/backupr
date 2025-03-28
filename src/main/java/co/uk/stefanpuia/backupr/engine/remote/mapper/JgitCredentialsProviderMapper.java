@@ -2,9 +2,9 @@ package co.uk.stefanpuia.backupr.engine.remote.mapper;
 
 import static java.util.Optional.ofNullable;
 
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.BasicCredentials;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.NoneCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.BasicCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;

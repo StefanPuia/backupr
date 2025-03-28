@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials;
+package co.uk.stefanpuia.backupr.config.reader.dto.credentials;
 
 import co.uk.stefanpuia.backupr.config.reader.dto.DtoStyle;
 import co.uk.stefanpuia.backupr.config.reader.dto.SupportsTemplate;

@@ -1,7 +1,7 @@
 package co.uk.stefanpuia.backupr.engine.transformers;
 
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ZipConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.ZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import java.io.File;

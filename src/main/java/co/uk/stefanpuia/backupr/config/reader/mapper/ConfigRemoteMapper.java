@@ -1,11 +1,11 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
+import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.GitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.AzureStorageConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteWithCredentialsDto;

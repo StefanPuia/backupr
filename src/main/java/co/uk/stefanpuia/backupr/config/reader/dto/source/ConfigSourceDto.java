@@ -2,10 +2,11 @@ package co.uk.stefanpuia.backupr.config.reader.dto.source;
 
 import static co.uk.stefanpuia.backupr.config.reader.dto.BackuprConfigDto.VALID_IDENTIFIER_REGEX;
 
+import co.uk.stefanpuia.backupr.config.reader.dto.IdentifiableConfigDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteArrayDeserializer;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteDto;
-import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.MixedTransformerArrayDeserializer;
-import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.TransformerOptionsDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.transformers.MixedTransformerArrayDeserializer;
+import co.uk.stefanpuia.backupr.config.reader.dto.transformers.TransformerOptionsDto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -19,7 +20,8 @@ import java.util.List;
 @JsonSubTypes({
   @JsonSubTypes.Type(value = LocalConfigSourceDto.class, name = "LOCAL"),
 })
-public interface ConfigSourceDto {
+public interface ConfigSourceDto extends IdentifiableConfigDto {
+  @Override
   @NotBlank
   @Pattern(regexp = VALID_IDENTIFIER_REGEX)
   String getName();

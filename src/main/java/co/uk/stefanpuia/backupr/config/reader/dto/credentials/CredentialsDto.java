@@ -1,5 +1,6 @@
-package co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials;
+package co.uk.stefanpuia.backupr.config.reader.dto.credentials;
 
+import co.uk.stefanpuia.backupr.config.reader.dto.IdentifiableConfigDto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.annotation.Nullable;
@@ -9,7 +10,8 @@ import jakarta.annotation.Nullable;
   @JsonSubTypes.Type(value = NoneCredentialsDto.class, name = "NONE"),
   @JsonSubTypes.Type(value = BasicCredentialsDto.class, name = "BASIC")
 })
-public interface CredentialsDto {
+public interface CredentialsDto extends IdentifiableConfigDto {
+  @Override
   @Nullable
   String getName();
 }

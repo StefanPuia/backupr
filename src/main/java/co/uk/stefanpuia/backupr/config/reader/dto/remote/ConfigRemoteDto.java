@@ -2,6 +2,7 @@ package co.uk.stefanpuia.backupr.config.reader.dto.remote;
 
 import static co.uk.stefanpuia.backupr.config.reader.dto.BackuprConfigDto.VALID_IDENTIFIER_REGEX;
 
+import co.uk.stefanpuia.backupr.config.reader.dto.IdentifiableConfigDto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.annotation.Nullable;
@@ -14,7 +15,8 @@ import jakarta.validation.constraints.Pattern;
   @JsonSubTypes.Type(value = AzureStorageConfigRemoteDto.class, name = "AZURE_STORAGE"),
   @JsonSubTypes.Type(value = GitConfigRemoteDto.class, name = "GIT"),
 })
-public interface ConfigRemoteDto {
+public interface ConfigRemoteDto extends IdentifiableConfigDto {
+  @Override
   @Nullable
   @NotBlank
   @Pattern(regexp = VALID_IDENTIFIER_REGEX)

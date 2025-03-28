@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials;
+package co.uk.stefanpuia.backupr.config.reader.dto.credentials;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;

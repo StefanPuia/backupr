@@ -1,7 +1,7 @@
 package co.uk.stefanpuia.backupr.config.model.source;
 
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.ConfigTransformerOptions;
 import java.nio.file.Path;
 import java.util.List;
 

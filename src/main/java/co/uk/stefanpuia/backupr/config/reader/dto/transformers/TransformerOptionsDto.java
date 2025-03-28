@@ -1,4 +1,4 @@
-package co.uk.stefanpuia.backupr.config.reader.dto.source.transformers;
+package co.uk.stefanpuia.backupr.config.reader.dto.transformers;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

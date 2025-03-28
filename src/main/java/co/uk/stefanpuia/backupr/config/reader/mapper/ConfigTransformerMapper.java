@@ -1,11 +1,11 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ConfigTransformerOptions;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.TarGzConfigTransformerOptions;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ZipConfigTransformerOptions;
-import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.TarGzTransformerOptionsDto;
-import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.TransformerOptionsDto;
-import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.ZipTransformerOptionsDto;
+import co.uk.stefanpuia.backupr.config.model.transformer.ConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.TarGzConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.ZipConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.reader.dto.transformers.TarGzTransformerOptionsDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.transformers.TransformerOptionsDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.transformers.ZipTransformerOptionsDto;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import java.util.List;
 import org.mapstruct.Context;
