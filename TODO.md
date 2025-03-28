@@ -10,18 +10,21 @@
 * default command - run help?
 * generate config - later
 * create/instruct scheduled task
+* generate schema to file
 
 # Engine
 
 * do not fail fast on remote handling - or add to config how fast to fail
 * notifications on success/failures?
     * webhook?
+* validate that no duplicate identifiers exist
 
 # Sources
 
 * better file filtering
 * more sources:
     * databases?
+* inline remote
 
 # Transformers
 

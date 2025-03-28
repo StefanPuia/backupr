@@ -10,6 +10,21 @@
       "type": "object",
       "description": "A set of <String, String> key-value pairs that can be reused in the configuration. These variables can reference each other, but only in the order they are defined."
     },
+    "credentials": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/credentials"
+          },
+          {
+            "required": [
+              "name"
+            ]
+          }
+        ]
+      }
+    },
     "remotes": {
       "type": "array",
       "items": {
@@ -18,7 +33,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/definitions/remote"
+                "$ref": "#/definitions/abstractRemote"
               },
               {
                 "properties": {
@@ -41,7 +56,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/definitions/remote"
+                "$ref": "#/definitions/abstractRemote"
               },
               {
                 "properties": {
@@ -56,7 +71,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/definitions/remote"
+                "$ref": "#/definitions/abstractRemoteWithCredentials"
               },
               {
                 "properties": {
@@ -72,9 +87,6 @@
                     "type": "string",
                     "minLength": 1,
                     "description": "Git branch name. Supports templating."
-                  },
-                  "credentials": {
-                    "$ref": "#/definitions/credentials"
                   }
                 },
                 "required": [
@@ -95,7 +107,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/definitions/source"
+                "$ref": "#/definitions/abstractSource"
               },
               {
                 "properties": {
@@ -128,7 +140,7 @@
       "type": "string",
       "pattern": "^[0-9a-zA-Z\\-_.]+$"
     },
-    "remote": {
+    "abstractRemote": {
       "type": "object",
       "properties": {
         "name": {
@@ -144,7 +156,30 @@
         "type"
       ]
     },
-    "source": {
+    "abstractRemoteWithCredentials": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/abstractRemote"
+        },
+        {
+          "properties": {
+            "credentials": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "$ref": "#/definitions/credentials"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "abstractSource": {
       "type": "object",
       "properties": {
         "name": {
@@ -158,8 +193,15 @@
           "type": "array",
           "description": "List of remotes where this source should be backed up to. These must reference existing remotes defined in this configuration.",
           "items": {
-            "type": "string",
-            "minLength": 1
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "$ref": "#/definitions/abstractRemote"
+              }
+            ]
           }
         },
         "transformers": {
@@ -177,43 +219,46 @@
     },
     "credentials": {
       "type": "object",
-      "anyOf": [
+      "allOf": [
         {
-          "properties": {
-            "none": {
-              "type": "object",
-              "description": "No authentication"
-            }
-          },
-          "required": [
-            "none"
-          ]
+          "$ref": "#/definitions/abstractCredentials"
         },
         {
-          "properties": {
-            "basic": {
-              "description": "Basic authentication",
-              "type": "object",
-              "properties": {
-                "username": {
-                  "type": "string",
-                  "minLength": 1,
-                  "description": "Basic auth username. Supports templating."
-                },
-                "password": {
-                  "type": "string",
-                  "description": "Basic auth password. Supports templating."
-                }
-              },
-              "required": [
-                "username"
-              ]
+          "anyOf": [
+            {
+              "$ref": "#/definitions/noneCredentials"
+            },
+            {
+              "$ref": "#/definitions/basicCredentials"
             }
-          },
-          "required": [
-            "basic"
           ]
         }
+      ]
+    },
+    "abstractCredentials": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        }
+      }
+    },
+    "noneCredentials": {},
+    "basicCredentials": {
+      "properties": {
+        "username": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Basic auth username. Supports templating."
+        },
+        "password": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Basic auth password. Supports templating."
+        }
+      },
+      "required": [
+        "username"
       ]
     },
     "transformer": {

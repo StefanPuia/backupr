@@ -25,7 +25,7 @@ public abstract class JgitCredentialsProviderMapper {
 
   protected UsernamePasswordCredentialsProvider convert(BasicCredentials source) {
     return new UsernamePasswordCredentialsProvider(
-        source.username(), ofNullable(source.password()).orElse(""));
+        source.getUsername(), ofNullable(source.getPassword()).orElse(""));
   }
 
   protected CredentialsProvider convert(NoneCredentials source) {

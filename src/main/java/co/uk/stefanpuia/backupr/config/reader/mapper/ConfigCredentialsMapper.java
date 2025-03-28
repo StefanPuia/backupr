@@ -21,7 +21,7 @@ public abstract class ConfigCredentialsMapper {
 
   @SubclassMapping(target = NoneCredentials.class, source = NoneCredentialsDto.class)
   @SubclassMapping(target = BasicCredentials.class, source = BasicCredentialsDto.class)
-  protected abstract Credentials mapRemote(
+  protected abstract Credentials mapCredential(
       CredentialsDto source, @Context VariablesWrapper variables);
 
   protected abstract NoneCredentials convert(

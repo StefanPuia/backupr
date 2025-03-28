@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.config.reader.dto;
 
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.remote.credentials.CredentialsDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -22,6 +23,8 @@ public abstract class BackuprConfigDto {
   public LinkedHashMap<@NotBlank String, @NotBlank String> getVariables() {
     return new LinkedHashMap<>();
   }
+
+  public abstract List<CredentialsDto> getCredentials();
 
   @NotEmpty
   public abstract List<@Valid ConfigRemoteDto> getRemotes();
