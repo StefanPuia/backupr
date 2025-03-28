@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Pattern;
   @JsonSubTypes.Type(value = GitConfigRemoteDto.class, name = "GIT"),
 })
 public interface ConfigRemoteDto {
+  @Nullable
   @NotBlank
   @Pattern(regexp = VALID_IDENTIFIER_REGEX)
   String getName();

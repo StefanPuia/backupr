@@ -9,6 +9,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageConfigR
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableBasicCredentials;
+import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableNoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.reader.mapper.VariablesWrapper;
@@ -28,28 +29,40 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
         toInputStream(
             """
             {
-              "variables": {},
+              "variables": {
+                "abc": "123"
+              },
               "credentials": [
                 {
-                  "name": "someBasicCred",
+                  "name": "noneCred1"
+                },
+                {
+                  "name": "basicCred1",
                   "username": "user1",
                   "password": "pass44"
                 }
               ],
               "remotes": [
                 {
-                  "name": "foo",
+                  "name": "localRemote1",
                   "type": "LOCAL",
                   "location": "/var/backups/foo"
                 },
                 {
-                  "name": "azure",
+                  "name": "gitRemote1",
+                  "type": "GIT",
+                  "url": "git:/var/backups/foo",
+                  "branch": "master",
+                  "credentials": "basicCred1"
+                },
+                {
+                  "name": "azureRemote1",
                   "type": "AZURE_STORAGE"
                 }
               ],
               "sources": [
                 {
-                  "name": "ff",
+                  "name": "localSource1",
                   "type": "LOCAL",
                   "directory": "/foo",
                   "files": [
@@ -59,21 +72,130 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                     "ZIP"
                   ],
                   "remotes": [
-                    "foo",
-                    "azure"
+                    "localRemote1",
+                    "azureRemote1"
+                  ]
+                },
+                {
+                  "name": "localSource2",
+                  "type": "LOCAL",
+                  "directory": "/foo",
+                  "files": [
+                    "**/*.json"
+                  ],
+                  "transformers": [
+                    "ZIP"
+                  ],
+                  "remotes": [
+                    {
+                      "type": "LOCAL",
+                      "location": "/var/backups/foo"
+                    },
+                    "azureRemote1",
+                    {
+                      "type": "GIT",
+                      "url": "git:/var/foo1",
+                      "branch": "master",
+                      "credentials": {
+                        "username": "user2",
+                        "password": "pas123"
+                      }
+                    },
+                    {
+                      "type": "GIT",
+                      "url": "git:/var/foo2",
+                      "branch": "master",
+                      "credentials": "noneCred1"
+                    }
                   ]
                 }
               ]
             }
             """);
-    final var localConfigRemote =
+    // variables
+    final var vars = new VariablesWrapper(Map.of("abc", "123"), System.getenv());
+
+    // credentials
+    final var noneCred1 = ImmutableNoneCredentials.builder().setName("noneCred1").build();
+    final var basicCreds1 =
+        ImmutableBasicCredentials.builder()
+            .setName("basicCred1")
+            .setUsername("user1")
+            .setPassword("pass44")
+            .build();
+
+    // remotes
+    final var localRemote1 =
         ImmutableLocalConfigRemote.builder()
-            .setName("foo")
+            .setName("localRemote1")
             .setLocation("/var/backups/foo")
             .setEnabled(true)
             .build();
-    final var azureConfigRemote =
-        ImmutableAzureStorageConfigRemote.builder().setName("azure").setEnabled(true).build();
+    final var gitRemote1 =
+        ImmutableGitConfigRemote.builder()
+            .setName("gitRemote1")
+            .setEnabled(true)
+            .setUrl("git:/var/backups/foo")
+            .setBranch("master")
+            .setCredentials(basicCreds1)
+            .build();
+    final var azureRemote1 =
+        ImmutableAzureStorageConfigRemote.builder()
+            .setName("azureRemote1")
+            .setEnabled(true)
+            .build();
+
+    // sources
+    final var localSource1 =
+        ImmutableLocalConfigSource.builder()
+            .setName("localSource1")
+            .setEnabled(true)
+            .setDirectory("/foo")
+            .setFiles(List.of("**/*.json"))
+            .setTransformers(
+                List.of(
+                    ImmutableZipConfigTransformerOptions.builder()
+                        .setFilenamePattern("<context.sourceName>-<context.now>.zip")
+                        .setVariables(vars)
+                        .build()))
+            .setRemotes(List.of(localRemote1, azureRemote1))
+            .build();
+    final var localSource2 =
+        ImmutableLocalConfigSource.builder()
+            .setName("localSource2")
+            .setEnabled(true)
+            .setDirectory("/foo")
+            .setFiles(List.of("**/*.json"))
+            .setTransformers(
+                List.of(
+                    ImmutableZipConfigTransformerOptions.builder()
+                        .setFilenamePattern("<context.sourceName>-<context.now>.zip")
+                        .setVariables(vars)
+                        .build()))
+            .setRemotes(
+                List.of(
+                    ImmutableLocalConfigRemote.builder()
+                        .setLocation("/var/backups/foo")
+                        .setEnabled(true)
+                        .build(),
+                    azureRemote1,
+                    ImmutableGitConfigRemote.builder()
+                        .setEnabled(true)
+                        .setUrl("git:/var/foo1")
+                        .setBranch("master")
+                        .setCredentials(
+                            ImmutableBasicCredentials.builder()
+                                .setUsername("user2")
+                                .setPassword("pas123")
+                                .build())
+                        .build(),
+                    ImmutableGitConfigRemote.builder()
+                        .setEnabled(true)
+                        .setUrl("git:/var/foo2")
+                        .setBranch("master")
+                        .setCredentials(noneCred1)
+                        .build()))
+            .build();
 
     // When
     final var config = configReader.readConfig(configStream);
@@ -82,25 +204,12 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
     then(config.remotes())
         .isNotNull()
-        .hasSize(2)
-        .containsExactlyInAnyOrder(localConfigRemote, azureConfigRemote);
+        .hasSize(3)
+        .containsExactlyInAnyOrder(localRemote1, gitRemote1, azureRemote1);
     then(config.sources())
         .isNotNull()
-        .hasSize(1)
-        .containsExactlyInAnyOrder(
-            ImmutableLocalConfigSource.builder()
-                .setName("ff")
-                .setEnabled(true)
-                .setDirectory("/foo")
-                .setFiles(List.of("**/*.json"))
-                .setTransformers(
-                    List.of(
-                        ImmutableZipConfigTransformerOptions.builder()
-                            .setFilenamePattern("<context.sourceName>-<context.now>.zip")
-                            .setVariables(defaultVars)
-                            .build()))
-                .setRemotes(List.of(localConfigRemote, azureConfigRemote))
-                .build());
+        .hasSize(2)
+        .containsExactlyInAnyOrder(localSource1, localSource2);
   }
 
   @Test

@@ -2,6 +2,8 @@ package co.uk.stefanpuia.backupr.config.reader.dto.source;
 
 import static co.uk.stefanpuia.backupr.config.reader.dto.BackuprConfigDto.VALID_IDENTIFIER_REGEX;
 
+import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteArrayDeserializer;
+import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.MixedTransformerArrayDeserializer;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.transformers.TransformerOptionsDto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -25,7 +27,8 @@ public interface ConfigSourceDto {
   @Nullable
   Boolean isDisabled();
 
-  List<@NotBlank String> getRemotes();
+  @JsonDeserialize(using = MixedRemoteArrayDeserializer.class)
+  List<@NotNull MixedRemoteDto> getRemotes();
 
   @JsonDeserialize(using = MixedTransformerArrayDeserializer.class)
   List<@NotNull TransformerOptionsDto> getTransformers();

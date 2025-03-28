@@ -27,7 +27,7 @@ public abstract class ConfigDtoMapper {
     final var variables = mapVariables(source.getVariables());
     final var credentials = mapCredentials(source.getCredentials(), variables);
     final var remotes = mapRemotes(source.getRemotes(), credentials, variables);
-    final var sources = mapSources(source.getSources(), remotes, variables);
+    final var sources = mapSources(source.getSources(), remotes, credentials, variables);
     return new BackuprConfig(remotes, sources);
   }
 
@@ -54,9 +54,10 @@ public abstract class ConfigDtoMapper {
   protected List<ConfigSource> mapSources(
       final List<ConfigSourceDto> sources,
       final List<ConfigRemote> remotes,
+      final List<Credentials> credentials,
       final VariablesWrapper variables) {
     return sources.stream()
-        .map(source -> sourceMapper.mapSource(source, remotes, variables))
+        .map(source -> sourceMapper.mapSource(source, remotes, credentials, variables))
         .toList();
   }
 

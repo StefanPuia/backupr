@@ -24,7 +24,6 @@
 * better file filtering
 * more sources:
     * databases?
-* inline remote
 
 # Transformers
 
