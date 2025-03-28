@@ -28,73 +28,19 @@
     "remotes": {
       "type": "array",
       "items": {
-        "anyOf": [
+        "allOf": [
           {
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/definitions/abstractRemote"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "const": "LOCAL"
-                  },
-                  "location": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Base directory to be used for backup storage. Supports templating."
-                  }
-                },
-                "required": [
-                  "location"
-                ]
+            "properties": {
+              "name": {
+                "$ref": "#/definitions/identifier"
               }
+            },
+            "required": [
+              "name"
             ]
           },
           {
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/definitions/abstractRemote"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "const": "AZURE_STORAGE"
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/definitions/abstractRemoteWithCredentials"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "const": "GIT"
-                  },
-                  "url": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Git remote URL. Supports templating."
-                  },
-                  "branch": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Git branch name. Supports templating."
-                  }
-                },
-                "required": [
-                  "url",
-                  "branch"
-                ]
-              }
-            ]
+            "$ref": "#/definitions/remote"
           }
         ]
       }
@@ -140,19 +86,86 @@
       "type": "string",
       "pattern": "^[0-9a-zA-Z\\-_.]+$"
     },
+    "remote": {
+      "anyOf": [
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/abstractRemote"
+            },
+            {
+              "properties": {
+                "type": {
+                  "const": "LOCAL"
+                },
+                "location": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Base directory to be used for backup storage. Supports templating."
+                }
+              },
+              "required": [
+                "location"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/abstractRemote"
+            },
+            {
+              "properties": {
+                "type": {
+                  "const": "AZURE_STORAGE"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/abstractRemoteWithCredentials"
+            },
+            {
+              "properties": {
+                "type": {
+                  "const": "GIT"
+                },
+                "url": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Git remote URL. Supports templating."
+                },
+                "branch": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Git branch name. Supports templating."
+                }
+              },
+              "required": [
+                "url",
+                "branch"
+              ]
+            }
+          ]
+        }
+      ]
+    },
     "abstractRemote": {
       "type": "object",
       "properties": {
-        "name": {
-          "$ref": "#/definitions/identifier"
-        },
         "disabled": {
           "type": "boolean",
           "default": false
         }
       },
       "required": [
-        "name",
         "type"
       ]
     },
@@ -199,7 +212,7 @@
                 "minLength": 1
               },
               {
-                "$ref": "#/definitions/abstractRemote"
+                "$ref": "#/definitions/remote"
               }
             ]
           }
