@@ -73,7 +73,7 @@ public abstract class ConfigSourceMapper {
                 return pickRemotes(sourceName, remotes, remote.name());
               }
 
-              return remoteMapper.mapRemote(remote.remote(), credentials, variables);
+              return remoteMapper.mapRemote(remote.remote(), sourceName, credentials, variables);
             })
         .toList();
   }

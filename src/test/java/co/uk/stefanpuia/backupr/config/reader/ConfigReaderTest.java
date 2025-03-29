@@ -7,7 +7,7 @@ import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
-import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageConfigRemote;
+import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageBlobConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
@@ -57,7 +57,10 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 },
                 {
                   "name": "azureRemote1",
-                  "type": "AZURE_STORAGE"
+                  "type": "AZURE_STORAGE_BLOB",
+                  "endpoint": "endpoint",
+                  "container": "container",
+                  "overwrite": true
                 }
               ],
               "sources": [
@@ -130,6 +133,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setName("localRemote1")
             .setLocation("/var/backups/foo")
             .setEnabled(true)
+            .setVariables(vars)
             .build();
     final var gitRemote1 =
         ImmutableGitConfigRemote.builder()
@@ -138,11 +142,18 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setUrl("git:/var/backups/foo")
             .setBranch("master")
             .setCredentials(basicCreds1)
+            .setVariables(vars)
             .build();
     final var azureRemote1 =
-        ImmutableAzureStorageConfigRemote.builder()
+        ImmutableAzureStorageBlobConfigRemote.builder()
             .setName("azureRemote1")
             .setEnabled(true)
+            .setEndpoint("endpoint")
+            .setContainer("container")
+            .setBlobPrefixPattern(
+                "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
+            .setVariables(vars)
+            .setOverwrite(true)
             .build();
 
     // sources
@@ -175,14 +186,18 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setRemotes(
                 List.of(
                     ImmutableLocalConfigRemote.builder()
+                        .setName("inline:localSource2/LOCAL")
                         .setLocation("/var/backups/foo")
                         .setEnabled(true)
+                        .setVariables(vars)
                         .build(),
                     azureRemote1,
                     ImmutableGitConfigRemote.builder()
                         .setEnabled(true)
+                        .setName("inline:localSource2/GIT")
                         .setUrl("git:/var/foo1")
                         .setBranch("master")
+                        .setVariables(vars)
                         .setCredentials(
                             ImmutableBasicCredentials.builder()
                                 .setUsername("user2")
@@ -191,9 +206,11 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                         .build(),
                     ImmutableGitConfigRemote.builder()
                         .setEnabled(true)
+                        .setName("inline:localSource2/GIT")
                         .setUrl("git:/var/foo2")
                         .setBranch("master")
                         .setCredentials(noneCred1)
+                        .setVariables(vars)
                         .build()))
             .build();
 
@@ -239,8 +256,10 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                       "location": "<localBackupDestination>/<env.JUNIT_ENV_VALUE_1>/foo"
                     },
                     {
-                      "name": "azure",
-                      "type": "AZURE_STORAGE"
+                      "name": "azureBlob",
+                      "type": "AZURE_STORAGE_BLOB",
+                      "endpoint": "endpoint",
+                      "container": "container"
                     },
                     {
                       "name": "git",
@@ -274,20 +293,43 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                   ]
                 }
                 """);
+    final var vars =
+        new VariablesWrapper(
+            Map.of(
+                "valueBeforeSomeProject", "/aaa//",
+                "someProject", "abc123",
+                "localBackupSource", "/etc/sources",
+                "localBackupDestination", "/var/backups",
+                "gitRemoteUrlRoot", "git://github.com/abc123",
+                "defaultGitBranch", "main",
+                "defaultUsername", "user",
+                "defaultPassword", "fooBaz2566"),
+            System.getenv());
     final var localConfigRemote =
         ImmutableLocalConfigRemote.builder()
             .setName("foo")
             .setLocation("/var/backups/fooBar9998/foo")
             .setEnabled(true)
+            .setVariables(vars)
             .build();
-    final var azureConfigRemote =
-        ImmutableAzureStorageConfigRemote.builder().setName("azure").setEnabled(true).build();
+    final var azureBlobConfigRemote =
+        ImmutableAzureStorageBlobConfigRemote.builder()
+            .setName("azureBlob")
+            .setEnabled(true)
+            .setEndpoint("endpoint")
+            .setContainer("container")
+            .setBlobPrefixPattern(
+                "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
+            .setVariables(vars)
+            .setOverwrite(false)
+            .build();
     final var gitConfigRemote =
         ImmutableGitConfigRemote.builder()
             .setName("git")
             .setEnabled(true)
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
+            .setVariables(vars)
             .setCredentials(
                 ImmutableBasicCredentials.builder()
                     .setUsername("user")
@@ -303,7 +345,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
     then(config.remotes())
         .isNotNull()
         .hasSize(3)
-        .containsExactlyInAnyOrder(localConfigRemote, azureConfigRemote, gitConfigRemote);
+        .containsExactlyInAnyOrder(localConfigRemote, azureBlobConfigRemote, gitConfigRemote);
     then(config.sources())
         .isNotNull()
         .hasSize(1)
@@ -317,18 +359,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                     List.of(
                         ImmutableZipConfigTransformerOptions.builder()
                             .setFilenamePattern("<context.sourceName>-<context.now>.zip")
-                            .setVariables(
-                                new VariablesWrapper(
-                                    Map.of(
-                                        "valueBeforeSomeProject", "/aaa//",
-                                        "someProject", "abc123",
-                                        "localBackupSource", "/etc/sources",
-                                        "localBackupDestination", "/var/backups",
-                                        "gitRemoteUrlRoot", "git://github.com/abc123",
-                                        "defaultGitBranch", "main",
-                                        "defaultUsername", "user",
-                                        "defaultPassword", "fooBaz2566"),
-                                    System.getenv()))
+                            .setVariables(vars)
                             .build()))
                 .setRemotes(List.of(localConfigRemote, gitConfigRemote))
                 .build());

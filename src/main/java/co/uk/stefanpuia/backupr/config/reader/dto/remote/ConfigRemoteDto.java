@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Pattern;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
   @JsonSubTypes.Type(value = LocalConfigRemoteDto.class, name = "LOCAL"),
-  @JsonSubTypes.Type(value = AzureStorageConfigRemoteDto.class, name = "AZURE_STORAGE"),
+  @JsonSubTypes.Type(value = AzureStorageBlobConfigRemoteDto.class, name = "AZURE_STORAGE_BLOB"),
   @JsonSubTypes.Type(value = GitConfigRemoteDto.class, name = "GIT"),
 })
 public interface ConfigRemoteDto extends IdentifiableConfigDto {

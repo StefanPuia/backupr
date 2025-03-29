@@ -1,7 +1,7 @@
 package co.uk.stefanpuia.backupr;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
-import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageConfigRemote;
+import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageBlobConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
 import org.springframework.aot.hint.RuntimeHints;
@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Profile;
 @RegisterReflectionForBinding({
   BackuprConfig.class,
   LocalConfigSource.class,
-  AzureStorageConfigRemote.class,
+  AzureStorageBlobConfigRemote.class,
   LocalConfigRemote.class
 })
 public class NativeConfiguration {

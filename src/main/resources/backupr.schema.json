@@ -120,9 +120,34 @@
             {
               "properties": {
                 "type": {
-                  "const": "AZURE_STORAGE"
+                  "const": "AZURE_STORAGE_BLOB"
+                },
+                "endpoint": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Azure storage account endpoint. Supports templating."
+                },
+                "container": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Name of the storage container. Supports templating."
+                },
+                "blobPrefixPattern": {
+                  "type": "string",
+                  "minLength": 1,
+                  "default": "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>",
+                  "description": "Pattern used to prefix the blob name. The original filename will be appended to this. Supports templating with context. Context includes: default context, sourceName (Name of current source), originalFilePath (Original path of file, relative to the source/transformer base path)"
+                },
+                "overwrite": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Overwrite any existing blob with the same name"
                 }
-              }
+              },
+              "required": [
+                "endpoint",
+                "container"
+              ]
             }
           ]
         },

@@ -52,6 +52,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
             .setCredentials(Optional.ofNullable(expected))
+            .setVariables(defaultVars)
             .build();
 
     // When
@@ -103,6 +104,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
             .setCredentials(Optional.ofNullable(expected))
+            .setVariables(defaultVars)
             .build();
 
     // When

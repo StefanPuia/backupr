@@ -7,6 +7,9 @@
 
 # Tech debt
 
+* remotes config parser coverage
+* azure blob config parsing test coverage
+
 # Config
 
 * placeholders in config e.g. user home - this may already be possible with env vars
@@ -49,7 +52,6 @@
 
 # Remotes
 
-* implement azure blob
 * implement aws?
 * implement google storage?
 * delete old backups?

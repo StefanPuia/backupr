@@ -21,6 +21,13 @@ public record VariablesWrapper(
     newContext.put("now", nowDateTime);
     newContext.put("nowDate", nowDate);
     newContext.put("nowTime", nowTime);
+    newContext.put("nowYear", String.valueOf(now.getYear()));
+    newContext.put("nowMonth", String.valueOf(now.getMonthValue()));
+    newContext.put("nowDay", String.valueOf(now.getDayOfMonth()));
+    newContext.put("nowHour", String.valueOf(now.getHour()));
+    newContext.put("nowMinute", String.valueOf(now.getMinute()));
+    newContext.put("nowSecond", String.valueOf(now.getSecond()));
+
     return new VariablesWrapper(variables(), environment(), newContext);
   }
 }

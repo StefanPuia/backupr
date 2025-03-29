@@ -47,7 +47,7 @@ public abstract class ConfigDtoMapper {
       final List<Credentials> credentials,
       final VariablesWrapper variables) {
     return remotes.stream()
-        .map(remote -> remoteMapper.mapRemote(remote, credentials, variables))
+        .map(remote -> remoteMapper.mapRemote(remote, null, credentials, variables))
         .toList();
   }
 

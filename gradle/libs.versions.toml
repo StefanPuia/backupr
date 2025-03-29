@@ -19,6 +19,7 @@ slf4j-test = { group = "com.github.valfirst", name = "slf4j-test", version = "3.
 spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-cloud-azure-dependencies = { group = "com.azure.spring", name = "spring-cloud-azure-dependencies", version.ref = "springCloudAzure" }
+spring-cloud-azure-starter-storage = { group = "com.azure.spring", name = "spring-cloud-azure-starter-storage" }
 spring-shell-dependencies = { group = "org.springframework.shell", name = "spring-shell-dependencies", version.ref = "springShell" }
 spring-shell-starter = { group = "org.springframework.shell", name = "spring-shell-starter" }
 spring-shell-starter-test = { group = "org.springframework.shell", name = "spring-shell-starter-test" }

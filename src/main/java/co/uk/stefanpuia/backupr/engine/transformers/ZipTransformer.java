@@ -62,7 +62,6 @@ public class ZipTransformer extends AbstractTransformer {
   }
 
   private String getFilename(final ConfigSource source) {
-
     return stringTemplateRenderer.applyTemplate(
         options.getFilenamePattern(),
         options.getVariables().withContext(Map.of("sourceName", source.getName())));

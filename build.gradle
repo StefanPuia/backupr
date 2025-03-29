@@ -33,7 +33,7 @@ dependencies {
     implementation libs.spring.shell.starter
     implementation libs.jgit
     implementation libs.commons.compress
-    //implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
+    implementation libs.spring.cloud.azure.starter.storage
 
     compileOnly libs.string.template
     compileOnly libs.immutables
