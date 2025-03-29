@@ -5,13 +5,13 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableBasicCredentials;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableNoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableZipConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.ImmutableZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.reader.mapper.VariablesWrapper;
 import java.util.List;
 import java.util.Map;

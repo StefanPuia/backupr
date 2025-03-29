@@ -4,9 +4,9 @@ import static net.bytebuddy.utility.RandomString.make;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableTarGzConfigTransformerOptions;
-import co.uk.stefanpuia.backupr.config.model.source.transformer.ImmutableZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.model.transformer.ConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.ImmutableTarGzConfigTransformerOptions;
+import co.uk.stefanpuia.backupr.config.model.transformer.ImmutableZipConfigTransformerOptions;
 import java.util.List;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

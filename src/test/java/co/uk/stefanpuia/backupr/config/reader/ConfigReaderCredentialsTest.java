@@ -4,9 +4,9 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableBasicCredentials;
-import co.uk.stefanpuia.backupr.config.model.remote.credentials.ImmutableNoneCredentials;
 import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
