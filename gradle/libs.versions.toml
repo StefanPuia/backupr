@@ -1,0 +1,34 @@
+[versions]
+immutables = "2.10.1"
+mapstruct = "1.6.3"
+springCloudAzure = "5.21.0"
+springShell = "3.4.0"
+
+
+[libraries]
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version = "1.27.1" }
+immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.18.3" }
+jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "7.2.0.202503040940-r" }
+junit-pioneer = { group = "org.junit-pioneer", name = "junit-pioneer", version = "2.3.0" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+lombok = { group = "org.projectlombok", name = "lombok" }
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
+slf4j-test = { group = "com.github.valfirst", name = "slf4j-test", version = "3.0.1" }
+spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-cloud-azure-dependencies = { group = "com.azure.spring", name = "spring-cloud-azure-dependencies", version.ref = "springCloudAzure" }
+spring-shell-dependencies = { group = "org.springframework.shell", name = "spring-shell-dependencies", version.ref = "springShell" }
+spring-shell-starter = { group = "org.springframework.shell", name = "spring-shell-starter" }
+spring-shell-starter-test = { group = "org.springframework.shell", name = "spring-shell-starter-test" }
+spring-web = { group = 'org.springframework', name = 'spring-web' }
+string-template = { group = "org.antlr", name = "ST4", version = "4.3.4" }
+
+
+[plugins]
+dotenv = { id = 'co.uzzu.dotenv.gradle', version = '4.0.0' }
+graal-build-tools = { id = 'org.graalvm.buildtools.native', version = '0.10.6' }
+spotless = { id = 'com.diffplug.spotless', version = '6.25.0' }
+spring-boot = { id = "org.springframework.boot", version = "3.4.4" }
+spring-dependency = { id = 'io.spring.dependency-management', version = '1.1.7' }

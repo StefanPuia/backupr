@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.4'
-    id 'io.spring.dependency-management' version '1.1.7'
-    id 'org.graalvm.buildtools.native' version '0.10.6'
-    id 'co.uzzu.dotenv.gradle' version '4.0.0'
-    id 'com.diffplug.spotless' version '6.25.0'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency)
+    alias(libs.plugins.graal.build.tools)
+    alias(libs.plugins.dotenv)
+    alias(libs.plugins.spotless)
 }
 
 group = 'co.uk.stefanpuia'
@@ -26,36 +26,29 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    set('springCloudAzureVersion', "5.21.0")
-    set('springShellVersion', "3.4.0")
-    set('immutablesVersion', "2.10.1")
-    set('mapstructVersion', "1.6.3")
-}
-
 dependencies {
-    implementation 'com.azure.spring:spring-cloud-azure-starter-active-directory'
-    implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
-    implementation 'org.springframework.shell:spring-shell-starter'
-    implementation 'org.eclipse.jgit:org.eclipse.jgit:7.2.0.202503040940-r'
-    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
-    implementation 'org.apache.commons:commons-compress:1.27.1'
+    implementation libs.jackson.databind
+    implementation libs.spring.web
+    implementation libs.mapstruct
+    implementation libs.spring.shell.starter
+    implementation libs.jgit
+    implementation libs.commons.compress
+    //implementation 'com.azure.spring:spring-cloud-azure-starter-storage'
 
-    compileOnly 'org.antlr:ST4:4.3.4'
-    compileOnly 'org.projectlombok:lombok'
-    compileOnly "org.immutables:value:${immutablesVersion}"
+    compileOnly libs.string.template
+    compileOnly libs.immutables
 
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
-    annotationProcessor "org.immutables:value:${immutablesVersion}"
-    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor libs.spring.boot.configuration.processor
+    annotationProcessor libs.lombok
+    annotationProcessor libs.immutables
+    annotationProcessor libs.mapstruct.processor
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.shell:spring-shell-starter-test'
-    testImplementation 'com.github.valfirst:slf4j-test:3.0.1'
-    testImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.shell.starter.test
+    testImplementation libs.slf4j.test
+    testImplementation libs.junit.pioneer
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly libs.junit.platform.launcher
 }
 
 configurations {
@@ -64,15 +57,16 @@ configurations {
 
 dependencyManagement {
     imports {
-        mavenBom "com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}"
-        mavenBom "org.springframework.shell:spring-shell-dependencies:${springShellVersion}"
+        mavenBom libs.spring.cloud.azure.dependencies.get().toString()
+        mavenBom libs.spring.shell.dependencies.get().toString()
     }
 }
 
 tasks.named('test') {
     useJUnitPlatform()
-    jvmArgs('--add-opens', 'java.base/java.util=ALL-UNNAMED')
-    jvmArgs('--add-opens', 'java.base/java.lang=ALL-UNNAMED')
+    jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED'
+    jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+    jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
 }
 
 bootRun {

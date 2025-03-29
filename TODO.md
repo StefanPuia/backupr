@@ -1,5 +1,12 @@
 ## List of things to implement
 
+# Docs
+
+* create docs layout
+    * md - 11ty?
+
+# Tech debt
+
 # Config
 
 * placeholders in config e.g. user home - this may already be possible with env vars
@@ -17,6 +24,12 @@
 * do not fail fast on remote handling - or add to config how fast to fail
 * notifications on success/failures?
     * webhook?
+
+# Credentials
+
+* implement azure
+    * cli
+    * oauth
 
 # Sources
 
