@@ -1,19 +1,19 @@
 package co.uk.stefanpuia.backupr.config.model.credentials;
 
 import co.uk.stefanpuia.backupr.config.model.ModelStyle;
-import jakarta.annotation.Nullable;
 import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public interface BasicCredentials extends Credentials {
-  String getUsername();
+public interface AzureClientSecretCredentials extends Credentials {
+  String getTenantId();
 
-  @Nullable
-  String getPassword();
+  String getClientId();
+
+  String getClientSecret();
 
   @Override
   default CredentialsType getType() {
-    return CredentialsType.BASIC;
+    return CredentialsType.AZURE_CLIENT_SECRET;
   }
 }

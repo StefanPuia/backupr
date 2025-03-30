@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
 
-  void shouldReadConfigWithCredentialsDefinedDirectly(
+  void shouldReadConfigWithCredentialsDefinedInline(
       final String credentialsJson, final Credentials expected) {
     // Given
     final var credentialsInsert =
@@ -30,16 +30,6 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
                       "url": "git://github.com/abc123/bar.git",
                       "branch": "main"
                       %s
-                    }
-                  ],
-                  "sources": [
-                    {
-                      "name": "local",
-                      "type": "LOCAL",
-                      "directory": "/foo",
-                      "remotes": [
-                        "git"
-                      ]
                     }
                   ]
                 }
@@ -63,7 +53,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
     then(config.remotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
   }
 
-  void shouldReadConfigWithCredentialsDefinedSeparately(
+  void shouldReadConfigWithCredentialsDefinedGlobally(
       final String credentialsJson, final String credentialsName, final Credentials expected) {
     // Given
     final var credentialsInsert =
@@ -82,16 +72,6 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
                       "url": "git://github.com/abc123/bar.git",
                       "branch": "main"
                       %s
-                    }
-                  ],
-                  "sources": [
-                    {
-                      "name": "local",
-                      "type": "LOCAL",
-                      "directory": "/foo",
-                      "remotes": [
-                        "git"
-                      ]
                     }
                   ]%s
                 }
@@ -118,23 +98,24 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
 
   @Test
   void shouldReadConfigWithNoCredentials() {
-    shouldReadConfigWithCredentialsDefinedDirectly(null, null);
+    shouldReadConfigWithCredentialsDefinedInline(null, null);
   }
 
   @Nested
   class None {
     @Test
     void shouldReadConfigCredentialsNone() {
-      shouldReadConfigWithCredentialsDefinedDirectly(
+      shouldReadConfigWithCredentialsDefinedInline(
           // language=JSON
           """
                 {}
-              """, ImmutableNoneCredentials.builder().build());
+              """,
+          ImmutableNoneCredentials.builder().setName("inline[git/NONE]").build());
     }
 
     @Test
     void shouldReadConfigCredentialsNoneWithNameRef() {
-      shouldReadConfigWithCredentialsDefinedSeparately(
+      shouldReadConfigWithCredentialsDefinedGlobally(
           // language=JSON
           """
                 {
@@ -150,19 +131,22 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
   class Basic {
     @Test
     void shouldReadConfigCredentialsBasicJustUsername() {
-      shouldReadConfigWithCredentialsDefinedDirectly(
+      shouldReadConfigWithCredentialsDefinedInline(
           // language=JSON
           """
                 {
                    "username": "foo"
                 }
               """,
-          ImmutableBasicCredentials.builder().setUsername("foo").build());
+          ImmutableBasicCredentials.builder()
+              .setName("inline[git/BASIC]")
+              .setUsername("foo")
+              .build());
     }
 
     @Test
     void shouldReadConfigCredentialsBasicJustUsernameWithNameRef() {
-      shouldReadConfigWithCredentialsDefinedSeparately(
+      shouldReadConfigWithCredentialsDefinedGlobally(
           // language=JSON
           """
                 {
@@ -176,7 +160,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
 
     @Test
     void shouldReadConfigCredentialsBasic() {
-      shouldReadConfigWithCredentialsDefinedDirectly(
+      shouldReadConfigWithCredentialsDefinedInline(
           // language=JSON
           """
                 {
@@ -184,12 +168,16 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
                    "password": "bar"
                 }
               """,
-          ImmutableBasicCredentials.builder().setUsername("foo").setPassword("bar").build());
+          ImmutableBasicCredentials.builder()
+              .setName("inline[git/BASIC]")
+              .setUsername("foo")
+              .setPassword("bar")
+              .build());
     }
 
     @Test
     void shouldReadConfigCredentialsBasicWithNameRef() {
-      shouldReadConfigWithCredentialsDefinedSeparately(
+      shouldReadConfigWithCredentialsDefinedGlobally(
           // language=JSON
           """
                 {

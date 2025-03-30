@@ -7,6 +7,7 @@
 
 # Tech debt
 
+* pipeline
 * remotes config parser coverage
 * azure blob config parsing test coverage
 
@@ -14,6 +15,7 @@
 
 * placeholders in config e.g. user home - this may already be possible with env vars
 * handle com.fasterxml.jackson.databind.exc exceptions - may need a custom exception to string converter
+* validate correct type of credentials are used with remotes (e.g. only azure creds for azure remote)
 
 # CLI
 
@@ -29,10 +31,6 @@
     * webhook?
 
 # Credentials
-
-* implement azure
-    * cli
-    * oauth
 
 # Sources
 

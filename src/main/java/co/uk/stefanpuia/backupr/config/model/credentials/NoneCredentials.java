@@ -5,4 +5,9 @@ import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public interface NoneCredentials extends Credentials {}
+public interface NoneCredentials extends Credentials {
+  @Override
+  default CredentialsType getType() {
+    return CredentialsType.NONE;
+  }
+}

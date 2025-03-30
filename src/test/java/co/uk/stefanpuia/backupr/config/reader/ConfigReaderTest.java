@@ -186,7 +186,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setRemotes(
                 List.of(
                     ImmutableLocalConfigRemote.builder()
-                        .setName("inline:localSource2/LOCAL")
+                        .setName("inline[localSource2/LOCAL]")
                         .setLocation("/var/backups/foo")
                         .setEnabled(true)
                         .setVariables(vars)
@@ -194,19 +194,20 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                     azureRemote1,
                     ImmutableGitConfigRemote.builder()
                         .setEnabled(true)
-                        .setName("inline:localSource2/GIT")
+                        .setName("inline[localSource2/GIT]")
                         .setUrl("git:/var/foo1")
                         .setBranch("master")
                         .setVariables(vars)
                         .setCredentials(
                             ImmutableBasicCredentials.builder()
+                                .setName("inline[inline[localSource2/GIT]/BASIC]")
                                 .setUsername("user2")
                                 .setPassword("pas123")
                                 .build())
                         .build(),
                     ImmutableGitConfigRemote.builder()
                         .setEnabled(true)
-                        .setName("inline:localSource2/GIT")
+                        .setName("inline[localSource2/GIT]")
                         .setUrl("git:/var/foo2")
                         .setBranch("master")
                         .setCredentials(noneCred1)
@@ -332,6 +333,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setVariables(vars)
             .setCredentials(
                 ImmutableBasicCredentials.builder()
+                    .setName("inline[git/BASIC]")
                     .setUsername("user")
                     .setPassword("fooBaz2566")
                     .build())

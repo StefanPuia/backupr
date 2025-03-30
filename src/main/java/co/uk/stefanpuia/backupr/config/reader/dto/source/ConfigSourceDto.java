@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -30,8 +31,8 @@ public interface ConfigSourceDto extends IdentifiableConfigDto {
   Boolean isDisabled();
 
   @JsonDeserialize(using = MixedRemoteArrayDeserializer.class)
-  List<@NotNull MixedRemoteDto> getRemotes();
+  List<@Valid @NotNull MixedRemoteDto> getRemotes();
 
   @JsonDeserialize(using = MixedTransformerArrayDeserializer.class)
-  List<@NotNull TransformerOptionsDto> getTransformers();
+  List<@Valid @NotNull TransformerOptionsDto> getTransformers();
 }

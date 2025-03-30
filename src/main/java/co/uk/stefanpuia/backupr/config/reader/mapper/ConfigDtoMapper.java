@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
+import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
@@ -48,6 +49,12 @@ public abstract class ConfigDtoMapper {
       final VariablesWrapper variables) {
     return remotes.stream()
         .map(remote -> remoteMapper.mapRemote(remote, null, credentials, variables))
+        .peek(
+            remote -> {
+              if (Objects.isNull(remote.getName())) {
+                throw new ConfigValidationException("Global remote name cannot be empty");
+              }
+            })
         .toList();
   }
 
@@ -64,11 +71,11 @@ public abstract class ConfigDtoMapper {
   protected List<Credentials> mapCredentials(
       final List<CredentialsDto> credentials, final VariablesWrapper variables) {
     return credentials.stream()
-        .map(credential -> credentialsMapper.mapCredential(credential, variables))
+        .map(credential -> credentialsMapper.mapCredential(credential, null, variables))
         .peek(
             cred -> {
               if (Objects.isNull(cred.getName())) {
-                throw new IllegalArgumentException("Global credential name cannot be empty");
+                throw new ConfigValidationException("Global credential name cannot be empty");
               }
             })
         .toList();

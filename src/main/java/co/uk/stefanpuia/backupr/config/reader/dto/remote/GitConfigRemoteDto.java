@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.config.reader.dto.remote;
 
+import co.uk.stefanpuia.backupr.config.model.remote.RemoteType;
 import co.uk.stefanpuia.backupr.config.reader.dto.DtoStyle;
 import co.uk.stefanpuia.backupr.config.reader.dto.SupportsTemplate;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -17,4 +18,9 @@ public abstract class GitConfigRemoteDto implements ConfigRemoteWithCredentialsD
   @NotBlank
   @SupportsTemplate
   public abstract String getBranch();
+
+  @Override
+  public RemoteType getType() {
+    return RemoteType.GIT;
+  }
 }

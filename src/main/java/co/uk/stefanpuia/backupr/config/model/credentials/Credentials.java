@@ -5,4 +5,6 @@ import jakarta.annotation.Nullable;
 public interface Credentials {
   @Nullable
   String getName();
+
+  CredentialsType getType();
 }

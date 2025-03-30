@@ -9,6 +9,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageBlobCon
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
+import co.uk.stefanpuia.backupr.config.model.remote.RemoteType;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.AzureStorageBlobConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteWithCredentialsDto;
@@ -92,6 +93,7 @@ public abstract class ConfigRemoteMapper {
 
   protected Optional<Credentials> mapMixedCredentials(
       final ConfigRemoteWithCredentialsDto remote,
+      final @Context String sourceName,
       final @Context List<Credentials> credentials,
       final @Context VariablesWrapper variables) {
     final var source = remote.getCredentials();
@@ -105,7 +107,12 @@ public abstract class ConfigRemoteMapper {
     }
 
     if (Objects.nonNull(source.credentials())) {
-      return Optional.ofNullable(credentialsMapper.mapCredential(source.credentials(), variables));
+      return Optional.ofNullable(
+          credentialsMapper.mapCredential(
+              source.credentials(),
+              Optional.ofNullable(remote.getName())
+                  .orElseGet(() -> this.getInlineName(remote.getType(), sourceName)),
+              variables));
     }
 
     return Optional.of(
@@ -151,7 +158,11 @@ public abstract class ConfigRemoteMapper {
       final Function<String, ?> nameApplier,
       final @Nullable String sourceName) {
     if (Objects.nonNull(sourceName) && Optional.ofNullable(remote.getName()).isEmpty()) {
-      nameApplier.apply("inline:%s/%s".formatted(sourceName, remote.getType()));
+      nameApplier.apply(getInlineName(remote.getType(), sourceName));
     }
+  }
+
+  private String getInlineName(final RemoteType remoteType, final String sourceName) {
+    return "inline[%s/%s]".formatted(sourceName, remoteType);
   }
 }

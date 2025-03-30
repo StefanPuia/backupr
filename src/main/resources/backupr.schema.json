@@ -115,7 +115,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/definitions/abstractRemote"
+              "$ref": "#/definitions/abstractRemoteWithCredentials"
             },
             {
               "properties": {
@@ -268,6 +268,12 @@
             },
             {
               "$ref": "#/definitions/basicCredentials"
+            },
+            {
+              "$ref": "#/definitions/azureCliCredentials"
+            },
+            {
+              "$ref": "#/definitions/azureClientSecretCredentials"
             }
           ]
         }
@@ -297,6 +303,43 @@
       },
       "required": [
         "username"
+      ]
+    },
+    "azureCliCredentials": {
+      "properties": {
+        "cli": {
+          "type": "boolean",
+          "default": true,
+          "const": true
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Azure tenant ID. Supports templating."
+        }
+      },
+      "required": [
+        "cli"
+      ]
+    },
+    "azureClientSecretCredentials": {
+      "properties": {
+        "tenantId": {
+          "type": "string",
+          "description": "Azure tenant ID. Supports templating."
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Azure service account client ID. Supports templating."
+        },
+        "clientSecret": {
+          "type": "string",
+          "description": "Azure service account client secret. Supports templating."
+        }
+      },
+      "required": [
+        "tenantId",
+        "clientId",
+        "clientSecret"
       ]
     },
     "transformer": {

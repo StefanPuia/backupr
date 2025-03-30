@@ -6,14 +6,12 @@ import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public interface BasicCredentials extends Credentials {
-  String getUsername();
-
+public interface AzureCliCredentials extends Credentials {
   @Nullable
-  String getPassword();
+  String getTenantId();
 
   @Override
   default CredentialsType getType() {
-    return CredentialsType.BASIC;
+    return CredentialsType.AZURE_CLI;
   }
 }

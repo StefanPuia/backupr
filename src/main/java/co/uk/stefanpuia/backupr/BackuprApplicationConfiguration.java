@@ -1,5 +1,7 @@
 package co.uk.stefanpuia.backupr;
 
+import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
+
 import co.uk.stefanpuia.backupr.shell.ShellExceptionResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -13,7 +15,7 @@ import org.springframework.shell.command.annotation.CommandScan;
 public class BackuprApplicationConfiguration {
   @Bean
   public ObjectMapper objectMapper() {
-    return new ObjectMapper();
+    return new ObjectMapper().enable(ALLOW_COMMENTS);
   }
 
   @Bean

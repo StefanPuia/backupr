@@ -25,7 +25,7 @@ public abstract class BackuprConfigDto {
   }
 
   @UniqueIdentifier
-  public abstract List<CredentialsDto> getCredentials();
+  public abstract List<@Valid CredentialsDto> getCredentials();
 
   @UniqueIdentifier
   public abstract List<@Valid ConfigRemoteDto> getRemotes();

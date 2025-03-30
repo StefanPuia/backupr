@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.config.reader.dto.remote;
 
+import co.uk.stefanpuia.backupr.config.model.remote.RemoteType;
 import co.uk.stefanpuia.backupr.config.reader.dto.DtoStyle;
 import co.uk.stefanpuia.backupr.config.reader.dto.SupportsTemplate;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,4 +14,9 @@ public interface LocalConfigRemoteDto extends ConfigRemoteDto {
   @NotBlank
   @SupportsTemplate
   String getLocation();
+
+  @Override
+  default RemoteType getType() {
+    return RemoteType.LOCAL;
+  }
 }

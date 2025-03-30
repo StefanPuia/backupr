@@ -68,13 +68,22 @@ public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
   }
 
   private BlobContainerClient buildClient() {
+    final var credential =
+        remote
+            .getCredentials()
+            .map(
+                cred -> {
+                  log.debug("Using credential '{}'", cred.getName());
+                  return credentialMapper.convert(cred);
+                })
+            .orElseGet(
+                () -> {
+                  log.debug("No credentials provided. Using default azure credential strategy");
+                  return new DefaultAzureCredentialBuilder().build();
+                });
     return new BlobServiceClientBuilder()
         .endpoint(remote.getEndpoint())
-        .credential(
-            remote
-                .getCredentials()
-                .map(credentialMapper::convert)
-                .orElseGet(() -> new DefaultAzureCredentialBuilder().build()))
+        .credential(credential)
         .buildClient()
         .getBlobContainerClient(remote.getContainer());
   }
