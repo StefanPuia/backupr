@@ -7,6 +7,7 @@ import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageBlobConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
@@ -154,6 +155,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
             .setVariables(vars)
             .setOverwrite(true)
+            .setCredentials(NoneCredentials.create())
             .build();
 
     // sources
@@ -323,6 +325,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
             .setVariables(vars)
             .setOverwrite(false)
+            .setCredentials(NoneCredentials.create())
             .build();
     final var gitConfigRemote =
         ImmutableGitConfigRemote.builder()

@@ -6,8 +6,8 @@ import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
-import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
             .setEnabled(true)
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
-            .setCredentials(Optional.ofNullable(expected))
+            .setCredentials(expected)
             .setVariables(defaultVars)
             .build();
 
@@ -83,7 +83,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
             .setEnabled(true)
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
-            .setCredentials(Optional.ofNullable(expected))
+            .setCredentials(expected)
             .setVariables(defaultVars)
             .build();
 
@@ -98,7 +98,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
 
   @Test
   void shouldReadConfigWithNoCredentials() {
-    shouldReadConfigWithCredentialsDefinedInline(null, null);
+    shouldReadConfigWithCredentialsDefinedInline(null, NoneCredentials.create());
   }
 
   @Nested

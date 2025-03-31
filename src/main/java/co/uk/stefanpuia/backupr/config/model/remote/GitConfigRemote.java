@@ -2,8 +2,9 @@ package co.uk.stefanpuia.backupr.config.model.remote;
 
 import co.uk.stefanpuia.backupr.config.model.ModelStyle;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.CredentialsType;
+import co.uk.stefanpuia.backupr.config.model.validation.AllowedCredentials;
 import java.net.URISyntaxException;
-import java.util.Optional;
 import org.eclipse.jgit.transport.URIish;
 import org.immutables.value.Value;
 
@@ -15,7 +16,8 @@ public abstract class GitConfigRemote implements ConfigRemote {
 
   public abstract String getBranch();
 
-  public abstract Optional<Credentials> getCredentials();
+  @AllowedCredentials({CredentialsType.NONE, CredentialsType.BASIC})
+  public abstract Credentials getCredentials();
 
   @Override
   public RemoteType getType() {

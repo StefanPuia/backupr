@@ -2,6 +2,7 @@ package co.uk.stefanpuia.backupr.config.reader.mapper;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
+import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageBlobConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.GitConfigRemote;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
     uses = {CoreDtoMapper.class, ConfigCredentialsMapper.class},
     subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public abstract class ConfigRemoteMapper {
+  private static final NoneCredentials NONE_CREDENTIALS = NoneCredentials.create();
   @Autowired protected ConfigCredentialsMapper credentialsMapper;
 
   @Named("mapRemote")
@@ -91,7 +93,7 @@ public abstract class ConfigRemoteMapper {
       @Context List<Credentials> credentials,
       @Context VariablesWrapper variables);
 
-  protected Optional<Credentials> mapMixedCredentials(
+  protected Credentials mapMixedCredentials(
       final ConfigRemoteWithCredentialsDto remote,
       final @Context String sourceName,
       final @Context List<Credentials> credentials,
@@ -99,31 +101,29 @@ public abstract class ConfigRemoteMapper {
     final var source = remote.getCredentials();
 
     if (Objects.isNull(source)) {
-      return Optional.empty();
+      return NONE_CREDENTIALS;
     }
 
     if (Objects.isNull(source.credentials()) && Objects.isNull(source.name())) {
-      return Optional.empty();
+      return NONE_CREDENTIALS;
     }
 
     if (Objects.nonNull(source.credentials())) {
-      return Optional.ofNullable(
-          credentialsMapper.mapCredential(
-              source.credentials(),
-              Optional.ofNullable(remote.getName())
-                  .orElseGet(() -> this.getInlineName(remote.getType(), sourceName)),
-              variables));
+      return credentialsMapper.mapCredential(
+          source.credentials(),
+          Optional.ofNullable(remote.getName())
+              .orElseGet(() -> this.getInlineName(remote.getType(), sourceName)),
+          variables);
     }
 
-    return Optional.of(
-        credentials.stream()
-            .filter(cred -> source.name().equals(cred.getName()))
-            .findFirst()
-            .orElseThrow(
-                () ->
-                    new ConfigValidationException(
-                        "in remote '%s': no credentials named '%s' defined"
-                            .formatted(remote.getName(), source.name()))));
+    return credentials.stream()
+        .filter(cred -> source.name().equals(cred.getName()))
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new ConfigValidationException(
+                    "in remote '%s': no credentials named '%s' defined"
+                        .formatted(remote.getName(), source.name())));
   }
 
   @AfterMapping

@@ -5,9 +5,13 @@ import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public interface NoneCredentials extends Credentials {
+public abstract class NoneCredentials implements Credentials {
+  public static NoneCredentials create() {
+    return ImmutableNoneCredentials.builder().build();
+  }
+
   @Override
-  default CredentialsType getType() {
+  public CredentialsType getType() {
     return CredentialsType.NONE;
   }
 }

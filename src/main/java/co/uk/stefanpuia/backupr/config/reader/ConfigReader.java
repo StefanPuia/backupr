@@ -29,15 +29,17 @@ public class ConfigReader {
   public BackuprConfig readConfig(final InputStream inputStream) {
     try {
       final var configDto = objectMapper.readValue(inputStream, BackuprConfigDto.class);
-      validate(configDto);
-      return requireNonNull(mapper.convert(configDto));
+      validate(configDto, "configuration file");
+      final var config = requireNonNull(mapper.convert(configDto));
+      validate(config, "configuration");
+      return config;
     } catch (IOException e) {
       throw new ConfigFileReadException(e);
     }
   }
 
-  private void validate(final BackuprConfigDto config) {
-    final var errors = new BeanPropertyBindingResult(config, "config");
+  private void validate(final Object config, final String objectName) {
+    final var errors = new BeanPropertyBindingResult(config, objectName);
     validator.validate(config, errors);
 
     if (errors.getErrorCount() > 0) {

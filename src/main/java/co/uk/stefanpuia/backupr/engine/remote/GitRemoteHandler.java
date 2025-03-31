@@ -46,21 +46,16 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
       git.remoteAdd().setName(REMOTE_NAME).setUri(remote.originUri()).call();
 
       log.debug("Fetching '{}' shallowly", remote.getBranch());
-      final var fetch =
-          git.fetch()
-              .setForceUpdate(true)
-              .setRemote(REMOTE_NAME)
-              .setRecurseSubmodules(FetchRecurseSubmodulesMode.NO)
-              .setInitialBranch(remote.getBranch())
-              .setRefSpecs(
-                  new RefSpec(
-                      "refs/heads/" + remote.getBranch() + ":refs/heads/" + remote.getBranch()))
-              .setDepth(1);
-      remote
-          .getCredentials()
-          .map(credentialsProviderMapper::convert)
-          .ifPresent(fetch::setCredentialsProvider);
-      fetch.call();
+      git.fetch()
+          .setForceUpdate(true)
+          .setRemote(REMOTE_NAME)
+          .setRecurseSubmodules(FetchRecurseSubmodulesMode.NO)
+          .setInitialBranch(remote.getBranch())
+          .setRefSpecs(
+              new RefSpec("refs/heads/" + remote.getBranch() + ":refs/heads/" + remote.getBranch()))
+          .setDepth(1)
+          .setCredentialsProvider(credentialsProviderMapper.convert(remote.getCredentials()))
+          .call();
 
       log.debug("Checking out branch '{}'", remote.getBranch());
       git.checkout()
@@ -94,11 +89,8 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
     git.commit().setMessage("Automatic backup").call();
     log.debug("Pushing commit");
     if (isDryRun()) return;
-    final var push = git.push();
-    remote
-        .getCredentials()
-        .map(credentialsProviderMapper::convert)
-        .ifPresent(push::setCredentialsProvider);
-    push.call();
+    git.push()
+        .setCredentialsProvider(credentialsProviderMapper.convert(remote.getCredentials()))
+        .call();
   }
 }

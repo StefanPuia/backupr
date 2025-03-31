@@ -5,7 +5,6 @@ import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.remote.mapper.AzureCredentialMapper;
-import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobHttpHeaders;
@@ -68,19 +67,8 @@ public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
   }
 
   private BlobContainerClient buildClient() {
-    final var credential =
-        remote
-            .getCredentials()
-            .map(
-                cred -> {
-                  log.debug("Using credential '{}'", cred.getName());
-                  return credentialMapper.convert(cred);
-                })
-            .orElseGet(
-                () -> {
-                  log.debug("No credentials provided. Using default azure credential strategy");
-                  return new DefaultAzureCredentialBuilder().build();
-                });
+    log.debug("Using credential '{}'", remote.getCredentials().getName());
+    final var credential = credentialMapper.convert(remote.getCredentials());
     return new BlobServiceClientBuilder()
         .endpoint(remote.getEndpoint())
         .credential(credential)

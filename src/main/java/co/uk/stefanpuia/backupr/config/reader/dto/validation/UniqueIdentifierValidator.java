@@ -4,9 +4,7 @@ import co.uk.stefanpuia.backupr.config.reader.dto.IdentifiableConfigDto;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.util.List;
-import org.springframework.stereotype.Component;
 
-@Component
 public class UniqueIdentifierValidator
     implements ConstraintValidator<UniqueIdentifier, List<? extends IdentifiableConfigDto>> {
   @Override
