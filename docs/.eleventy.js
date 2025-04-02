@@ -32,6 +32,7 @@ module.exports = config => {
   config.addPassthroughCopy('./src/css/**');
   config.addPassthroughCopy('./src/js/**');
   config.addPassthroughCopy('./src/font/**');
+  config.addPassthroughCopy({ '../src/main/resources/backupr.schema.json': '/backupr.schema.json' });
 
   config.addCollection('posts', collection => {
     const items = collection.getFilteredByGlob('./src/posts/**/posts/*.md');
