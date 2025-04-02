@@ -1,0 +1,4 @@
+{
+  "layout": "layouts/post.html",
+  "permalink": "/transformers/{{ title | slug }}/index.html"
+}

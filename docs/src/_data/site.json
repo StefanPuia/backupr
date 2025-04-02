@@ -1,0 +1,13 @@
+{
+  "authorEmail": "",
+  "authorName": "Stefan",
+  "copyright": "Some rights reserved.",
+  "name": "Backupr",
+  "slogan": "A backup tool for your everything.",
+  "social": {
+    "twitter": "",
+    "github": "https://github.com/StefanPuia/backupr",
+    "discord": ""
+  },
+  "url": "https://eleventy-documentation.sprucecss.com"
+}
