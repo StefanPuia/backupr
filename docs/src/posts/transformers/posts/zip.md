@@ -4,10 +4,10 @@ summary: ""
 eleventyNavigation:
   key: zip
   parent: Transformers
-  order: 1
+  order: 21
 ---
 
-## The .zip transformer
+## Description
 
 The .zip [transformer](/getting-started/features/#transformer) is a simple archiving transformer that will add all
 source files to a single .zip archive file.

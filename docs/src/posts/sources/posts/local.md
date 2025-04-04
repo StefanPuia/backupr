@@ -4,17 +4,15 @@ summary: ""
 eleventyNavigation:
   key: Local Source
   parent: Sources
-  order: 1
+  order: 11
 ---
 
-## The local source
+## Description
 
 The local [source](/getting-started/features/#source) is a source type that uses the current machine's file system to
 look up files for backing up.
 
 ## Configuration
-
-### Available configuration options
 
 ```json5
 {
@@ -41,6 +39,8 @@ look up files for backing up.
 }
 
 ```
+
+### Available configuration options
 
 #### name
 

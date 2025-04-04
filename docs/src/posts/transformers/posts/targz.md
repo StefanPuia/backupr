@@ -4,10 +4,10 @@ summary: ""
 eleventyNavigation:
   key: tar.gz
   parent: Transformers
-  order: 2
+  order: 22
 ---
 
-## The .tar.gz transformer
+## Description
 
 The .tar.gz [transformer](/getting-started/features/#transformer) is a simple archiving transformer that will add all
 source files to a single .tar.gz archive file.

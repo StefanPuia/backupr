@@ -4,5 +4,5 @@ summary: ""
 eleventyNavigation:
   key: Git
   parent: Remotes
-  order: 2
+  order: 32
 ---
