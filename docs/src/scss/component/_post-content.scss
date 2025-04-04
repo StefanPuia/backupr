@@ -24,10 +24,11 @@
     margin-top: spacer('s');
   }
 
-  h2[id] {
+  h2[id], h3[id], h4[id] {
     align-items: flex-start;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    column-gap: 0.5em;
 
     &:hover .anchor,
     &:focus-within .anchor {
@@ -60,5 +61,47 @@
 
   picture {
     display: flex;
+  }
+
+  ul.field-chips {
+    display: flex;
+    padding: 0;
+
+    li {
+      display: block;
+      list-style: none;
+      margin: 0 0.3rem 0 0;
+      border-radius: 0.375rem;
+      background-color: color('code-background');
+      padding: 0.125rem 0.625rem;
+      border-width: 1px;
+      border-color: transparent;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      color: color('text');
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      text-transform: lowercase;
+
+      &.field-chip {
+        &-required {
+          background-color: color('danger', 'alert');
+          color: light-dark(color('mark-foreground'), color('text'));
+        }
+
+        &-default {
+          color: light-dark(color('mark-foreground'), color('text'));
+        }
+
+        &-template {
+          background-color: color('info', 'alert');
+          color: light-dark(color('mark-foreground'), color('text'));
+        }
+
+        &-constant {
+          background-color: color('warning', 'alert');
+          color: color('mark-foreground');
+        }
+      }
+    }
   }
 }

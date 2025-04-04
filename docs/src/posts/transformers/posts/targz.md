@@ -26,7 +26,7 @@ _The original directory structure of the source files will be preserved inside t
     "transformers": [
       {
         "targz": {
-          "filenamePattern": "<context.sourceName>-<context.now>.zip"
+          "filenamePattern": "<context.sourceName>-<context.now>.tar.gz"
         }
       }
     ]
@@ -37,7 +37,12 @@ _The original directory structure of the source files will be preserved inside t
 
 #### filenamePattern
 
-Pattern to be used as filename for the created tar.gz file. Supports templating with [context](#context).
+- default value{.field-chip-default}
+- template enabled{.field-chip-template}
+  {.field-chips}
+
+Pattern to be used as filename for the created tar.gz file. Supports templating with [context](#context). Defaults to
+`"<context.sourceName>-<context.now>.tar.gz"`.
 
 ### Default configuration
 
