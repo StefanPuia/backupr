@@ -88,6 +88,6 @@ public class ConfigFileProviderTest {
     final var location = configFileProvider.getDefaultLocation();
 
     // Then
-    then(location).isEqualTo(Path.of(System.getProperty("user.home"), ".backupr.json").toString());
+    then(location).isEqualTo(Path.of(System.getProperty("user.home"), ".backupr.jsonc").toString());
   }
 }
