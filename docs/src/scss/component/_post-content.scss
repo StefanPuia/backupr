@@ -85,23 +85,26 @@
   }
 }
 
-.field-chip {
-  &-required {
-    background-color: color('danger', 'alert');
-    color: light-dark(color('mark-foreground'), color('text'));
-  }
 
-  &-default {
-    color: light-dark(color('mark-foreground'), color('text'));
-  }
+code, ul.field-chips>li {
+  &.field-chip {
+    &-required {
+      background-color: color('danger', 'alert');
+      color: light-dark(color('mark-foreground'), color('text'));
+    }
 
-  &-template {
-    background-color: color('info', 'alert');
-    color: light-dark(color('mark-foreground'), color('text'));
-  }
+    &-default {
+      color: light-dark(color('mark-foreground'), color('text'));
+    }
 
-  &-constant {
-    background-color: color('warning', 'alert');
-    color: color('mark-foreground');
+    &-template {
+      background-color: color('info', 'alert');
+      color: light-dark(color('mark-foreground'), color('text'));
+    }
+
+    &-constant {
+      background-color: color('warning', 'alert');
+      color: color('mark-foreground');
+    }
   }
 }
