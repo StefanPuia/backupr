@@ -1,6 +1,5 @@
 ---
 title: "Back up your stuff."
-headline: "Backupr"
 btns:
 -
     caption: "Introduction"
