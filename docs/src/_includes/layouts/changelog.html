@@ -11,12 +11,19 @@
                 <div class="changelog-item">
                     <time datetime="{{ change.date | w3DateFilter }}" class="changelog-item__date">{{ change.date | dateFilter }}</time>
                     <div class="changelog-item__body post-content">
-                        <h2 class="changelog-item__title">{{ change.title }}</h2>
-                        <ul>
-                            {% for row in change.items %}
-                                <li>{% markdownRender row %}</li>
-                            {% endfor %}
-                        </ul>
+                        <h2 class="changelog-item__title">{{ change.tag }}</h2>
+                        <a href="https://github.com/StefanPuia/backupr/releases/tag/{{ change.tag }}" rel="noreferer" target="_blank" class="changelog-item__url">Open on GitHub</a>
+                        <h4 class="changelog-item__title">{{ change.title }}</h4>
+                        {% if change.content %}
+                            {% markdownRender change.content %}
+                        {% endif %}
+                        {% if change.items %}
+                            <ul>
+                                {% for row in change.items %}
+                                    <li>{% markdownRender row %}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

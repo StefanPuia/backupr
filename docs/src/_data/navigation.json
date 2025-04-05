@@ -12,13 +12,13 @@
     },
     {
       "caption": "Download",
-      "url": "/download/",
-      "external": false
+      "url": "https://github.com/StefanPuia/backupr/releases/latest",
+      "external": true
     }
   ],
   "footer": [
     {
-      "title": "Getting Started",
+      "title": "Backupr",
       "items": [
         {
           "caption": "Introduction",
@@ -31,59 +31,64 @@
           "external": false
         },
         {
-          "caption": "Structure",
-          "url": "/getting-started/structure/",
+          "caption": "Configuration",
+          "url": "/getting-started/configuration/",
           "external": false
         },
         {
-          "caption": "Setup",
-          "url": "/getting-started/setup/",
+          "caption": "CLI Reference",
+          "url": "/getting-started/cli-reference/",
           "external": false
         }
       ]
     },
     {
-      "title": "Spruce CSS",
+      "title": "Features and releases",
       "items": [
         {
-          "caption": "Introduction",
-          "url": "https://sprucecss.com/docs/getting-started/introduction/",
+          "caption": "Changelog",
+          "url": "/changelog/",
+          "external": false
+        },
+        {
+          "caption": "Releases",
+          "url": "https://github.com/StefanPuia/backupr/releases",
           "external": true
         },
         {
-          "caption": "Themes",
-          "url": "https://sprucecss.com/docs/customization/themes/",
+          "caption": "Planned changes",
+          "url": "https://github.com/StefanPuia/backupr/milestones",
           "external": true
         },
         {
-          "caption": "Components",
-          "url": "https://sprucecss.com/ui/getting-started/introduction/",
+          "caption": "Issues",
+          "url": "https://github.com/StefanPuia/backupr/issues",
           "external": true
         }
       ]
     },
     {
-      "title": "More From Us",
+      "title": "Many thanks",
       "items": [
         {
-          "caption": "Services",
-          "url": "https://conedevelopment.com/services/",
+          "caption": "Spring Shell",
+          "url": "https://spring.io/projects/spring-shell/",
           "external": true
         },
         {
-          "caption": "Pine development blog",
-          "url": "https://pineco.de/",
+          "caption": "Spruce CSS",
+          "url": "https://github.com/conedevelopment/sprucecss-eleventy-documentation-template",
           "external": true
         },
         {
-          "caption": "Root Laravel admin",
-          "url": "https://root.conedevelopment.com/",
+          "caption": "11ty",
+          "url": "https://www.11ty.dev/",
           "external": true
         },
         {
-          "caption": "Bite-Sized Accessibility",
-          "url": "https://bite-sized-a11y.com/",
-          "external": true
+          "caption": "Open source",
+          "url": "/open-source-software/",
+          "external": false
         }
       ]
     }

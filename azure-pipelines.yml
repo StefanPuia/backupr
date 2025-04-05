@@ -1,5 +1,10 @@
 pr: none
 
+trigger:
+  paths:
+    exclude:
+      - docs
+
 variables:
   isMain: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/main') }}
   GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle

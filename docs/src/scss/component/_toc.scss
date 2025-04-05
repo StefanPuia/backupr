@@ -11,6 +11,26 @@
     ol {
       @include clear-list;
       @include layout-stack('xs');
+
+      li {
+
+        ol {
+          font-size: 0.9rem;
+          margin-left: 1rem;
+
+          li {
+
+            ol {
+              font-size: 0.8rem;
+              margin-left: 1rem;
+
+              li {
+                list-style: square;
+              }
+            }
+          }
+        }
+      }
     }
 
     a {

@@ -4,5 +4,5 @@ summary: ""
 eleventyNavigation:
   key: Azure CLI
   parent: Credentials
-  order: 3
+  order: 43
 ---

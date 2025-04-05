@@ -28,3 +28,12 @@
     }
   }
 }
+
+@include generate-table();
+.context-variable-table {
+  @extend .table;
+  @extend .table--clear-border;
+  @extend .table-responsive;
+  @extend .table--sm;
+  @extend .table--striped;
+}

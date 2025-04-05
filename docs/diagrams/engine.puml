@@ -1,0 +1,31 @@
+@startuml
+start
+
+:read JSON config;
+
+:apply variable templates
+and validate configuration;
+
+while (for each source)
+
+    :find contents to back up;
+
+    if (source has transformers) then (yes)
+
+        while (for each transformer)
+
+            :apply transformation;
+            ->//set transformation output as new sources//;
+
+        endwhile
+    endif
+
+    while (for each remote)
+
+        :upload files to remote;
+
+    endwhile
+endwhile
+
+stop
+@enduml

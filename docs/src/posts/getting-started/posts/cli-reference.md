@@ -7,34 +7,114 @@ eleventyNavigation:
   order: 5
 ---
 
-## Clone the repository
+## backup
 
-Today more people and experts write about accessibility. For the better progression it is a good idea to read them.
+Start the backup process.
 
-## Install the dependencies
-
-In the `package.json` file, you will find all of the dependencies (and scripts) to install them using the following command:
+### Usage
 
 ```shell
-npm install
+backupr backup [OPTIONS]
 ```
 
-## Run the development mode
+#### dry
 
-To run the development mode, use the `npm script`.   This script will also watch for changes.
+Does not perform persistent steps in the backup process. It may, however, authenticate or connect to certain remotes, as
+well as create temporary files.
+
+Alias: `-d`
 
 ```shell
-npm start
+backupr backup --dry
 ```
 
-## Run the production mode
+#### config
 
-Before you go live, you should use the production script to compress the Sass files.
+Used to specify a different [configuration](/getting-started/configuration) file location.
+
+Alias: `-c`
 
 ```shell
-npm run prod
+backupr backup --config "/custom/config/location.json"
 ```
 
-## Additional Scripts
+#### verbose
 
-You can find some more npm scripts in the [package.json](https://github.com/conedevelopment/sprucecss-eleventy-documentation-template/blob/main/package.json) that can be helpful.
+Prints out steps of the process. Helpful to understand and debug the backup contents and process.
+
+Alias: `-v`
+
+```shell
+backupr backup --verbose
+```
+
+#### help
+
+Prints out the manual for this command.
+
+Alias: `-h`
+
+```shell
+backupr backup --help
+```
+
+## validate
+
+Validates a configuration file.
+
+### Usage
+
+```shell
+backupr validate [OPTIONS]
+```
+
+#### config
+
+Used to specify a different [configuration](/getting-started/configuration) file location.
+
+Alias: `-c`
+
+```shell
+backupr validate --config "/custom/config/location.json"
+```
+
+#### verbose
+
+Prints out steps of the process.
+
+Alias: `-v`
+
+```shell
+backupr validate --verbose
+```
+
+#### help
+
+Prints out the manual for this command.
+
+Alias: `-h`
+
+```shell
+backupr validate --help
+```
+
+## schema
+
+Prints the [JSON schema](/getting-started/configuration/#json-schema) to the console. Useful if you can't use the online
+version.
+
+### Usage
+
+```shell
+backupr schema
+```
+
+#### help
+
+Prints out the manual for this command.
+
+Alias: `-h`
+
+```shell
+backupr schema --help
+```
