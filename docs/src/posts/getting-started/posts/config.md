@@ -11,6 +11,26 @@ eleventyNavigation:
 
 The Backupr configuration is expected in a JSON (or JSONC) format. The schema is available [here](/backupr.schema.json).
 
+The structure of the configuration file is as follows:
+
+```json5
+{
+  // global values to be reused
+  "variables": {},
+
+  // global credentials to be reused
+  "credentials": [],
+
+  // global remotes to be reused, can have bespoke credentials
+  // defined inside each remote
+  "remotes": [],
+
+  // sources, can have bespoke remotes defined inside each source,
+  // and credentials inside each remote
+  "sources": [],
+}
+```
+
 ## File locations
 
 The configuration can be provided through one of the following methods. The default lookup order is
@@ -81,6 +101,30 @@ that allows setting global values which can be reused in template enabled fields
 
 Variables are available without a prefix, but `env` and `context` are reserved words, and variables named either of
 those will be overwritten.
+
+Variables can also contain template placeholders (though only variables or environment, not context). Variables are
+loaded and placeholders replaced in the order they are defined, so a variable must exist above one that references it as
+a placeholder:
+
+```json5
+{
+  // assuming environment variable MY_VAR=123
+  "variables": {
+    "var1": "ABC",
+
+    // value will be "_ABC_"
+    "var2": "_<var1>_",
+
+    // value will be "123"
+    "var3": "<env.MY_VAR>",
+
+    // value will be ""
+    "var4": "<var5>",
+
+    "var5": "DEF"
+  }
+}
+```
 
 ### Environment variables
 
