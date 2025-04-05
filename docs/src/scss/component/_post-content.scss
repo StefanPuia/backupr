@@ -81,27 +81,27 @@
       color: color('text');
       box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
       text-transform: lowercase;
-
-      &.field-chip {
-        &-required {
-          background-color: color('danger', 'alert');
-          color: light-dark(color('mark-foreground'), color('text'));
-        }
-
-        &-default {
-          color: light-dark(color('mark-foreground'), color('text'));
-        }
-
-        &-template {
-          background-color: color('info', 'alert');
-          color: light-dark(color('mark-foreground'), color('text'));
-        }
-
-        &-constant {
-          background-color: color('warning', 'alert');
-          color: color('mark-foreground');
-        }
-      }
     }
+  }
+}
+
+.field-chip {
+  &-required {
+    background-color: color('danger', 'alert');
+    color: light-dark(color('mark-foreground'), color('text'));
+  }
+
+  &-default {
+    color: light-dark(color('mark-foreground'), color('text'));
+  }
+
+  &-template {
+    background-color: color('info', 'alert');
+    color: light-dark(color('mark-foreground'), color('text'));
+  }
+
+  &-constant {
+    background-color: color('warning', 'alert');
+    color: color('mark-foreground');
   }
 }

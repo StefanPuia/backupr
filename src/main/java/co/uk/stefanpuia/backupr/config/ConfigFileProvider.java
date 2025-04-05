@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class ConfigFileProvider {
-  private static final String DEFAULT_CONFIG_FILE_NAME = ".backupr.json";
+  private static final String DEFAULT_CONFIG_FILE_NAME = ".backupr.jsonc";
   private static final String DEFAULT_LOCATION = System.getProperty("user.home");
 
   private final EnvironmentReader environmentReader;

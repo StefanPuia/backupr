@@ -47,7 +47,7 @@ look up files for backing up.
 - required{.field-chip-required}
   {.field-chips}
 
-The name of the source. This has to be a valid [identifier](/getting-started/configuration#identifier).
+The name of the source. This has to be a valid [identifier](/getting-started/configuration/#identifier).
 
 #### type
 
@@ -116,7 +116,7 @@ Available matchers, given the following file structure:
 
 #### remotes
 
-An array of [remote](/getting-started/features/#remote) [identifiers](/getting-started/configuration#identifier), or
+An array of [remote](/getting-started/features/#remote) [identifiers](/getting-started/configuration/#identifier), or
 inline configurations. If using an identifier, a remote with the respective name must exist in the root configuration.
 
 See [remotes](/remotes) for a list of available remotes.

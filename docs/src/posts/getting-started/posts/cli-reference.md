@@ -100,7 +100,7 @@ backupr validate --help
 
 ## schema
 
-Prints the [JSON schema](/getting-started/configuration#json-schema) to the console. Useful if you can't use the online
+Prints the [JSON schema](/getting-started/configuration/#json-schema) to the console. Useful if you can't use the online
 version.
 
 ### Usage
