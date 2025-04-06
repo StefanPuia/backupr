@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.Set;
 
 public interface Transformer {
+  TransformerType getType();
+
   Transformer setDry(boolean dry);
 
   Set<File> transform(ConfigSource source, Set<File> files);

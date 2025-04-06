@@ -1,5 +1,6 @@
 package co.uk.stefanpuia.backupr.config.reader.dto.transformers;
 
+import co.uk.stefanpuia.backupr.engine.transformers.TransformerType;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -24,8 +25,7 @@ public class MixedTransformerArrayDeserializer
     if (rootNode.isArray()) {
       for (JsonNode node : (ArrayNode) rootNode) {
         if (node.isTextual()) {
-          result.add(
-              getDefaultOptions(mapper.convertValue(node.asText(), SourceTransformer.class)));
+          result.add(getDefaultOptions(mapper.convertValue(node.asText(), TransformerType.class)));
         } else if (node.isObject()) {
           result.add(mapper.readValue(node.toString(), TransformerOptionsDto.class));
         }
@@ -34,7 +34,7 @@ public class MixedTransformerArrayDeserializer
     return result;
   }
 
-  private TransformerOptionsDto getDefaultOptions(final SourceTransformer sourceTransformer) {
+  private TransformerOptionsDto getDefaultOptions(final TransformerType sourceTransformer) {
     return switch (sourceTransformer) {
       case ZIP -> ImmutableZipTransformerOptionsDto.builder().build();
       case TARGZ -> ImmutableTarGzTransformerOptionsDto.builder().build();

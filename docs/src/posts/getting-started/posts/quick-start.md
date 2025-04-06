@@ -16,7 +16,8 @@ download the latest version of the executable for your operating system.
 
 ## Configure
 
-Create a `.backupr.json` [configuration](/getting-started/configuration) file in your _home directory_ with the following contents, making sure to replace the `[[placeholders]]`:
+Create a `.backupr.jsonc` [configuration](/getting-started/configuration) file in your _home directory_ with the
+following contents, making sure to replace the `[[placeholders]]`:
 
 ```json5
 {
@@ -26,8 +27,12 @@ Create a `.backupr.json` [configuration](/getting-started/configuration) file in
       "name": "quickstart",
       "type": "LOCAL",
       "directory": "[[enter a directory to back up]]",
-      "files": ["**"],
-      "transformers": ["ZIP"],
+      "files": [
+        "**"
+      ],
+      "transformers": [
+        "ZIP"
+      ],
       "remotes": [
         {
           type: "LOCAL",
@@ -40,7 +45,6 @@ Create a `.backupr.json` [configuration](/getting-started/configuration) file in
 ```
 
 ## Create a backup
-
 
 ```shell
 backupr backup --verbose

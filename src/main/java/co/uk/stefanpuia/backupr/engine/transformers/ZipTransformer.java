@@ -25,6 +25,11 @@ public class ZipTransformer extends AbstractTransformer {
   private final StringTemplateRenderer stringTemplateRenderer;
 
   @Override
+  public TransformerType getType() {
+    return TransformerType.ZIP;
+  }
+
+  @Override
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
     try {
       final var zip = createZipFile(source);

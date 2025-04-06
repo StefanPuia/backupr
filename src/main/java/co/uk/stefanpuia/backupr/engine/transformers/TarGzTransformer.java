@@ -25,6 +25,11 @@ public class TarGzTransformer extends AbstractTransformer {
   private final StringTemplateRenderer stringTemplateRenderer;
 
   @Override
+  public TransformerType getType() {
+    return TransformerType.TARGZ;
+  }
+
+  @Override
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
     try {
       final var archive = createArchive(source);

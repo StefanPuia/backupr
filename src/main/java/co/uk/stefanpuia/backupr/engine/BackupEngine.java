@@ -60,7 +60,7 @@ public class BackupEngine {
     Set<File> transformedFiles = new HashSet<>(sourceFiles);
     for (final var transformerType : source.getTransformers()) {
       final var transformer = transformerFactory.getInstance(transformerType).setDry(dry);
-      log.debug("Transforming using '{}' transformer", transformerType);
+      log.debug("Transforming using '{}' transformer", transformer.getType());
 
       transformedFiles = transformer.transform(source, transformedFiles);
       log.debug("Transformed to {} files:", transformedFiles.size());
