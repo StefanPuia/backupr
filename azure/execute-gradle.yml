@@ -1,5 +1,8 @@
 parameters:
   - name: gradleTasks
+  - name: useGraal
+    type: boolean
+    default: true
   - name: publishJUnitResults
     type: boolean
     default: false
@@ -9,14 +12,22 @@ parameters:
     default: linux-x64_bin.tar.gz
 
 steps:
-  - task: DownloadGitHubRelease@0
-    inputs:
-      connection: StefanPuia
-      userRepository: graalvm/graalvm-ce-builds
-      defaultVersionType: specificTag
-      version: ${{ parameters.graalJdkVersion }}
-      itemPattern: 'graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
-      downloadPath: "$(Agent.TempDirectory)"
+  - ${{ if eq(parameters.useGraal, true) }}:
+      - task: DownloadGitHubRelease@0
+        inputs:
+          connection: StefanPuia
+          userRepository: graalvm/graalvm-ce-builds
+          defaultVersionType: specificTag
+          version: ${{ parameters.graalJdkVersion }}
+          itemPattern: 'graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
+          downloadPath: '$(Agent.TempDirectory)'
+  - ${{ else }}:
+      - task: JavaToolInstaller@0
+        displayName: Set java version to 21
+        inputs:
+          versionSpec: '21'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'PreInstalled'
 
   - task: JavaToolInstaller@0
     displayName: Set java version to 21
@@ -24,7 +35,7 @@ steps:
       versionSpec: '21'
       jdkArchitectureOption: 'x64'
       jdkSourceOption: 'LocalDirectory'
-      jdkFile: "$(Agent.TempDirectory)/graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}"
+      jdkFile: '$(Agent.TempDirectory)/graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
       jdkDestinationDirectory: '$(agent.toolsDirectory)/jdk21'
       cleanDestinationDirectory: false
 

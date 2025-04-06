@@ -18,6 +18,7 @@ stages:
         steps:
           - template: azure/execute-gradle.yml
             parameters:
+              useGraal: false
               gradleTasks: clean check
               publishJUnitResults: true
 
