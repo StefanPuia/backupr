@@ -21,28 +21,28 @@ stages:
               gradleTasks: clean check
               publishJUnitResults: true
 
-#  - ${{ if eq(variables.isMain, true) }}:
-  - stage: package
-    dependsOn: check
-    variables:
-      - group: package
-    jobs:
-      - job: packageUbuntu
-        pool:
-          vmImage: ubuntu-latest
-        steps:
-          - template: azure/execute-gradle.yml
-            parameters:
-              gradleTasks: nativeCompile
-          - publish: build/native/nativeCompile/backupr
-            name: linux-x64
-      - job: packageWindows
-        pool:
-          vmImage: windows-latest
-        steps:
-          - template: azure/execute-gradle.yml
-            parameters:
-              gradleTasks: nativeCompile
-              graalVmReleaseItem: windows-x64_bin.zip
-          - publish: build/native/nativeCompile/backupr.exe
-            name: windows-x64
+  - ${{ if eq(variables.isMain, true) }}:
+      - stage: package
+        dependsOn: check
+        variables:
+          - group: package
+        jobs:
+          - job: packageUbuntu
+            pool:
+              vmImage: ubuntu-latest
+            steps:
+              - template: azure/execute-gradle.yml
+                parameters:
+                  gradleTasks: nativeCompile
+              - publish: build/native/nativeCompile/backupr
+                artifact: linux-x64
+          - job: packageWindows
+            pool:
+              vmImage: windows-latest
+            steps:
+              - template: azure/execute-gradle.yml
+                parameters:
+                  gradleTasks: nativeCompile
+                  graalVmReleaseItem: windows-x64_bin.zip
+              - publish: build/native/nativeCompile/backupr.exe
+                artifact: windows-x64
