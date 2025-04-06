@@ -21,6 +21,17 @@ steps:
           version: ${{ parameters.graalJdkVersion }}
           itemPattern: 'graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
           downloadPath: '$(Agent.TempDirectory)'
+
+      - task: JavaToolInstaller@0
+        displayName: Set java version to 21
+        inputs:
+          versionSpec: '21'
+          jdkArchitectureOption: 'x64'
+          jdkSourceOption: 'LocalDirectory'
+          jdkFile: '$(Agent.TempDirectory)/graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
+          jdkDestinationDirectory: '$(agent.toolsDirectory)/jdk21'
+          cleanDestinationDirectory: false
+
   - ${{ else }}:
       - task: JavaToolInstaller@0
         displayName: Set java version to 21
@@ -28,16 +39,6 @@ steps:
           versionSpec: '21'
           jdkArchitectureOption: 'x64'
           jdkSourceOption: 'PreInstalled'
-
-  - task: JavaToolInstaller@0
-    displayName: Set java version to 21
-    inputs:
-      versionSpec: '21'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'LocalDirectory'
-      jdkFile: '$(Agent.TempDirectory)/graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
-      jdkDestinationDirectory: '$(agent.toolsDirectory)/jdk21'
-      cleanDestinationDirectory: false
 
   - checkout: self
 
