@@ -9,38 +9,38 @@ variables:
   isMain: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/main') }}
   GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
   gradleCacheVersion: v1
+  BUILD_VERSION: $(Build.BuildNumber)
 
 stages:
   - stage: check
     jobs:
       - job: check
         steps:
-          - task: JavaToolInstaller@0
-            displayName: Set java version to 21
-            inputs:
-              versionSpec: '21'
-              jdkArchitectureOption: 'x64'
-              jdkSourceOption: 'PreInstalled'
-
-          - task: Cache@2
-            inputs:
-              key: '"$(gradleCacheVersion)" | "gradle" | "$(Agent.OS)" | **/build.gradle'
-              restoreKeys: |
-                "$(gradleCacheVersion)" | "gradle" | "$(Agent.OS)"
-                "$(gradleCacheVersion)" | "gradle"
-                "$(gradleCacheVersion)"
-              path: $(GRADLE_USER_HOME)
-            displayName: Configure gradle caching
-
-          - task: Gradle@3
-            displayName: Gradle Build
-            inputs:
-              options: '--build-cache -Duser.language=en -Duser.country=GB'
-              tasks: 'clean check'
-              testResultsFiles: '**/TEST-*.xml'
+          - template: azure/execute-gradle.yml
+            parameters:
+              gradleTasks: clean check
               publishJUnitResults: true
 
-          # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
-          - script: |
-              ./gradlew --stop
-            displayName: Stop the Gradle daemon
+#  - ${{ if eq(variables.isMain, true) }}:
+  - stage: package
+    dependsOn: check
+    variables:
+      - group: package
+    jobs:
+      - job: packageUbuntu
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - template: azure/execute-gradle.yml
+            parameters:
+              gradleTasks: nativeCompile
+          - publish: build/native/nativeCompile
+      - job: packageWindows
+        pool:
+          vmImage: windows-latest
+        steps:
+          - template: azure/execute-gradle.yml
+            parameters:
+              gradleTasks: nativeCompile
+              graalVmReleaseItem: windows-x64_bin.zip
+          - publish: build/native/nativeCompile

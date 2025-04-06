@@ -1,0 +1,54 @@
+parameters:
+  - name: gradleTasks
+  - name: publishJUnitResults
+    type: boolean
+    default: false
+  - name: graalJdkVersion
+    default: jdk-21.0.2
+  - name: graalVmReleaseItem
+    default: linux-x64_bin.tar.gz
+
+steps:
+  - task: DownloadGitHubRelease@0
+    inputs:
+      connection: StefanPuia
+      userRepository: graalvm/graalvm-ce-builds
+      defaultVersionType: specificTag
+      version: ${{ parameters.graalJdkVersion }}
+      itemPattern: 'graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}'
+      downloadPath: "$(Agent.TempDirectory)"
+
+  - task: JavaToolInstaller@0
+    displayName: Set java version to 21
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'LocalDirectory'
+      jdkFile: "$(Agent.TempDirectory)/graalvm-community-${{ parameters.graalJdkVersion }}_${{ parameters.graalVmReleaseItem }}"
+      jdkDestinationDirectory: '$(agent.toolsDirectory)/jdk21'
+      cleanDestinationDirectory: false
+
+  - checkout: self
+
+  - task: Cache@2
+    inputs:
+      key: '"$(gradleCacheVersion)" | "gradle" | "$(Agent.OS)" | **/build.gradle'
+      restoreKeys: |
+        "$(gradleCacheVersion)" | "gradle" | "$(Agent.OS)"
+        "$(gradleCacheVersion)" | "gradle"
+        "$(gradleCacheVersion)"
+      path: $(GRADLE_USER_HOME)
+    displayName: Configure gradle caching
+
+  - task: Gradle@3
+    displayName: Gradle Build
+    inputs:
+      options: '--build-cache -Duser.language=en -Duser.country=GB'
+      tasks: '${{ parameters.gradleTasks }}'
+      testResultsFiles: '**/TEST-*.xml'
+      publishJUnitResults: ${{ parameters.publishJUnitResults }}
+
+  # stop the Gradle daemon to ensure no files are left open (impacting the save cache operation later)
+  - script: |
+      ./gradlew --stop
+    displayName: Stop the Gradle daemon

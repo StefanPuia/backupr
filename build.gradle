@@ -1,3 +1,5 @@
+import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
+
 plugins {
     id 'java'
     alias(libs.plugins.spring.boot)
@@ -33,7 +35,8 @@ dependencies {
     implementation libs.spring.shell.starter
     implementation libs.jgit
     implementation libs.commons.compress
-    implementation libs.spring.cloud.azure.starter.storage
+    implementation libs.azure.storage.blob
+    implementation libs.azure.identity
 
     compileOnly libs.string.template
     compileOnly libs.immutables
@@ -57,8 +60,16 @@ configurations {
 
 dependencyManagement {
     imports {
-        mavenBom libs.spring.cloud.azure.dependencies.get().toString()
+        mavenBom libs.azure.bom.get().toString()
         mavenBom libs.spring.shell.dependencies.get().toString()
+    }
+}
+
+springBoot {
+    buildInfo {
+        properties {
+            version = "0.0.1-${System.env.BUILD_VERSION ?: 'local'}"
+        }
     }
 }
 
@@ -67,6 +78,10 @@ tasks.named('test') {
     jvmArgs '--add-opens', 'java.base/java.util=ALL-UNNAMED'
     jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
     jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
+}
+
+tasks.withType(BuildNativeImageTask).configureEach {
+    appendJvmArgs(['-Dspring.profiles.active=native'])
 }
 
 bootRun {

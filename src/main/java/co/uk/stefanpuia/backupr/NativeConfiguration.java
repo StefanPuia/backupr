@@ -1,9 +1,5 @@
 package co.uk.stefanpuia.backupr;
 
-import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
-import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageBlobConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
-import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
@@ -13,25 +9,12 @@ import org.springframework.context.annotation.Profile;
 
 @Profile("native")
 @Configuration
-// @Import({AzureGlobalProperties.class})
-@ImportRuntimeHints(NativeConfiguration.RestRuntimeHints.class)
-@RegisterReflectionForBinding({
-  BackuprConfig.class,
-  LocalConfigSource.class,
-  AzureStorageBlobConfigRemote.class,
-  LocalConfigRemote.class
-})
+@ImportRuntimeHints(NativeConfiguration.AppRuntimeHints.class)
+@RegisterReflectionForBinding()
 public class NativeConfiguration {
 
-  public static class RestRuntimeHints implements RuntimeHintsRegistrar {
+  public static class AppRuntimeHints implements RuntimeHintsRegistrar {
     @Override
-    // @SneakyThrows
-    public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-      // hints
-      //     .reflection()
-      //     .registerConstructor(
-      //         BackuprConfig.class.getDeclaredConstructor(List.class, List.class),
-      //         ExecutableMode.INVOKE);
-    }
+    public void registerHints(RuntimeHints hints, ClassLoader classLoader) {}
   }
 }
