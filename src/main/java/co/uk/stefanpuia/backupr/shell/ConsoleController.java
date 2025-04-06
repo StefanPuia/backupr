@@ -23,7 +23,7 @@ public class ConsoleController {
   private final BackupDelegate backupDelegate;
   private final JsonSchemaWriter schemaWriter;
 
-  @Command(description = "Start the backup process.")
+  @Command(command = "backup", description = "Start the backup process.")
   public void backup(
       final @Option(
               shortNames = 'd',

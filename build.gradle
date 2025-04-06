@@ -68,7 +68,7 @@ dependencyManagement {
 springBoot {
     buildInfo {
         properties {
-            version = "0.0.1-${System.env.BUILD_VERSION ?: 'local'}"
+            version = "0.0.1-alpha-${System.env.BUILD_VERSION ?: 'local'}"
         }
     }
 }

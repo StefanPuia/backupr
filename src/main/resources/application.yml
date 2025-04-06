@@ -7,6 +7,10 @@ spring:
     log-startup-info: false
     web-application-type: none
   shell:
+    interactive:
+      enabled: false
+    script:
+      enabled: false
     noninteractive:
       primary-command: "${PRIMARY_COMMAND:}"
   profiles:
