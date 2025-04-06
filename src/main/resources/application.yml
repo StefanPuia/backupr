@@ -8,10 +8,7 @@ spring:
     web-application-type: none
   shell:
     noninteractive:
-      primary-command: "${PRIMARY_COMMAND:backup --dry --verbose}"
-#      primary-command: validate --verbose
-#    interactive:
-#      enabled: true
+      primary-command: "${PRIMARY_COMMAND:}"
   profiles:
     active: "${SPRING_PROFILES_ACTIVE:}"
 
