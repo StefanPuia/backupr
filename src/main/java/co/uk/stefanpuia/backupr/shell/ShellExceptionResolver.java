@@ -5,11 +5,13 @@ import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.springframework.shell.command.CommandExceptionResolver;
 import org.springframework.shell.command.CommandHandlingResult;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ShellExceptionResolver implements CommandExceptionResolver {
   @Override
   public CommandHandlingResult resolve(final Exception ex) {
-    return CommandHandlingResult.of(getResultMessage(ex) + "\n\n", 1);
+    return CommandHandlingResult.of("\nERROR: %s\n\n".formatted(getResultMessage(ex)), 1);
   }
 
   private String getResultMessage(final Throwable ex) {

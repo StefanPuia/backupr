@@ -36,13 +36,13 @@ public class ConfigFileProvider {
 
   public InputStream getConfigInputStream(final String configPath)
       throws ConfigFileNotFoundException {
+    final var location = resolveConfigPath(configPath);
     try {
-      final var location = resolveConfigPath(configPath);
       log.debug("Reading config file at '{}'", location);
 
       return new FileInputStream(location);
     } catch (final FileNotFoundException e) {
-      throw new ConfigFileNotFoundException(configPath);
+      throw new ConfigFileNotFoundException(location);
     }
   }
 }
