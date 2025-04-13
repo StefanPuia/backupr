@@ -9,7 +9,7 @@ eleventyNavigation:
 
 ## Description
 
-The .zip [transformer](/getting-started/features/#transformer) is a simple archiving transformer that will add all
+The `.zip` [transformer](/getting-started/features/#transformer) is a simple archiving transformer that will add all
 source files to a single .zip archive file.
 
 _The original directory structure of the source files will be preserved inside the archive._

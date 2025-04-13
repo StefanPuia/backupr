@@ -174,3 +174,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# Production css
+src/css/main.css

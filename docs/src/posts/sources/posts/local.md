@@ -9,7 +9,7 @@ eleventyNavigation:
 
 ## Description
 
-The local [source](/getting-started/features/#source) is a source type that uses the current machine's file system to
+The `local` [source](/getting-started/features/#source) is a source type that uses the current machine's file system to
 look up files for backing up.
 
 ## Configuration
@@ -42,12 +42,7 @@ look up files for backing up.
 
 ### Available configuration options
 
-#### name
-
-- required{.field-chip-required}
-  {.field-chips}
-
-The name of the source. This has to be a valid [identifier](/getting-started/configuration/#identifier).
+{% include 'partials/sources/common-configuration-before.md' %}
 
 #### type
 
@@ -56,13 +51,6 @@ The name of the source. This has to be a valid [identifier](/getting-started/con
   {.field-chips}
 
 A constant that tells the engine what kind of source this object is. This **must** be set to `"LOCAL"`.
-
-#### disabled
-
-- default value{.field-chip-default}
-  {.field-chips}
-
-Whether to ignore this source during the backup process. Defaults to `false`.
 
 #### directory
 
@@ -114,16 +102,4 @@ Available matchers, given the following file structure:
 
 {.table .table--striped}
 
-#### remotes
-
-An array of [remote](/getting-started/features/#remote) [identifiers](/getting-started/configuration/#identifier), or
-inline configurations. If using an identifier, a remote with the respective name must exist in the root configuration.
-
-See [remotes](/remotes) for a list of available remotes.
-
-#### transformers
-
-An array of [transformer](/getting-started/features/#transformer) types, or inline configurations. Transformers will be
-executed in the order they are defined in the array.
-
-See [transformers](/transformers) for a list of available transformers.
+{% include 'partials/sources/common-configuration-after.md' %}

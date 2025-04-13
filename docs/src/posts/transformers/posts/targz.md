@@ -9,7 +9,7 @@ eleventyNavigation:
 
 ## Description
 
-The .tar.gz [transformer](/getting-started/features/#transformer) is a simple archiving transformer that will add all
+The `.tar.gz` [transformer](/getting-started/features/#transformer) is a simple archiving transformer that will add all
 source files to a single .tar.gz archive file.
 
 _The original directory structure of the source files will be preserved inside the archive._
