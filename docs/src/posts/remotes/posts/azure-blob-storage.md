@@ -6,3 +6,5 @@ eleventyNavigation:
   parent: Remotes
   order: 33
 ---
+
+https://learn.microsoft.com/en-us/java/api/com.azure.identity.defaultazurecredential?view=azure-java-stable
