@@ -1,6 +1,6 @@
 ---
 title: "Azure Blob"
-summary: ""
+summary: "Upload the files to an Azure Blob Storage container."
 eleventyNavigation:
   key: Azure Blob
   parent: Remotes

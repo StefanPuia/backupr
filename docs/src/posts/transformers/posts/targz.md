@@ -1,6 +1,6 @@
 ---
 title: "tar.gz"
-summary: ""
+summary: "Archiving transformer using tar.gz compression."
 eleventyNavigation:
   key: tar.gz
   parent: Transformers

@@ -1,6 +1,6 @@
 ---
 title: "CLI Reference"
-summary: "We use eleventy --serve and compile Sass with sass-cli with npm scripts."
+summary: "List of all available CLI commands and flags."
 eleventyNavigation:
   key: CLI Reference
   parent: Getting Started

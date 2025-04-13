@@ -1,6 +1,6 @@
 ---
 title: "Basic"
-summary: ""
+summary: "Basic authentication using a username and an optional password."
 eleventyNavigation:
   key: Basic
   parent: Credentials

@@ -1,6 +1,6 @@
 ---
 title: "zip"
-summary: ""
+summary: "Archiving transformer using zip compression."
 eleventyNavigation:
   key: zip
   parent: Transformers

@@ -1,6 +1,6 @@
 ---
 title: "None"
-summary: ""
+hideInList: true
 eleventyNavigation:
   key: None
   parent: Credentials

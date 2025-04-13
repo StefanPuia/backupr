@@ -1,6 +1,6 @@
 ---
 title: "Azure CLI"
-summary: ""
+summary: "Authenticate using the local installation of Azure CLI."
 eleventyNavigation:
   key: Azure CLI
   parent: Credentials

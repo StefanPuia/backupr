@@ -1,6 +1,6 @@
 ---
 title: "Local Source"
-summary: ""
+summary: "A source type that uses the current machine's file system to look up files for backing up."
 eleventyNavigation:
   key: Local Source
   parent: Sources
