@@ -11,6 +11,19 @@
     color: color('heading');
     font-size: config('font-size-base', $typography);
     margin-block: 0;
+
+    a {
+      align-items: center;
+      color: color('text');
+      display: inline-flex;
+      gap: spacer('xs');
+      text-decoration: none;
+
+      &[aria-current='page'] {
+        color: color('link');
+        font-weight: 700;
+      }
+    }
   }
 
   &__navigation {
