@@ -17,7 +17,7 @@ look up files for backing up.
 ```json5
 {
   "sources": {
-    "name": "some-source",
+    "name": "my-local-source",
     "type": "LOCAL",
     "disabled": false,
     "directory": "/var/foo",
