@@ -16,6 +16,8 @@ public abstract class GitConfigRemote implements ConfigRemote {
 
   public abstract String getBranch();
 
+  public abstract String getCommitMessagePattern();
+
   @AllowedCredentials({CredentialsType.NONE, CredentialsType.BASIC})
   public abstract Credentials getCredentials();
 

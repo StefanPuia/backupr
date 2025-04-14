@@ -85,6 +85,14 @@ The git remote URL. This can be either HTTP or SSH.
 
 The repository branch to be used for backup.
 
+#### commitMessagePattern
+
+- default value{.field-chip-default}
+- template enabled{.field-chip-template}
+  {.field-chips}
+
+Pattern used for the commit message. Supports templating with [context](#context). Defaults to `"Automatic backup"`.
+
 {% include 'partials/remotes/common-configuration-after.md' %}
 
 {% include 'partials/remotes/common-configuration-creds.md' %}
@@ -99,3 +107,14 @@ attempt to use the [default git behaviour](https://git-scm.com/docs/gitcredentia
 #### Basic
 
 [Basic](/credentials/basic) credentials can be provided.
+
+### Context
+
+The field templating context extends the [default context](/getting-started/configuration/#default-context) with
+additional values:
+
+| Variable             | Description            |
+|----------------------|------------------------|
+| `context.sourceName` | Name of current source |
+
+{.context-variable-table}

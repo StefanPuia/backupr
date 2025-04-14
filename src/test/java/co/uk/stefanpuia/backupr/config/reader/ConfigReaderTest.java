@@ -54,7 +54,8 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                   "type": "GIT",
                   "url": "git:/var/backups/foo",
                   "branch": "master",
-                  "credentials": "basicCred1"
+                  "credentials": "basicCred1",
+                  "commitMessagePattern": "Some backup message <context.sourceName>"
                 },
                 {
                   "name": "azureRemote1",
@@ -143,6 +144,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setUrl("git:/var/backups/foo")
             .setBranch("master")
             .setCredentials(basicCreds1)
+            .setCommitMessagePattern("Some backup message <context.sourceName>")
             .setVariables(vars)
             .build();
     final var azureRemote1 =
@@ -200,6 +202,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                         .setUrl("git:/var/foo1")
                         .setBranch("master")
                         .setVariables(vars)
+                        .setCommitMessagePattern("Automatic backup")
                         .setCredentials(
                             ImmutableBasicCredentials.builder()
                                 .setName("inline[inline[localSource2/GIT]/BASIC]")
@@ -213,6 +216,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                         .setUrl("git:/var/foo2")
                         .setBranch("master")
                         .setCredentials(noneCred1)
+                        .setCommitMessagePattern("Automatic backup")
                         .setVariables(vars)
                         .build()))
             .build();
@@ -334,6 +338,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
             .setVariables(vars)
+            .setCommitMessagePattern("Automatic backup")
             .setCredentials(
                 ImmutableBasicCredentials.builder()
                     .setName("inline[git/BASIC]")

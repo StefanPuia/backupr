@@ -41,6 +41,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
             .setEnabled(true)
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
+            .setCommitMessagePattern("Automatic backup")
             .setCredentials(expected)
             .setVariables(defaultVars)
             .build();
@@ -84,6 +85,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
             .setUrl("git://github.com/abc123/bar.git")
             .setBranch("main")
             .setCredentials(expected)
+            .setCommitMessagePattern("Automatic backup")
             .setVariables(defaultVars)
             .build();
 

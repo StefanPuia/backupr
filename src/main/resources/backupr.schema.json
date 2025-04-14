@@ -167,6 +167,12 @@
                   "type": "string",
                   "minLength": 1,
                   "description": "Git branch name. Supports templating."
+                },
+                "commitMessagePattern": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Pattern used for the commit message. Supports templating with context. Context includes: default context, sourceName (Name of current source)",
+                  "default": "Automatic backup"
                 }
               },
               "required": [

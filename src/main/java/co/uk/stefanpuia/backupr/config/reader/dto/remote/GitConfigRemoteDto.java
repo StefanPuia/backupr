@@ -19,6 +19,12 @@ public abstract class GitConfigRemoteDto implements ConfigRemoteWithCredentialsD
   @SupportsTemplate
   public abstract String getBranch();
 
+  @Value.Default
+  @SupportsTemplate
+  public String getCommitMessagePattern() {
+    return "Automatic backup";
+  }
+
   @Override
   public RemoteType getType() {
     return RemoteType.GIT;

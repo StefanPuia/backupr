@@ -23,7 +23,8 @@ public class RemoteHandlerFactory {
     return switch (remote) {
       case LocalConfigRemote local -> new LocalRemoteHandler(local, backupHelper);
       case GitConfigRemote git ->
-          new GitRemoteHandler(git, backupHelper, jgitCredentialsProviderMapper);
+          new GitRemoteHandler(
+              git, backupHelper, jgitCredentialsProviderMapper, stringTemplateRenderer);
       case AzureStorageBlobConfigRemote azure ->
           new AzureStorageBlobRemoteHandler(
               azure, azureCredentialMapper, backupHelper, stringTemplateRenderer);

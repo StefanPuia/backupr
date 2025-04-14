@@ -2,6 +2,7 @@ package co.uk.stefanpuia.backupr.engine.remote;
 
 import co.uk.stefanpuia.backupr.config.model.remote.GitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
+import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.remote.mapper.JgitCredentialsProviderMapper;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +27,13 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
   private final GitConfigRemote remote;
   private final BackupHelper backupHelper;
   private final JgitCredentialsProviderMapper credentialsProviderMapper;
+  private final StringTemplateRenderer stringTemplateRenderer;
 
   @Override
   public void upload(final ConfigSource source, final Set<File> files) {
     try (final var repo = initRepository()) {
       appendFiles(repo, source, files);
-      commitAndPush(repo);
+      commitAndPush(repo, source);
     } catch (IOException | URISyntaxException | GitAPIException e) {
       throw new RemoteHandlerException(e);
     }
@@ -83,14 +86,20 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
     }
   }
 
-  private void commitAndPush(final Git git) throws GitAPIException {
+  private void commitAndPush(final Git git, final ConfigSource source) throws GitAPIException {
     log.debug("Creating commit");
     git.add().addFilepattern(".").call();
-    git.commit().setMessage("Automatic backup").call();
+    git.commit().setMessage(getCommitMessage(source)).call();
     log.debug("Pushing commit");
     if (isDryRun()) return;
     git.push()
         .setCredentialsProvider(credentialsProviderMapper.convert(remote.getCredentials()))
         .call();
+  }
+
+  private String getCommitMessage(final ConfigSource source) {
+    return stringTemplateRenderer.applyTemplate(
+        remote.getCommitMessagePattern(),
+        remote.getVariables().withContext(Map.of("sourceName", source.getName())));
   }
 }
