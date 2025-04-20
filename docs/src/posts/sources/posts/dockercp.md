@@ -58,7 +58,8 @@ A constant that tells the engine what kind of source this object is. This **must
 - template enabled{.field-chip-template}
   {.field-chips}
 
-A string that can identify a container (name or container ID).
+A string that can identify a container (name or partial container ID). Sourcing will stop if a container cannot be
+found.
 
 #### paths
 
@@ -74,6 +75,7 @@ up.
 - default value{.field-chip-default}
   {.field-chips}
 
-Skip paths that do not exist in the container. Defaults to `false`.
+Skip paths that do not exist in the container. Sourcing will stop if set to `false` and path does not exist. Defaults to
+`false`.
 
 {% include 'partials/sources/common-configuration-after.md' %}
