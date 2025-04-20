@@ -44,36 +44,7 @@
     "sources": {
       "type": "array",
       "items": {
-        "anyOf": [
-          {
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/definitions/abstractSource"
-              },
-              {
-                "properties": {
-                  "type": {
-                    "const": "LOCAL"
-                  },
-                  "directory": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Base directory of the sources. Supports templating."
-                  },
-                  "files": {
-                    "type": "array",
-                    "description": "File patterns, relative to `directory`. Supports templating.",
-                    "items": {
-                      "type": "string",
-                      "minLength": 1
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
+        "$ref": "#/definitions/source"
       }
     }
   },
@@ -216,6 +187,80 @@
               ]
             }
           }
+        }
+      ]
+    },
+    "source": {
+      "anyOf": [
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/abstractSource"
+            },
+            {
+              "properties": {
+                "type": {
+                  "const": "LOCAL"
+                },
+                "directory": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Base directory of the sources. Supports templating."
+                },
+                "files": {
+                  "type": "array",
+                  "description": "File patterns, relative to `directory`. Supports templating.",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "directory",
+                "files"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/abstractSource"
+            },
+            {
+              "properties": {
+                "type": {
+                  "const": "DOCKER_CP"
+                },
+                "container": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A string that can identify a container (name or container ID). Supports templating."
+                },
+                "paths": {
+                  "type": "array",
+                  "description": "File/Directory paths, relative to container root. Supports templating.",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "allowNotFoundPaths": {
+                  "type": "boolean",
+                  "description": "Skip paths that do not exist in the container.",
+                  "default": false
+                }
+              },
+              "required": [
+                "container",
+                "paths"
+              ]
+            }
+          ]
         }
       ]
     },

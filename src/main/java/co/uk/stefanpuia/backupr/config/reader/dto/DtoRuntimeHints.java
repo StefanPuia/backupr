@@ -17,6 +17,8 @@ import co.uk.stefanpuia.backupr.config.reader.dto.remote.ImmutableGitConfigRemot
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ImmutableLocalConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.LocalConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerCpConfigSourceDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.ImmutableDockerCpConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ImmutableLocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.LocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.transformers.ImmutableTarGzTransformerOptionsDto;
@@ -47,11 +49,13 @@ import org.springframework.context.annotation.Configuration;
   ImmutableGitConfigRemoteDto.class,
   ImmutableLocalConfigRemoteDto.class,
   ImmutableLocalConfigSourceDto.class,
+  ImmutableDockerCpConfigSourceDto.class,
   ImmutableNoneCredentialsDto.class,
   ImmutableTarGzTransformerOptionsDto.class,
   ImmutableZipTransformerOptionsDto.class,
   LocalConfigRemoteDto.class,
   LocalConfigSourceDto.class,
+  DockerCpConfigSourceDto.class,
   NoneCredentialsDto.class,
   TarGzTransformerOptionsDto.class,
   TransformerOptionsDto.class,

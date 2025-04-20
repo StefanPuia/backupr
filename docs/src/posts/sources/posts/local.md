@@ -28,12 +28,11 @@ look up files for backing up.
     "remotes": [
       "my-remote",
       {
-        "type": "GIT",
-        //..
+        // ...
       }
     ],
     "transformers": [
-      "ZIP"
+      // ...
     ]
   }
 }

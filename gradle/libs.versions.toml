@@ -2,6 +2,7 @@
 immutables = "2.10.1"
 mapstruct = "1.6.3"
 springShell = "3.4.0"
+dockerApi = "3.5.0"
 
 
 [libraries]
@@ -9,6 +10,8 @@ azure-bom = { group = "com.azure", name = "azure-sdk-bom", version = "1.2.33" }
 azure-identity = { group = "com.azure", name = "azure-identity" }
 azure-storage-blob = { group = "com.azure", name = "azure-storage-blob" }
 commons-compress = { group = "org.apache.commons", name = "commons-compress", version = "1.27.1" }
+docker-api = { group = 'com.github.docker-java', name = 'docker-java', version.ref = 'dockerApi' }
+docker-java-transport-zerodep = { group = 'com.github.docker-java', name = 'docker-java-transport-zerodep', version.ref = 'dockerApi' }
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.18.3" }
 jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "7.2.0.202503040940-r" }
@@ -33,3 +36,7 @@ graal-build-tools = { id = 'org.graalvm.buildtools.native', version = '0.10.6' }
 spotless = { id = 'com.diffplug.spotless', version = '7.0.3' }
 spring-boot = { id = "org.springframework.boot", version = "3.4.4" }
 spring-dependency = { id = 'io.spring.dependency-management', version = '1.1.7' }
+
+
+[bundles]
+docker = ['docker-api', 'docker-java-transport-zerodep']

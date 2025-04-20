@@ -37,6 +37,7 @@ dependencies {
     implementation libs.commons.compress
     implementation libs.azure.storage.blob
     implementation libs.azure.identity
+    implementation libs.bundles.docker
 
     compileOnly libs.string.template
     compileOnly libs.immutables
