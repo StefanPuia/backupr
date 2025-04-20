@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.shell;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
+import co.uk.stefanpuia.backupr.engine.adapters.AdapterException;
 import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import co.uk.stefanpuia.backupr.engine.source.SourceHandlerException;
 import org.eclipse.jgit.api.errors.TransportException;
@@ -21,11 +22,10 @@ public class ShellExceptionResolver implements CommandExceptionResolver {
       return getResultMessage(ex.getCause());
     }
 
-    if (ex instanceof RemoteHandlerException && ex.getCause() != null) {
-      return getResultMessage(ex.getCause());
-    }
-
-    if (ex instanceof SourceHandlerException && ex.getCause() != null) {
+    if ((ex instanceof RemoteHandlerException
+            || ex instanceof SourceHandlerException
+            || ex instanceof AdapterException)
+        && ex.getCause() != null) {
       return getResultMessage(ex.getCause());
     }
 

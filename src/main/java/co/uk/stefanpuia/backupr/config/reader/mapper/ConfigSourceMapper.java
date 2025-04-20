@@ -8,10 +8,12 @@ import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.DockerCpConfigSource;
+import co.uk.stefanpuia.backupr.config.model.source.DockerExecConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerCpConfigSourceDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerExecConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.LocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +45,10 @@ public abstract class ConfigSourceMapper {
       target = DockerCpConfigSource.class,
       source = DockerCpConfigSourceDto.class,
       qualifiedByName = "convertDockerCpConfigSource")
+  @SubclassMapping(
+      target = DockerExecConfigSource.class,
+      source = DockerExecConfigSourceDto.class,
+      qualifiedByName = "convertDockerExecConfigSource")
   protected abstract ConfigSource mapSource(
       ConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
@@ -70,6 +76,20 @@ public abstract class ConfigSourceMapper {
       @Context List<ConfigRemote> remotes,
       @Context List<Credentials> credentials,
       @Context VariablesWrapper variables);
+
+  @Named("convertDockerExecConfigSource")
+  @Mapping(target = "remotes", expression = REMOTES_EXPRESSION)
+  @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
+  @Mapping(target = "container", source = "container", qualifiedByName = "applyTemplateToString")
+  protected abstract DockerExecConfigSource convertDockerExecConfigSource(
+      DockerExecConfigSourceDto source,
+      @Context List<ConfigRemote> remotes,
+      @Context List<Credentials> credentials,
+      @Context VariablesWrapper variables);
+
+  @Mapping(target = "outputFile", source = "file", qualifiedByName = "applyTemplateToString")
+  protected abstract DockerExecConfigSource.Command convert(
+      DockerExecConfigSourceDto.CommandDto source, @Context VariablesWrapper variables);
 
   protected List<ConfigRemote> mapMixedRemotes(
       final String sourceName,

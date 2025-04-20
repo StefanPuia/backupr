@@ -20,7 +20,8 @@ import java.util.List;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
   @JsonSubTypes.Type(value = LocalConfigSourceDto.class, name = "LOCAL"),
-  @JsonSubTypes.Type(value = DockerCpConfigSourceDto.class, name = "DOCKER_CP"),
+    @JsonSubTypes.Type(value = DockerCpConfigSourceDto.class, name = "DOCKER_CP"),
+    @JsonSubTypes.Type(value = DockerExecConfigSourceDto.class, name = "DOCKER_EXEC"),
 })
 public interface ConfigSourceDto extends IdentifiableConfigDto {
   @Override
