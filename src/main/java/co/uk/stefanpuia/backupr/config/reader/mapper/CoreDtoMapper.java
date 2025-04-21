@@ -3,8 +3,10 @@ package co.uk.stefanpuia.backupr.config.reader.mapper;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import jakarta.annotation.Nullable;
+import java.util.List;
 import java.util.Optional;
 import org.mapstruct.Context;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +25,15 @@ public abstract class CoreDtoMapper {
   protected String applyTemplate(
       final @Nullable String source, final @Context VariablesWrapper variables) {
     return stringTemplateRenderer.applyTemplate(source, variables);
+  }
+
+  @Named("mapFilePaths")
+  @IterableMapping(qualifiedByName = "mapFilePath")
+  protected abstract List<String> mapFilePaths(
+      final List<String> filePaths, final @Context VariablesWrapper variables);
+
+  @Named("mapFilePath")
+  protected String mapFilePath(final String filePath, final @Context VariablesWrapper variables) {
+    return applyTemplate(filePath, variables).replaceAll("[\\\\/]", "/");
   }
 }

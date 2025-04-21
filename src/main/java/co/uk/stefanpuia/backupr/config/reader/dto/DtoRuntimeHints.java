@@ -18,7 +18,9 @@ import co.uk.stefanpuia.backupr.config.reader.dto.remote.ImmutableLocalConfigRem
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.LocalConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerCpConfigSourceDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerExecConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ImmutableDockerCpConfigSourceDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.source.ImmutableDockerExecConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ImmutableLocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.LocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.transformers.ImmutableTarGzTransformerOptionsDto;
@@ -40,26 +42,28 @@ import org.springframework.context.annotation.Configuration;
   ConfigRemoteDto.class,
   ConfigSourceDto.class,
   CredentialsDto.class,
+  DockerCpConfigSourceDto.class,
+  DockerExecConfigSourceDto.class,
   GitConfigRemoteDto.class,
   ImmutableAzureCliCredentialsDto.class,
   ImmutableAzureClientSecretCredentialsDto.class,
   ImmutableAzureStorageBlobConfigRemoteDto.class,
   ImmutableBackuprConfigDto.class,
   ImmutableBasicCredentialsDto.class,
+  ImmutableDockerCpConfigSourceDto.class,
+  ImmutableDockerExecConfigSourceDto.class,
   ImmutableGitConfigRemoteDto.class,
   ImmutableLocalConfigRemoteDto.class,
   ImmutableLocalConfigSourceDto.class,
-  ImmutableDockerCpConfigSourceDto.class,
   ImmutableNoneCredentialsDto.class,
   ImmutableTarGzTransformerOptionsDto.class,
   ImmutableZipTransformerOptionsDto.class,
   LocalConfigRemoteDto.class,
   LocalConfigSourceDto.class,
-  DockerCpConfigSourceDto.class,
   NoneCredentialsDto.class,
   TarGzTransformerOptionsDto.class,
   TransformerOptionsDto.class,
-  ZipTransformerOptionsDto.class,
   UniqueIdentifierValidator.class,
+  ZipTransformerOptionsDto.class,
 })
 public class DtoRuntimeHints {}
