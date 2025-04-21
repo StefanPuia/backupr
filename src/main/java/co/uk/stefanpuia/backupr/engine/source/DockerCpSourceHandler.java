@@ -25,19 +25,19 @@ public class DockerCpSourceHandler implements SourceHandler {
   public Set<File> getFiles() {
     final Set<File> sourcedFiles = new HashSet<>();
     try {
-      dockerAdapter.ensureContainer(source.getContainer());
+      final var containerId = dockerAdapter.getContainerId(source.getContainer());
 
       final var directory = createTempTargetDir();
       for (final var path : source.getPaths()) {
-        log.debug("Sourcing path: {}:{}", source.getContainer(), path);
+        log.debug("Sourcing path: {}:{}", containerId, path);
 
         try {
-          dockerAdapter.copyPathFromContainer(source.getContainer(), path, directory);
+          dockerAdapter.copyPathFromContainer(containerId, path, directory);
         } catch (final NotFoundException notFoundException) {
           if (!source.isAllowNotFoundPaths()) {
             throw notFoundException;
           } else {
-            log.info("Skipping non-existent path: {}:{}", source.getContainer(), path);
+            log.info("Skipping non-existent path: {}:{}", containerId, path);
           }
         }
       }

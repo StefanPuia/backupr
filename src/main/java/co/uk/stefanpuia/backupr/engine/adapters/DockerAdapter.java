@@ -50,9 +50,10 @@ public class DockerAdapter {
     }
   }
 
-  public void ensureContainer(final String containerId) {
+  public String getContainerId(final String containerId) {
     // Trying to find container first to ensure isAllowNotFoundPaths only checks for paths
     final var container = getDockerClient().inspectContainerCmd(containerId).exec();
     log.debug("Found container '{}' ({})", container.getName(), container.getId());
+    return container.getId();
   }
 }

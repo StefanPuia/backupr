@@ -19,6 +19,7 @@ import co.uk.stefanpuia.backupr.core.MapstructConfig;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.mapstruct.Context;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -87,7 +88,8 @@ public abstract class ConfigSourceMapper {
       @Context List<Credentials> credentials,
       @Context VariablesWrapper variables);
 
-  @Mapping(target = "outputFile", source = "file", qualifiedByName = "applyTemplateToString")
+  @Mapping(target = "outputFile", source = "file", qualifiedByName = "mapFilePath")
+  @Mapping(target = "command", source = "command", qualifiedByName = "mapCommandArgs")
   protected abstract DockerExecConfigSource.Command convert(
       DockerExecConfigSourceDto.CommandDto source, @Context VariablesWrapper variables);
 
@@ -126,12 +128,8 @@ public abstract class ConfigSourceMapper {
                         .formatted(sourceName, remoteName)));
   }
 
-  @Named("mapFilePaths")
-  protected List<String> mapFilePaths(
-      final List<String> filePaths, final @Context VariablesWrapper variables) {
-    return filePaths.stream()
-        .map(pattern -> coreMapper.applyTemplate(pattern, variables))
-        .map(pattern -> pattern.replaceAll("[\\\\/]", "/"))
-        .toList();
-  }
+  @Named("mapCommandArgs")
+  @IterableMapping(qualifiedByName = "applyTemplateToString")
+  protected abstract String[] mapCommandArgs(
+      List<String> source, @Context VariablesWrapper variables);
 }

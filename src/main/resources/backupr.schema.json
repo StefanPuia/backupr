@@ -261,6 +261,58 @@
               ]
             }
           ]
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/abstractSource"
+            },
+            {
+              "properties": {
+                "type": {
+                  "const": "DOCKER_EXEC"
+                },
+                "container": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "A string that can identify a container (name or container ID). Supports templating."
+                },
+                "commands": {
+                  "type": "array",
+                  "description": "List of commands and respective output files.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "type": "string",
+                        "description": "Output file path for this command. Can contain multiple directory levels. Supports templating.",
+                        "minLength": 1
+                      },
+                      "command": {
+                        "type": "array",
+                        "description": "Command arguments to run using docker exec. Supports templating.",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "command",
+                      "file"
+                    ]
+                  },
+                  "minItems": 1
+                }
+              },
+              "required": [
+                "container",
+                "commands"
+              ]
+            }
+          ]
         }
       ]
     },

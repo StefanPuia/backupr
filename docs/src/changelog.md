@@ -8,7 +8,7 @@ changelog:
     content: |
       - Created Backupr engine
       - Added configuration parser
-      - **Added sources**: local, docker cp
+      - **Added sources**: local, docker cp, docker exec
       - **Added transformers**: zip, gzip
       - **Added remotes**: local, git, azure blob
       - **Added credentials**: none, basic, azure cli, azure client credentials

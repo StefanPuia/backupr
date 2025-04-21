@@ -29,12 +29,12 @@ public class DockerExecSourceHandler implements SourceHandler {
   public Set<File> getFiles() {
     final Set<File> sourcedFiles = new HashSet<>();
     try {
-      dockerAdapter.ensureContainer(source.getContainer());
+      final var containerId = dockerAdapter.getContainerId(source.getContainer());
 
       final var directory = createTempTargetDir();
       log.debug("Creating temporary directory: {}", directory);
       for (final var command : source.getCommands()) {
-        execToFile(command, directory);
+        execToFile(containerId, command, directory);
       }
 
       FileUtils.iterateFiles(directory.toFile(), TrueFileFilter.TRUE, TrueFileFilter.TRUE)
@@ -50,12 +50,15 @@ public class DockerExecSourceHandler implements SourceHandler {
     return Files.createTempDirectory("docker-cp-temp");
   }
 
-  private void execToFile(final DockerExecConfigSource.Command command, final Path targetDirectory)
+  private void execToFile(
+      final String containerId,
+      final DockerExecConfigSource.Command command,
+      final Path targetDirectory)
       throws InterruptedException, IOException {
     final var dockerClient = dockerAdapter.getDockerClient();
     final var execCreateCmdResponse =
         dockerClient
-            .execCreateCmd(source.getContainer())
+            .execCreateCmd(containerId)
             .withAttachStderr(true)
             .withAttachStdout(true)
             .withCmd(command.command())
