@@ -1,0 +1,11 @@
+name: backupr-run
+
+services:
+  backupr:
+    image: backupr:latest
+    privileged: true
+    volumes:
+      - //var/run/docker.sock:/var/run/docker.sock
+      - ./.backupr.jsonc:/root/.backupr.jsonc:ro
+      - /mnt/sources:/backupr/sources:ro
+    command: validate

@@ -23,23 +23,69 @@ stages:
               publishJUnitResults: true
 
   - ${{ if eq(variables.isMain, true) }}:
-      - stage: package
+      - stage: packageDocker
         dependsOn: check
+        variables:
+          - group: package
+          - name: dockerRegistry
+            value: stefanpuia.azurecr.io
+          - name: dockerImage
+            value: backupr
+          - name: dockerImageVersion
+            value: $(Build.BuildNumber)
+        jobs:
+          - job: packageDocker
+            steps:
+              - task: Docker@2
+                inputs:
+                  command: build
+                  repository: $(dockerRegistry)/$(dockerImage)
+                  containerRegistry: azureContainerRegistry2-Backupr
+                  tags: |
+                    $(dockerImageVersion)
+                    latest
+              - task: Docker@2
+                displayName: Login to ACR
+                inputs:
+                  command: login
+                  containerRegistry: azureContainerRegistry2-Backupr
+              - task: Docker@2
+                displayName: Push image
+                inputs:
+                  command: push
+                  containerRegistry: azureContainerRegistry2-Backupr
+                  repository: $(dockerImage)
+                  tags: $(dockerImageVersion)
+              - task: Docker@2
+                displayName: Docker Logout
+                inputs:
+                  command: logout
+                  containerRegistry: azureContainerRegistry2-Backupr
+                condition: always()
+
+      - stage: packageUbuntu
+        dependsOn: check
+        pool:
+          vmImage: ubuntu-latest
         variables:
           - group: package
         jobs:
           - job: packageUbuntu
-            pool:
-              vmImage: ubuntu-latest
             steps:
               - template: azure/execute-gradle.yml
                 parameters:
                   gradleTasks: nativeCompile
               - publish: build/native/nativeCompile/backupr
                 artifact: linux-x64
+
+      - stage: packageWindows
+        dependsOn: check
+        pool:
+          vmImage: windows-latest
+        variables:
+          - group: package
+        jobs:
           - job: packageWindows
-            pool:
-              vmImage: windows-latest
             steps:
               - template: azure/execute-gradle.yml
                 parameters:
