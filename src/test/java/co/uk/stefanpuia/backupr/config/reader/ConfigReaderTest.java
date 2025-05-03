@@ -5,6 +5,7 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableAzureClientSecretCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
@@ -254,7 +255,8 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                     "gitRemoteUrlRoot": "git://github.com/<someProject>",
                     "defaultGitBranch": "main",
                     "defaultUsername": "user",
-                    "defaultPassword": "<env.JUNIT_ENV_VALUE_2>"
+                    "defaultPassword": "<env.JUNIT_ENV_VALUE_2>",
+                    "tenantId": "tenant-123"
                   },
                   "remotes": [
                     {
@@ -266,7 +268,12 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                       "name": "azureBlob",
                       "type": "AZURE_STORAGE_BLOB",
                       "endpoint": "endpoint",
-                      "container": "container"
+                      "container": "container",
+                      "credentials": {
+                        "tenantId": "<tenantId>",
+                        "clientId": "client-123",
+                        "clientSecret": "<env.JUNIT_ENV_VALUE_2>"
+                      }
                     },
                     {
                       "name": "git",
@@ -310,7 +317,8 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 "gitRemoteUrlRoot", "git://github.com/abc123",
                 "defaultGitBranch", "main",
                 "defaultUsername", "user",
-                "defaultPassword", "fooBaz2566"),
+                "defaultPassword", "fooBaz2566",
+                "tenantId", "tenant-123"),
             System.getenv());
     final var localConfigRemote =
         ImmutableLocalConfigRemote.builder()
@@ -329,7 +337,13 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
             .setVariables(vars)
             .setOverwrite(false)
-            .setCredentials(NoneCredentials.create())
+            .setCredentials(
+                ImmutableAzureClientSecretCredentials.builder()
+                    .setName("inline[azureBlob/AZURE_CLIENT_SECRET]")
+                    .setTenantId("tenant-123")
+                    .setClientId("client-123")
+                    .setClientSecret("fooBaz2566")
+                    .build())
             .build();
     final var gitConfigRemote =
         ImmutableGitConfigRemote.builder()

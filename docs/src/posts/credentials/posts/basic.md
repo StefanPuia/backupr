@@ -47,10 +47,14 @@ optionally, a password.
 #### username
 
 - required{.field-chip-required}
+- template enabled{.field-chip-template}
   {.field-chips}
 
 The basic auth username.
 
 #### password
+
+- template enabled{.field-chip-template}
+  {.field-chips}
 
 The basic auth password.

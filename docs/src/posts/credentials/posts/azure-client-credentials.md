@@ -57,6 +57,7 @@ to authenticate to Azure resources.
 #### tenantId
 
 - required{.field-chip-required}
+- template enabled{.field-chip-template}
   {.field-chips}
 
 Specify the tenant ID to be used during authentication.
@@ -64,6 +65,7 @@ Specify the tenant ID to be used during authentication.
 #### clientId
 
 - required{.field-chip-required}
+- template enabled{.field-chip-template}
   {.field-chips}
 
 Specify the client (application) ID to be used during authentication.
@@ -71,6 +73,7 @@ Specify the client (application) ID to be used during authentication.
 #### clientSecret
 
 - required{.field-chip-required}
+- template enabled{.field-chip-template}
   {.field-chips}
 
 Specify the client secret to be used during authentication.

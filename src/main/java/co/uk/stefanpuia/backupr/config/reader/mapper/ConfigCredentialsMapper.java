@@ -50,6 +50,23 @@ public abstract class ConfigCredentialsMapper {
   protected abstract BasicCredentials convert(
       BasicCredentialsDto source, @Context String remoteName, @Context VariablesWrapper variables);
 
+  @Mapping(target = "tenantId", source = "tenantId", qualifiedByName = "applyTemplateToString")
+  protected abstract AzureCliCredentials convert(
+      AzureCliCredentialsDto source,
+      @Context String remoteName,
+      @Context VariablesWrapper variables);
+
+  @Mapping(target = "tenantId", source = "tenantId", qualifiedByName = "applyTemplateToString")
+  @Mapping(target = "clientId", source = "clientId", qualifiedByName = "applyTemplateToString")
+  @Mapping(
+      target = "clientSecret",
+      source = "clientSecret",
+      qualifiedByName = "applyTemplateToString")
+  protected abstract AzureClientSecretCredentials convert(
+      AzureClientSecretCredentialsDto source,
+      @Context String remoteName,
+      @Context VariablesWrapper variables);
+
   @AfterMapping
   protected void addContext(
       final @MappingTarget ImmutableNoneCredentials.Builder target,

@@ -61,4 +61,7 @@ This field is required due to a technical limitation of the JSON deserializer. T
 
 #### tenantId
 
+- template enabled{.field-chip-template}
+  {.field-chips}
+
 Specify the tenant ID that should be used during authentication.
