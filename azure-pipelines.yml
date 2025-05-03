@@ -25,6 +25,7 @@ stages:
   - ${{ if eq(variables.isMain, true) }}:
       - stage: packageDocker
         dependsOn: check
+        pool: self-hosted-scale-set-02
         variables:
           - group: package
           - name: dockerRegistry
@@ -54,8 +55,10 @@ stages:
                 inputs:
                   command: push
                   containerRegistry: azureContainerRegistry2-Backupr
-                  repository: $(dockerImage)
-                  tags: $(dockerImageVersion)
+                  repository: $(dockerRegistry)/$(dockerImage)
+                  tags: |
+                    $(dockerImageVersion)
+                    latest
               - task: Docker@2
                 displayName: Docker Logout
                 inputs:
