@@ -4,6 +4,8 @@ import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,12 +21,18 @@ public class BackupHelper {
     }
   }
 
-  public String getRelativePath(final Path basePath, final File file) {
+  public Path getRelativePathIncludingFilename(final Path basePath, final File file) {
     try {
-      return basePath.relativize(file.toPath()).toString();
+      return basePath.relativize(file.toPath());
     } catch (IllegalArgumentException e) {
-      return file.getName();
+      return Path.of(file.getName());
     }
+  }
+
+  public String toString(final Path path) {
+    return StreamSupport.stream(path.spliterator(), false)
+        .map(Path::toString)
+        .collect(Collectors.joining("/"));
   }
 
   public String generateBackupName() {

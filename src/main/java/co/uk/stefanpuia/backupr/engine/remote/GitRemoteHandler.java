@@ -75,9 +75,8 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
       throws IOException {
     for (final var file : files) {
       final var targetPath =
-          Path.of(
-              repo.getRepository().getDirectory().getParent(),
-              backupHelper.getRelativePath(source.getBasePath(), file));
+          Path.of(repo.getRepository().getDirectory().getParent())
+              .resolve(backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file));
       log.debug("Backing up '{}' to '{}'", file, targetPath);
       backupHelper.mkdirp(
           targetPath.getParent(),

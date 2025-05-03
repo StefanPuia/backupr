@@ -25,8 +25,8 @@ public class LocalRemoteHandler extends AbstractRemoteHandler {
 
       for (final var file : files) {
         final var targetPath =
-            Path.of(
-                target.getAbsolutePath(), backupHelper.getRelativePath(source.getBasePath(), file));
+            Path.of(target.getAbsolutePath())
+                .resolve(backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file));
         log.debug("Backing up '{}' to '{}'", file, targetPath);
         if (isDryRun()) continue;
 

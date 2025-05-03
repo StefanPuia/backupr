@@ -54,7 +54,10 @@ public class ZipTransformer extends AbstractTransformer {
         log.debug("Appending file '{}' to archive", file);
         if (isDryRun()) continue;
 
-        final var zipEntry = new ZipEntry(backupHelper.getRelativePath(source.getBasePath(), file));
+        final var zipEntry =
+            new ZipEntry(
+                backupHelper.toString(
+                    backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file)));
         out.putNextEntry(zipEntry);
 
         try (final var fileInputStream = new FileInputStream(file)) {

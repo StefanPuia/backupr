@@ -59,17 +59,17 @@ public class TarGzTransformer extends AbstractTransformer {
         if (isDryRun()) continue;
         addFilesToTarGz(
             file.toPath(),
-            backupHelper.getRelativePath(source.getBasePath(), file),
+            backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file),
             tarArchiveOutputStream);
       }
     }
   }
 
   private void addFilesToTarGz(
-      final Path path, final String entryName, final TarArchiveOutputStream outputStream)
+      final Path path, final Path entryPath, final TarArchiveOutputStream outputStream)
       throws IOException {
-    final var entry = new TarArchiveEntry(path.toFile(), entryName);
-    outputStream.putArchiveEntry(entry);
+    final var tarEntry = new TarArchiveEntry(path.toFile(), backupHelper.toString(entryPath));
+    outputStream.putArchiveEntry(tarEntry);
 
     if (Files.isRegularFile(path)) {
       // add file
@@ -86,7 +86,7 @@ public class TarGzTransformer extends AbstractTransformer {
       // walk directory
       try (final var stream = Files.newDirectoryStream(path)) {
         for (Path child : stream) {
-          addFilesToTarGz(child, entryName + "/", outputStream);
+          addFilesToTarGz(child, entryPath.resolve("/"), outputStream);
         }
       }
     }

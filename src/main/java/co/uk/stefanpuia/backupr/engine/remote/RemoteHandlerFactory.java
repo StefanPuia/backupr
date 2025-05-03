@@ -6,7 +6,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.GitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
-import co.uk.stefanpuia.backupr.engine.remote.mapper.AzureCredentialMapper;
+import co.uk.stefanpuia.backupr.engine.adapters.AzureBlobClientProvider;
 import co.uk.stefanpuia.backupr.engine.remote.mapper.JgitCredentialsProviderMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class RemoteHandlerFactory {
   private final BackupHelper backupHelper;
   private final JgitCredentialsProviderMapper jgitCredentialsProviderMapper;
-  private final AzureCredentialMapper azureCredentialMapper;
+  private final AzureBlobClientProvider azureBlobClientProvider;
   private final StringTemplateRenderer stringTemplateRenderer;
 
   public RemoteHandler getInstance(final ConfigRemote remote) {
@@ -27,7 +27,7 @@ public class RemoteHandlerFactory {
               git, backupHelper, jgitCredentialsProviderMapper, stringTemplateRenderer);
       case AzureStorageBlobConfigRemote azure ->
           new AzureStorageBlobRemoteHandler(
-              azure, azureCredentialMapper, backupHelper, stringTemplateRenderer);
+              azure, azureBlobClientProvider, backupHelper, stringTemplateRenderer);
       default -> throw new IllegalArgumentException("Unsupported remote type: " + remote);
     };
   }

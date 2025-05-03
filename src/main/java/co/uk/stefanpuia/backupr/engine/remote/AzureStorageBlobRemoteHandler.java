@@ -4,9 +4,8 @@ import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageBlobConfigRemote
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
-import co.uk.stefanpuia.backupr.engine.remote.mapper.AzureCredentialMapper;
+import co.uk.stefanpuia.backupr.engine.adapters.AzureBlobClientProvider;
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobHttpHeaders;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,15 +21,22 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
   private final AzureStorageBlobConfigRemote remote;
-  private final AzureCredentialMapper credentialMapper;
+  private final AzureBlobClientProvider azureBlobClientProvider;
   private final BackupHelper backupHelper;
   private final StringTemplateRenderer stringTemplateRenderer;
 
   @Override
   public void upload(final ConfigSource source, final Set<File> files) {
-    final var containerClient = buildClient();
+    final var containerClient =
+        azureBlobClientProvider.buildClient(
+            remote.getCredentials(), remote.getEndpoint(), remote.getContainer());
     for (final var file : files) {
-      final var targetPath = "%s/%s".formatted(getPrefix(source, file), file.getName());
+      final var targetPath =
+          "%s/%s"
+              .formatted(
+                  getPrefix(source, file),
+                  backupHelper.toString(
+                      backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file)));
       log.debug(
           "Backing up '{}' to '{}/{}/{}'",
           file,
@@ -46,7 +52,7 @@ public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
       final File file, final BlobContainerClient containerClient, final String targetPath) {
     try (final var fileInputStream = new FileInputStream(file)) {
       final var blobClient = containerClient.getBlobClient(targetPath);
-      blobClient.upload(fileInputStream, remote.isOverwrite());
+      blobClient.upload(fileInputStream, file.length(), remote.isOverwrite());
 
       final var headers = new BlobHttpHeaders();
       headers.setContentType(getFileContentType(fileInputStream, file));
@@ -66,18 +72,10 @@ public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
     }
   }
 
-  private BlobContainerClient buildClient() {
-    log.debug("Using credential '{}'", remote.getCredentials().getName());
-    final var credential = credentialMapper.convert(remote.getCredentials());
-    return new BlobServiceClientBuilder()
-        .endpoint(remote.getEndpoint())
-        .credential(credential)
-        .buildClient()
-        .getBlobContainerClient(remote.getContainer());
-  }
-
   private String getPrefix(final ConfigSource source, final File file) {
-    final var originalFilePath = backupHelper.getRelativePath(source.getBasePath(), file);
+    final var originalFilePath =
+        backupHelper.toString(
+            backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file));
     return stringTemplateRenderer
         .applyTemplate(
             remote.getBlobPrefixPattern(),
@@ -85,7 +83,9 @@ public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
                 .getVariables()
                 .withContext(
                     Map.of("sourceName", source.getName(), "originalFilePath", originalFilePath)))
+        // remove leading slashes
         .replaceFirst("^/*", "")
+        // remove trailing slashes
         .replaceFirst("/*$", "");
   }
 }
