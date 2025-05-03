@@ -28,8 +28,6 @@ stages:
         pool: self-hosted-scale-set-02
         variables:
           - group: package
-          - name: dockerRegistry
-            value: stefanpuia.azurecr.io
           - name: dockerImage
             value: backupr
           - name: dockerImageVersion
@@ -40,7 +38,7 @@ stages:
               - task: Docker@2
                 inputs:
                   command: build
-                  repository: $(dockerRegistry)/$(dockerImage)
+                  repository: $(dockerImage)
                   containerRegistry: azureContainerRegistry2-Backupr
                   tags: |
                     $(dockerImageVersion)
@@ -55,7 +53,7 @@ stages:
                 inputs:
                   command: push
                   containerRegistry: azureContainerRegistry2-Backupr
-                  repository: $(dockerRegistry)/$(dockerImage)
+                  repository: $(dockerImage)
                   tags: |
                     $(dockerImageVersion)
                     latest
