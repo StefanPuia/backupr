@@ -4,6 +4,8 @@ import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.engine.adapters.AdapterException;
 import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import co.uk.stefanpuia.backupr.engine.source.SourceHandlerException;
+import com.azure.storage.blob.implementation.models.BlobStorageError;
+import com.azure.storage.blob.models.BlobStorageException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.springframework.shell.command.CommandExceptionResolver;
 import org.springframework.shell.command.CommandHandlingResult;
@@ -29,6 +31,23 @@ public class ShellExceptionResolver implements CommandExceptionResolver {
       return getResultMessage(ex.getCause());
     }
 
+    if (ex instanceof final BlobStorageException blobStorageException) {
+      return handleBlobStorageException(blobStorageException);
+    }
+
     return ex.getMessage();
+  }
+
+  private String handleBlobStorageException(final BlobStorageException ex) {
+    String message = ex.getMessage();
+    if (ex.getValue() instanceof final BlobStorageError blobStorageError) {
+      message = blobStorageError.getMessage();
+      if ("BlobAlreadyExists".equals(blobStorageError.getCode())) {
+        message =
+            "Target file already exists. Did you mean to use the 'overwrite' option, or set up a"
+                + " different 'blobPrefixPattern'?";
+      }
+    }
+    return message;
   }
 }

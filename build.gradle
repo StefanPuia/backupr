@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation libs.jackson.databind
+    implementation libs.bundles.jackson
     implementation libs.spring.web
     implementation libs.mapstruct
     implementation libs.spring.shell.starter

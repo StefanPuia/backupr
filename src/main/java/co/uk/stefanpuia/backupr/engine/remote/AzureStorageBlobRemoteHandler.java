@@ -7,6 +7,7 @@ import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.adapters.AzureBlobClientProvider;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.BlobStorageException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +58,7 @@ public class AzureStorageBlobRemoteHandler extends AbstractRemoteHandler {
       final var headers = new BlobHttpHeaders();
       headers.setContentType(getFileContentType(fileInputStream, file));
       blobClient.setHttpHeaders(headers);
-    } catch (IOException e) {
+    } catch (BlobStorageException | IOException e) {
       throw new RemoteHandlerException(e);
     }
   }

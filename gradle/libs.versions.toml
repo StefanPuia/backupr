@@ -14,6 +14,7 @@ docker-api = { group = 'com.github.docker-java', name = 'docker-java', version.r
 docker-java-transport-zerodep = { group = 'com.github.docker-java', name = 'docker-java-transport-zerodep', version.ref = 'dockerApi' }
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind" }
+jackson-dataformat-xml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-xml" }
 jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "7.2.0.202503040940-r" }
 junit-pioneer = { group = "org.junit-pioneer", name = "junit-pioneer", version = "2.3.0" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
@@ -40,3 +41,4 @@ spring-dependency = { id = 'io.spring.dependency-management', version = '1.1.7' 
 
 [bundles]
 docker = ['docker-api', 'docker-java-transport-zerodep']
+jackson = ['jackson-databind', 'jackson-dataformat-xml']
