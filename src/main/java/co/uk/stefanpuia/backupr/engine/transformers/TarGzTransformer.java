@@ -43,7 +43,7 @@ public class TarGzTransformer extends AbstractTransformer {
 
   private File createArchive(final ConfigSource source) throws IOException {
     log.debug("Creating temporary tar.gz file");
-    final var tempDir = Files.createTempDirectory("targz-temp");
+    final var tempDir = backupHelper.createTempDirectory("targz-transformer");
     return Path.of(tempDir.toString(), getFilename(source)).toFile();
   }
 

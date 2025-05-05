@@ -40,7 +40,7 @@ public class GitRemoteHandler extends AbstractRemoteHandler {
   }
 
   private Git initRepository() throws IOException, URISyntaxException, GitAPIException {
-    final var repoDir = Files.createTempDirectory("").toFile();
+    final var repoDir = backupHelper.createTempDirectory("git-remote").toFile();
     repoDir.deleteOnExit();
     log.debug("Initializing empty repository at '{}'", repoDir);
     try (final var git = Git.init().setDirectory(repoDir).call()) {

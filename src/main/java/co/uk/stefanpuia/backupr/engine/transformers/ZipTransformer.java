@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +32,6 @@ public class ZipTransformer extends AbstractTransformer {
   public Set<File> transform(final ConfigSource source, final Set<File> files) {
     try {
       final var zip = createZipFile(source);
-      zip.deleteOnExit();
       createZipContents(source, files, zip);
       return Set.of(zip);
     } catch (final IOException e) {
@@ -43,7 +41,7 @@ public class ZipTransformer extends AbstractTransformer {
 
   private File createZipFile(final ConfigSource source) throws IOException {
     log.debug("Creating temporary zip file");
-    final var tempDir = Files.createTempDirectory("zip-temp");
+    final var tempDir = backupHelper.createTempDirectory("zip-transformer");
     return Path.of(tempDir.toString(), getFilename(source)).toFile();
   }
 

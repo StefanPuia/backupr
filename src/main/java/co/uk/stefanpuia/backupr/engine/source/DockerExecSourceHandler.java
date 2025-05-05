@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.engine.source;
 
 import co.uk.stefanpuia.backupr.config.model.source.DockerExecConfigSource;
+import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.adapters.DockerAdapter;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.exception.DockerException;
@@ -23,6 +24,7 @@ import org.springframework.util.StreamUtils;
 @AllArgsConstructor
 public class DockerExecSourceHandler implements SourceHandler {
   private final DockerExecConfigSource source;
+  private final BackupHelper backupHelper;
   private final DockerAdapter dockerAdapter;
 
   @Override
@@ -47,7 +49,7 @@ public class DockerExecSourceHandler implements SourceHandler {
 
   private Path createTempTargetDir() throws IOException {
     log.debug("Creating temporary directory");
-    return Files.createTempDirectory("docker-cp-temp");
+    return backupHelper.createTempDirectory("docker-exec-source");
   }
 
   private void execToFile(

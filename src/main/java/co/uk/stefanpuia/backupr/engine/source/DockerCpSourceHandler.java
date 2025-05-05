@@ -1,12 +1,12 @@
 package co.uk.stefanpuia.backupr.engine.source;
 
 import co.uk.stefanpuia.backupr.config.model.source.DockerCpConfigSource;
+import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.adapters.DockerAdapter;
 import com.github.dockerjava.api.exception.DockerException;
 import com.github.dockerjava.api.exception.NotFoundException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +19,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 @AllArgsConstructor
 public class DockerCpSourceHandler implements SourceHandler {
   private final DockerCpConfigSource source;
+  private final BackupHelper backupHelper;
   private final DockerAdapter dockerAdapter;
 
   @Override
@@ -52,6 +53,6 @@ public class DockerCpSourceHandler implements SourceHandler {
 
   private Path createTempTargetDir() throws IOException {
     log.debug("Creating temporary directory");
-    return Files.createTempDirectory("docker-cp-temp");
+    return backupHelper.createTempDirectory("docker-cp-source");
   }
 }

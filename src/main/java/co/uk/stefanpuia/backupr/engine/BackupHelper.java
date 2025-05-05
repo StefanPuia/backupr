@@ -2,14 +2,19 @@ package co.uk.stefanpuia.backupr.engine;
 
 import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class BackupHelper {
+  private final BackupSession backupSession;
 
   public void mkdirp(final Path path, final String exceptionMessage) {
     final var directory = path.toFile();
@@ -37,5 +42,9 @@ public class BackupHelper {
 
   public String generateBackupName() {
     return LocalDateTime.now().withNano(0).toString().replaceAll("\\W", "-");
+  }
+
+  public Path createTempDirectory(final String prefix) throws IOException {
+    return Files.createTempDirectory(backupSession.getBackupRootPath(), "%s-".formatted(prefix));
   }
 }
