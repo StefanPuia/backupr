@@ -27,10 +27,15 @@ public class BackupHelper {
   }
 
   public Path getRelativePathIncludingFilename(final Path basePath, final File file) {
+    final var filePath = file.toPath();
     try {
-      return basePath.relativize(file.toPath());
-    } catch (IllegalArgumentException e) {
-      return Path.of(file.getName());
+      if (filePath.startsWith(basePath)) {
+        return basePath.relativize(filePath);
+      } else {
+        return filePath.getFileName();
+      }
+    } catch (SecurityException | IllegalArgumentException e) {
+      return filePath.getFileName();
     }
   }
 
