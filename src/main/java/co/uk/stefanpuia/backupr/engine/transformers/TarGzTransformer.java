@@ -54,6 +54,7 @@ public class TarGzTransformer extends AbstractTransformer {
         final var bufferedOutputStream = new BufferedOutputStream(fos);
         final var gzipOutputStream = new GzipCompressorOutputStream(bufferedOutputStream);
         final var tarArchiveOutputStream = new TarArchiveOutputStream(gzipOutputStream)) {
+      tarArchiveOutputStream.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
       for (final var file : files) {
         log.debug("Appending file '{}' to archive", file);
         if (isDryRun()) continue;
