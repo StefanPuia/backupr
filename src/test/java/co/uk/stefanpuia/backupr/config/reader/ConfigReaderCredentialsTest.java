@@ -51,7 +51,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
 
     // Then
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
-    then(config.remotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
+    then(config.getRemotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
   }
 
   void shouldReadConfigWithCredentialsDefinedGlobally(
@@ -95,7 +95,7 @@ public class ConfigReaderCredentialsTest extends AbstractConfigReaderTest {
     // Then
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
     // then(config.credentials()).isNotNull().hasSize(1).containsExactlyInAnyOrder(expected);
-    then(config.remotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
+    then(config.getRemotes()).isNotNull().hasSize(1).containsExactlyInAnyOrder(gitConfigRemote);
   }
 
   @Test

@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.core.JsonParser.Feature.ALLOW_COMMENTS;
 
 import co.uk.stefanpuia.backupr.shell.ShellExceptionResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ import org.springframework.shell.command.annotation.CommandScan;
 public class BackuprApplicationConfiguration {
   @Bean
   public ObjectMapper objectMapper() {
-    return new ObjectMapper().enable(ALLOW_COMMENTS);
+    return new ObjectMapper().registerModule(new JavaTimeModule()).enable(ALLOW_COMMENTS);
   }
 
   @Bean

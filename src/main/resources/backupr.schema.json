@@ -6,6 +6,38 @@
       "type": "object",
       "description": "A set of <String, String> key-value pairs that can be reused in the configuration. These variables can reference each other, but only in the order they are defined."
     },
+    "state": {
+      "type": "object",
+      "description": "Configuration for the state storage. This allows Backupr to keep track of which backups have been successfully uploaded to which remotes.",
+      "properties": {
+        "remote": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "$ref": "#/definitions/remote"
+            }
+          ]
+        }
+      }
+    },
+    "cleanup": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/definitions/cleanup"
+          },
+          {
+            "required": [
+              "name"
+            ]
+          }
+        ]
+      }
+    },
     "credentials": {
       "type": "array",
       "items": {
@@ -62,6 +94,9 @@
               "$ref": "#/definitions/abstractRemote"
             },
             {
+              "$ref": "#/definitions/abstractRemoteWithCleanup"
+            },
+            {
               "properties": {
                 "type": {
                   "const": "LOCAL"
@@ -83,6 +118,9 @@
           "allOf": [
             {
               "$ref": "#/definitions/abstractRemoteWithCredentials"
+            },
+            {
+              "$ref": "#/definitions/abstractRemoteWithCleanup"
             },
             {
               "properties": {
@@ -183,6 +221,29 @@
                 },
                 {
                   "$ref": "#/definitions/credentials"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "abstractRemoteWithCleanup": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/abstractRemote"
+        },
+        {
+          "properties": {
+            "cleanup": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "$ref": "#/definitions/cleanup"
                 }
               ]
             }
@@ -326,6 +387,17 @@
           "type": "boolean",
           "default": false
         },
+        "cleanup": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "$ref": "#/definitions/cleanup"
+            }
+          ]
+        },
         "remotes": {
           "type": "array",
           "description": "List of remotes where this source should be backed up to. These must reference existing remotes defined in this configuration.",
@@ -352,6 +424,49 @@
       "required": [
         "name",
         "type"
+      ]
+    },
+    "cleanup": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/abstractCleanup"
+        },
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/keepAllCleanup"
+            },
+            {
+              "$ref": "#/definitions/parameterizedCleanup"
+            }
+          ]
+        }
+      ]
+    },
+    "abstractCleanup": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/identifier"
+        }
+      }
+    },
+    "keepAllCleanup": {},
+    "parameterizedCleanup": {
+      "properties": {
+        "keepCount": {
+          "type": "number",
+          "description": "Minimum number of backups to keep. Older backups will be deleted."
+        },
+        "keepDays": {
+          "type": "number",
+          "description": "Minimum age of backups to keep in days. Older backups will be deleted."
+        }
+      },
+      "required": [
+        "keepCount",
+        "keepDays"
       ]
     },
     "credentials": {

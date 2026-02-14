@@ -1,11 +1,14 @@
 package co.uk.stefanpuia.backupr.config.reader.dto;
 
+import co.uk.stefanpuia.backupr.config.reader.dto.cleanup.CleanupDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.credentials.CredentialsDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.state.StateDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.validation.UniqueIdentifier;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.LinkedHashMap;
@@ -23,6 +26,12 @@ public abstract class BackuprConfigDto {
   public LinkedHashMap<@NotBlank String, @NotBlank String> getVariables() {
     return new LinkedHashMap<>();
   }
+
+  @Nullable
+  public abstract StateDto getState();
+
+  @UniqueIdentifier
+  public abstract List<@Valid CleanupDto> getCleanup();
 
   @UniqueIdentifier
   public abstract List<@Valid CredentialsDto> getCredentials();

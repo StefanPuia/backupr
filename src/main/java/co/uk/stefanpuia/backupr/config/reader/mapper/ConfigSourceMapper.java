@@ -4,18 +4,21 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
+import co.uk.stefanpuia.backupr.config.model.cleanup.Cleanup;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.DockerCpConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.DockerExecConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
+import co.uk.stefanpuia.backupr.config.reader.dto.cleanup.MixedCleanupDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.ConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerCpConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerExecConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.LocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import org.mapstruct.Context;
@@ -34,9 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class ConfigSourceMapper {
   private static final String REMOTES_EXPRESSION =
       "java(mapMixedRemotes(source.getName(), source.getRemotes(), remotes, credentials,"
-          + " variables))";
+          + " cleanup, variables))";
+  private static final String CLEANUP_EXPRESSION =
+      "java(mapMixedCleanup(source.getName(), source.getCleanup(), cleanup, variables))";
   @Autowired private CoreDtoMapper coreMapper;
   @Autowired private ConfigRemoteMapper remoteMapper;
+  @Autowired private ConfigCleanupMapper cleanupMapper;
 
   @SubclassMapping(
       target = LocalConfigSource.class,
@@ -54,10 +60,12 @@ public abstract class ConfigSourceMapper {
       ConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
       @Context List<Credentials> credentials,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   @Named("convertLocalConfigSource")
   @Mapping(target = "remotes", expression = REMOTES_EXPRESSION)
+  @Mapping(target = "cleanup", expression = CLEANUP_EXPRESSION)
   @Mapping(target = "files", source = "files", qualifiedByName = "mapFilePaths")
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   @Mapping(target = "directory", source = "directory", qualifiedByName = "applyTemplateToString")
@@ -65,10 +73,12 @@ public abstract class ConfigSourceMapper {
       LocalConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
       @Context List<Credentials> credentials,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   @Named("convertDockerCpConfigSource")
   @Mapping(target = "remotes", expression = REMOTES_EXPRESSION)
+  @Mapping(target = "cleanup", expression = CLEANUP_EXPRESSION)
   @Mapping(target = "paths", source = "paths", qualifiedByName = "mapFilePaths")
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   @Mapping(target = "container", source = "container", qualifiedByName = "applyTemplateToString")
@@ -76,16 +86,19 @@ public abstract class ConfigSourceMapper {
       DockerCpConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
       @Context List<Credentials> credentials,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   @Named("convertDockerExecConfigSource")
   @Mapping(target = "remotes", expression = REMOTES_EXPRESSION)
+  @Mapping(target = "cleanup", expression = CLEANUP_EXPRESSION)
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   @Mapping(target = "container", source = "container", qualifiedByName = "applyTemplateToString")
   protected abstract DockerExecConfigSource convertDockerExecConfigSource(
       DockerExecConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
       @Context List<Credentials> credentials,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   @Mapping(target = "outputFile", source = "file", qualifiedByName = "mapFilePath")
@@ -98,6 +111,7 @@ public abstract class ConfigSourceMapper {
       final @Context List<MixedRemoteDto> mixedRemotes,
       final @Context List<ConfigRemote> remotes,
       final @Context List<Credentials> credentials,
+      final @Context List<Cleanup> cleanup,
       final @Context VariablesWrapper variables) {
     return mixedRemotes.stream()
         .map(
@@ -111,7 +125,8 @@ public abstract class ConfigSourceMapper {
                 return pickRemotes(sourceName, remotes, remote.name());
               }
 
-              return remoteMapper.mapRemote(remote.remote(), sourceName, credentials, variables);
+              return remoteMapper.mapRemote(
+                  remote.remote(), sourceName, credentials, cleanup, variables);
             })
         .toList();
   }
@@ -126,6 +141,39 @@ public abstract class ConfigSourceMapper {
                 new ConfigValidationException(
                     "in source '%s': no remote named '%s' defined"
                         .formatted(sourceName, remoteName)));
+  }
+
+  protected Cleanup mapMixedCleanup(
+      final String sourceName,
+      final @Nullable MixedCleanupDto cleanup,
+      final @Context List<Cleanup> cleanups,
+      final @Context VariablesWrapper variables) {
+    if (isNull(cleanup)) {
+      return null;
+    }
+
+    if (isNull(cleanup.name()) && isNull(cleanup.cleanup())) {
+      throw new ConfigValidationException(
+          "in source '%s': either a name or inline cleanup must be provided");
+    }
+
+    if (nonNull(cleanup.name())) {
+      return pickCleanup(sourceName, cleanups, cleanup.name());
+    }
+
+    return cleanupMapper.mapCleanup(cleanup.cleanup(), variables, sourceName);
+  }
+
+  private Cleanup pickCleanup(
+      final String sourceName, final List<Cleanup> cleanups, final @NotNull String cleanupName) {
+    return cleanups.stream()
+        .filter(cleanup -> cleanupName.equals(cleanup.getName()))
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new ConfigValidationException(
+                    "in source '%s': no cleanup named '%s' defined"
+                        .formatted(sourceName, cleanupName)));
   }
 
   @Named("mapCommandArgs")

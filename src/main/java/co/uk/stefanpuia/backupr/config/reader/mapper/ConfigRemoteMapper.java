@@ -1,6 +1,8 @@
 package co.uk.stefanpuia.backupr.config.reader.mapper;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigValidationException;
+import co.uk.stefanpuia.backupr.config.model.cleanup.Cleanup;
+import co.uk.stefanpuia.backupr.config.model.cleanup.KeepAllCleanup;
 import co.uk.stefanpuia.backupr.config.model.credentials.Credentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.NoneCredentials;
 import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageBlobConfigRemote;
@@ -13,6 +15,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.LocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.RemoteType;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.AzureStorageBlobConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteWithCleanupDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.ConfigRemoteWithCredentialsDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.GitConfigRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.LocalConfigRemoteDto;
@@ -38,7 +41,11 @@ import org.springframework.beans.factory.annotation.Autowired;
     subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public abstract class ConfigRemoteMapper {
   private static final NoneCredentials NONE_CREDENTIALS = NoneCredentials.create();
+  private static final KeepAllCleanup KEEP_ALL_CLEANUP = KeepAllCleanup.create();
+  private static final String CLEANUP_EXPRESSION =
+      "java(mapMixedCleanup(source, cleanup, variables))";
   @Autowired protected ConfigCredentialsMapper credentialsMapper;
+  @Autowired protected ConfigCleanupMapper cleanupMapper;
 
   @Named("mapRemote")
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
@@ -58,15 +65,18 @@ public abstract class ConfigRemoteMapper {
       ConfigRemoteDto source,
       @Nullable @Context String sourceName,
       @Context List<Credentials> credentials,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   @Named("convertLocalConfigRemote")
   @Mapping(target = "variables", ignore = true)
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   @Mapping(target = "location", source = "location", qualifiedByName = "applyTemplateToString")
+  @Mapping(target = "cleanup", expression = CLEANUP_EXPRESSION)
   protected abstract LocalConfigRemote convertLocalConfigRemote(
       LocalConfigRemoteDto source,
       @Nullable @Context String sourceName,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   @Named("convertGitConfigRemote")
@@ -87,10 +97,12 @@ public abstract class ConfigRemoteMapper {
   @Mapping(target = "endpoint", source = "endpoint", qualifiedByName = "applyTemplateToString")
   @Mapping(target = "container", source = "container", qualifiedByName = "applyTemplateToString")
   @Mapping(target = "credentials", source = "source")
+  @Mapping(target = "cleanup", expression = CLEANUP_EXPRESSION)
   protected abstract AzureStorageBlobConfigRemote convertAzureStorageBlobConfigRemote(
       AzureStorageBlobConfigRemoteDto source,
       @Nullable @Context String sourceName,
       @Context List<Credentials> credentials,
+      @Context List<Cleanup> cleanup,
       @Context VariablesWrapper variables);
 
   protected Credentials mapMixedCredentials(
@@ -110,10 +122,7 @@ public abstract class ConfigRemoteMapper {
 
     if (Objects.nonNull(source.credentials())) {
       return credentialsMapper.mapCredential(
-          source.credentials(),
-          Optional.ofNullable(remote.getName())
-              .orElseGet(() -> this.getInlineName(remote.getType(), sourceName)),
-          variables);
+          source.credentials(), getPrintName(remote, sourceName), variables);
     }
 
     return credentials.stream()
@@ -123,6 +132,35 @@ public abstract class ConfigRemoteMapper {
             () ->
                 new ConfigValidationException(
                     "in remote '%s': no credentials named '%s' defined"
+                        .formatted(getPrintName(remote, sourceName), source.name())));
+  }
+
+  @Named("mapMixedCleanup")
+  protected Cleanup mapMixedCleanup(
+      final ConfigRemoteWithCleanupDto remote,
+      final @Context List<Cleanup> cleanups,
+      final @Context VariablesWrapper variables) {
+    final var source = remote.getCleanup();
+
+    if (Objects.isNull(source)) {
+      return KEEP_ALL_CLEANUP;
+    }
+
+    if (Objects.isNull(source.cleanup()) && Objects.isNull(source.name())) {
+      return KEEP_ALL_CLEANUP;
+    }
+
+    if (Objects.nonNull(source.cleanup())) {
+      return cleanupMapper.mapCleanup(source.cleanup(), variables, getPrintName(remote, null));
+    }
+
+    return cleanups.stream()
+        .filter(cleanup -> source.name().equals(cleanup.getName()))
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new ConfigValidationException(
+                    "in remote '%s': no cleanups named '%s' defined"
                         .formatted(remote.getName(), source.name())));
   }
 
@@ -160,6 +198,11 @@ public abstract class ConfigRemoteMapper {
     if (Objects.nonNull(sourceName) && Optional.ofNullable(remote.getName()).isEmpty()) {
       nameApplier.apply(getInlineName(remote.getType(), sourceName));
     }
+  }
+
+  private String getPrintName(final ConfigRemoteDto remote, @Nullable final String sourceName) {
+    return Optional.ofNullable(remote.getName())
+        .orElseGet(() -> this.getInlineName(remote.getType(), sourceName));
   }
 
   private String getInlineName(final RemoteType remoteType, final String sourceName) {

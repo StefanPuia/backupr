@@ -65,8 +65,23 @@ identifier can be used, or one can be provided inline.
 
 ## Credentials
 
-Credentials are ways to authenticate to a remote. Due to the nature of the contents of these, it is recommended
+Credentials are ways to authenticate to a remote. Due to the sensitive nature of their contents, it is recommended
 using [environment variable templates](/getting-started/configuration/#environment-variables), as well as protecting the
 configuration file using file permissions and/or placing it in a safe location.
 
 [List of available credentials](/credentials).
+
+## Cleanup
+
+Cleanup rules are used to remove old backups from remotes. These can be defined for each remote and each source
+independently.
+
+<div class="alert alert--danger" role="alert">
+  <div class="alert__caption">
+    <p>Cleanup is only available when a backup <a href="/getting-started/state-management">state</a> is configured.
+      <br/>
+      Not all remotes support cleanup.</p>
+  </div>
+</div>
+
+[List of available cleanup rules](/cleanup).

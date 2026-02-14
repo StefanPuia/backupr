@@ -3,6 +3,7 @@ package co.uk.stefanpuia.backupr.engine;
 import co.uk.stefanpuia.backupr.config.ConfigFileProvider;
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileNotFoundException;
 import co.uk.stefanpuia.backupr.config.reader.ConfigReader;
+import co.uk.stefanpuia.backupr.engine.state.BackupStateLoader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ public class BackupDelegate {
   private final ConfigFileProvider configFileProvider;
   private final ConfigReader configReader;
   private final BackupEngine backupEngine;
+  private final BackupStateLoader backupStateLoader;
 
   public String validateConfig(final String configPath) {
     try {
@@ -27,8 +29,14 @@ public class BackupDelegate {
     }
   }
 
-  public void executeBackup(final boolean dry, final String configPath) {
-    backupEngine.execute(
-        dry, configReader.readConfig(configFileProvider.getConfigInputStream(configPath)));
+  public void executeBackup(final String configPath) {
+    final var readConfig =
+        configReader.readConfig(configFileProvider.getConfigInputStream(configPath));
+    final var config = backupStateLoader.initialiseState(readConfig);
+    try {
+      backupEngine.execute(config);
+    } finally {
+      backupStateLoader.writeState(config);
+    }
   }
 }

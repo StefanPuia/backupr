@@ -6,12 +6,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.ImmutableBackuprConfig;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.engine.remote.RemoteHandler;
 import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerFactory;
 import co.uk.stefanpuia.backupr.engine.source.SourceHandler;
 import co.uk.stefanpuia.backupr.engine.source.SourceHandlerFactory;
+import co.uk.stefanpuia.backupr.engine.state.BackupStateLoader;
 import com.github.valfirst.slf4jtest.LoggingEvent;
 import com.github.valfirst.slf4jtest.TestLogger;
 import java.io.File;
@@ -37,12 +39,14 @@ public class BackupEngineTest {
   @Mock private RemoteHandler remoteHandler;
   @Mock private ConfigSource configSource;
   @Mock private ConfigRemote configRemote;
+  @Mock private BackupSession backupSession;
+  @Mock private BackupStateLoader backupStateLoader;
   @InjectMocks private BackupEngine backupEngine;
   private BackuprConfig backuprConfig;
 
   @BeforeEach
   void setUp() {
-    backuprConfig = new BackuprConfig(List.of(configRemote), List.of(configSource));
+    backuprConfig = ImmutableBackuprConfig.of(null, List.of(configRemote), List.of(configSource));
     LOGGER.clear();
   }
 
@@ -54,7 +58,7 @@ public class BackupEngineTest {
     doReturn(Set.of()).when(sourceHandler).getFiles();
 
     // When
-    backupEngine.execute(false, backuprConfig);
+    backupEngine.execute(backuprConfig);
 
     // Then
     verifyNoInteractions(remoteHandlerFactory);
@@ -79,10 +83,10 @@ public class BackupEngineTest {
     doReturn(List.of(configRemote)).when(configSource).getRemotes();
     doReturn(remoteHandler).when(remoteHandlerFactory).getInstance(configRemote);
     doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
-    doReturn(remoteHandler).when(remoteHandler).setDry(dryRun);
+    doReturn(dryRun).when(backupSession).isDry();
 
     // When
-    backupEngine.execute(dryRun, backuprConfig);
+    backupEngine.execute(backuprConfig);
 
     // Then
     verify(remoteHandler).upload(configSource, Set.of(new File(sourceFilePath)));
@@ -99,6 +103,7 @@ public class BackupEngineTest {
             sourceFilePath,
             "Backing up to {} remote '{}'",
             "Finished backup to {} remote '{}'",
+            "Cleaning up remotes for source: '{}'",
             "Backup process completed");
   }
 
@@ -113,7 +118,7 @@ public class BackupEngineTest {
     doReturn(Set.of(new File(sourceFilePath))).when(sourceHandler).getFiles();
 
     // When
-    backupEngine.execute(false, backuprConfig);
+    backupEngine.execute(backuprConfig);
 
     // Then
     then(LOGGER.getLoggingEvents())
@@ -128,6 +133,7 @@ public class BackupEngineTest {
             "Backing up {} files to remotes:",
             sourceFilePath,
             "Ignoring remote '{}' because it is disabled",
+            "Cleaning up remotes for source: '{}'",
             "Backup process completed");
   }
 
@@ -137,7 +143,7 @@ public class BackupEngineTest {
     doReturn(false).when(configSource).isEnabled();
 
     // When
-    backupEngine.execute(false, backuprConfig);
+    backupEngine.execute(backuprConfig);
 
     // Then
     then(LOGGER.getLoggingEvents())

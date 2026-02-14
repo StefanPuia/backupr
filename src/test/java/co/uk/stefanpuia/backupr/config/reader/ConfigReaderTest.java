@@ -5,6 +5,8 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import co.uk.stefanpuia.backupr.config.exception.ConfigFileReadException;
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.cleanup.ImmutableParameterizedCleanup;
+import co.uk.stefanpuia.backupr.config.model.cleanup.KeepAllCleanup;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableAzureClientSecretCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableBasicCredentials;
 import co.uk.stefanpuia.backupr.config.model.credentials.ImmutableNoneCredentials;
@@ -13,6 +15,7 @@ import co.uk.stefanpuia.backupr.config.model.remote.ImmutableAzureStorageBlobCon
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableGitConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ImmutableLocalConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ImmutableLocalConfigSource;
+import co.uk.stefanpuia.backupr.config.model.state.ImmutableBackupState;
 import co.uk.stefanpuia.backupr.config.model.transformer.ImmutableZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.config.reader.mapper.VariablesWrapper;
 import java.util.List;
@@ -34,6 +37,19 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
               "variables": {
                 "abc": "123"
               },
+              "state": {
+                "remote": {
+                  "type": "LOCAL",
+                  "location": "/var/backups/state"
+                }
+              },
+              "cleanup": [
+                {
+                  "name": "cleanupRule1",
+                  "keepCount": 10,
+                  "keepDays": 20
+                }
+              ],
               "credentials": [
                 {
                   "name": "noneCred1"
@@ -48,7 +64,8 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 {
                   "name": "localRemote1",
                   "type": "LOCAL",
-                  "location": "/var/backups/foo"
+                  "location": "/var/backups/foo",
+                  "cleanup": "cleanupRule1"
                 },
                 {
                   "name": "gitRemote1",
@@ -80,7 +97,8 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                   "remotes": [
                     "localRemote1",
                     "azureRemote1"
-                  ]
+                  ],
+                  "cleanup": "cleanupRule1"
                 },
                 {
                   "name": "localSource2",
@@ -95,7 +113,11 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                   "remotes": [
                     {
                       "type": "LOCAL",
-                      "location": "/var/backups/foo"
+                      "location": "/var/backups/foo",
+                      "cleanup": {
+                        "keepDays": 3,
+                        "disabled": true
+                      }
                     },
                     "azureRemote1",
                     {
@@ -121,6 +143,25 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
     // variables
     final var vars = new VariablesWrapper(Map.of("abc", "123"), System.getenv());
 
+    // state
+    final var state =
+        ImmutableBackupState.of(
+            ImmutableLocalConfigRemote.builder()
+                .setLocation("/var/backups/state")
+                .setEnabled(true)
+                .setCleanup(KeepAllCleanup.create())
+                .setVariables(vars)
+                .build());
+
+    // cleanup
+    final var cleanupRule1 =
+        ImmutableParameterizedCleanup.builder()
+            .setName("cleanupRule1")
+            .setKeepCount(10)
+            .setKeepDays(20)
+            .setEnabled(true)
+            .build();
+
     // credentials
     final var noneCred1 = ImmutableNoneCredentials.builder().setName("noneCred1").build();
     final var basicCreds1 =
@@ -136,6 +177,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setName("localRemote1")
             .setLocation("/var/backups/foo")
             .setEnabled(true)
+            .setCleanup(cleanupRule1)
             .setVariables(vars)
             .build();
     final var gitRemote1 =
@@ -158,6 +200,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
             .setVariables(vars)
             .setOverwrite(true)
+            .setCleanup(KeepAllCleanup.create())
             .setCredentials(NoneCredentials.create())
             .build();
 
@@ -168,6 +211,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setEnabled(true)
             .setDirectory("/foo")
             .setFiles(List.of("**/*.json"))
+            .setCleanup(cleanupRule1)
             .setTransformers(
                 List.of(
                     ImmutableZipConfigTransformerOptions.builder()
@@ -195,6 +239,12 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                         .setLocation("/var/backups/foo")
                         .setEnabled(true)
                         .setVariables(vars)
+                        .setCleanup(
+                            ImmutableParameterizedCleanup.builder()
+                                .setEnabled(false)
+                                .setName("inline[inline[null/LOCAL]/PARAMETERIZED]")
+                                .setKeepDays(3)
+                                .build())
                         .build(),
                     azureRemote1,
                     ImmutableGitConfigRemote.builder()
@@ -227,14 +277,15 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
 
     // Then
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
-    then(config.remotes())
+    then(config.getRemotes())
         .isNotNull()
         .hasSize(3)
         .containsExactlyInAnyOrder(localRemote1, gitRemote1, azureRemote1);
-    then(config.sources())
+    then(config.getSources())
         .isNotNull()
         .hasSize(2)
         .containsExactlyInAnyOrder(localSource1, localSource2);
+    then(config.getState()).isEqualTo(state);
   }
 
   @Test
@@ -326,6 +377,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
             .setLocation("/var/backups/fooBar9998/foo")
             .setEnabled(true)
             .setVariables(vars)
+            .setCleanup(KeepAllCleanup.create())
             .build();
     final var azureBlobConfigRemote =
         ImmutableAzureStorageBlobConfigRemote.builder()
@@ -337,6 +389,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                 "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>")
             .setVariables(vars)
             .setOverwrite(false)
+            .setCleanup(KeepAllCleanup.create())
             .setCredentials(
                 ImmutableAzureClientSecretCredentials.builder()
                     .setName("inline[azureBlob/AZURE_CLIENT_SECRET]")
@@ -366,11 +419,10 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
 
     // Then
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
-    then(config.remotes())
-        .isNotNull()
-        .hasSize(3)
-        .containsExactlyInAnyOrder(localConfigRemote, azureBlobConfigRemote, gitConfigRemote);
-    then(config.sources())
+    then(config.getRemotes().get(0)).usingRecursiveComparison().isEqualTo(localConfigRemote);
+    then(config.getRemotes().get(1)).usingRecursiveComparison().isEqualTo(azureBlobConfigRemote);
+    then(config.getRemotes().get(2)).usingRecursiveComparison().isEqualTo(gitConfigRemote);
+    then(config.getSources())
         .isNotNull()
         .hasSize(1)
         .containsExactlyInAnyOrder(

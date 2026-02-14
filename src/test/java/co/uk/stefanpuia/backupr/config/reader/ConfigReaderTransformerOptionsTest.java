@@ -58,8 +58,8 @@ public class ConfigReaderTransformerOptionsTest extends AbstractConfigReaderTest
 
     // Then
     then(config).isNotNull().isInstanceOf(BackuprConfig.class);
-    then(config.sources()).isNotNull().hasSize(1);
-    final var actual = config.sources().get(0).getTransformers()
+    then(config.getSources()).isNotNull().hasSize(1);
+    final var actual = config.getSources().get(0).getTransformers()
         // .stream()
         // .map(
         //     t -> {

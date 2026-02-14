@@ -3,6 +3,8 @@ package co.uk.stefanpuia.backupr.config.reader.dto.source;
 import static co.uk.stefanpuia.backupr.config.reader.dto.BackuprConfigDto.VALID_IDENTIFIER_REGEX;
 
 import co.uk.stefanpuia.backupr.config.reader.dto.IdentifiableConfigDto;
+import co.uk.stefanpuia.backupr.config.reader.dto.cleanup.MixedCleanupDeserializer;
+import co.uk.stefanpuia.backupr.config.reader.dto.cleanup.MixedCleanupDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteArrayDeserializer;
 import co.uk.stefanpuia.backupr.config.reader.dto.remote.MixedRemoteDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.transformers.MixedTransformerArrayDeserializer;
@@ -31,6 +33,11 @@ public interface ConfigSourceDto extends IdentifiableConfigDto {
 
   @Nullable
   Boolean isDisabled();
+
+  @Valid
+  @Nullable
+  @JsonDeserialize(using = MixedCleanupDeserializer.class)
+  MixedCleanupDto getCleanup();
 
   @JsonDeserialize(using = MixedRemoteArrayDeserializer.class)
   List<@Valid @NotNull MixedRemoteDto> getRemotes();

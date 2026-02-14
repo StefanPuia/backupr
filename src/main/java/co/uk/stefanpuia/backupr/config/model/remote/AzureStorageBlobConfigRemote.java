@@ -8,7 +8,7 @@ import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public abstract class AzureStorageBlobConfigRemote implements ConfigRemote {
+public abstract class AzureStorageBlobConfigRemote implements ConfigRemote, CleanupRemote {
 
   @Override
   public RemoteType getType() {

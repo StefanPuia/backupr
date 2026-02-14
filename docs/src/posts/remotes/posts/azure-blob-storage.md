@@ -25,8 +25,9 @@ backup process to a storage container.
       "endpoint": "https://mybackupstorage.blob.core.windows.net/",
       "container": "backups",
       "overwrite": true,
-      "blobPrefixPattern": "latest"
+      "blobPrefixPattern": "latest",
       // no credentials provided
+      "cleanup": "my-cleanup"
     }
   ],
   "sources": [
@@ -103,6 +104,8 @@ The prefix for all blobs created during the same backup session. Supports templa
 {% include 'partials/remotes/common-configuration-after.md' %}
 
 {% include 'partials/remotes/common-configuration-creds.md' %}
+
+{% include 'partials/remotes/common-configuration-cleanup.md' %}
 
 ### Valid credentials
 

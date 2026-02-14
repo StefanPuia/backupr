@@ -24,6 +24,8 @@ while (for each source)
 
         :upload files to remote;
 
+        :clean up remote;
+
     endwhile
 endwhile
 

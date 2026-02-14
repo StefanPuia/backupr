@@ -25,3 +25,13 @@ An array of [transformer](/getting-started/features/#transformer) types, or inli
 executed in the order they are defined in the array. Defaults to no transformers.
 
 See [transformers](/transformers) for a list of available transformers.
+
+#### cleanup
+
+- default value{.field-chip-default}
+  {.field-chips}
+
+A [cleanup](/getting-started/features/#cleanup) [identifier](/getting-started/configuration/#identifier), or inline
+configuration. Defaults to the remote's cleanup configuration.
+
+See [cleanup](/cleanup) for a list of available cleanup types.

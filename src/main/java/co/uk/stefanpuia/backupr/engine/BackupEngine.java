@@ -1,6 +1,7 @@
 package co.uk.stefanpuia.backupr.engine;
 
 import co.uk.stefanpuia.backupr.config.model.BackuprConfig;
+import co.uk.stefanpuia.backupr.config.model.remote.CleanupRemote;
 import co.uk.stefanpuia.backupr.config.model.remote.ConfigRemote;
 import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerFactory;
@@ -9,6 +10,7 @@ import co.uk.stefanpuia.backupr.engine.transformers.TransformerFactory;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import lombok.AllArgsConstructor;
@@ -22,21 +24,23 @@ public class BackupEngine {
   private final SourceHandlerFactory sourceHandlerFactory;
   private final TransformerFactory transformerFactory;
   private final RemoteHandlerFactory remoteHandlerFactory;
+  private final BackupSession backupSession;
 
-  public void execute(final boolean dry, final BackuprConfig config) {
-    log.info(dry ? "Beginning backup process (dry)" : "Beginning backup process");
-    config.sources().stream()
+  public void execute(final BackuprConfig config) {
+    log.info(backupSession.isDry() ? "Beginning backup process (dry)" : "Beginning backup process");
+    config.getSources().stream()
         .filter(Predicate.not(ConfigSource::isEnabled))
         .map(ConfigSource::getName)
         .forEach(source -> log.debug("Ignoring source '{}' because it is disabled", source));
-    config.sources().stream()
+    config.getSources().stream()
         .filter(ConfigSource::isEnabled)
         .forEach(
             source -> {
               final var sourceFiles = discoverSources(source);
               if (sourceFiles == null) return;
-              final var remoteFiles = getTransformedFiles(dry, source, sourceFiles);
-              uploadToRemote(dry, config, source, remoteFiles);
+              final var remoteFiles = getTransformedFiles(source, sourceFiles);
+              uploadToRemote(config, source, remoteFiles);
+              cleanUpRemote(config, source);
             });
     log.info("Backup process completed");
   }
@@ -54,40 +58,57 @@ public class BackupEngine {
     return sourceFiles;
   }
 
-  private Set<File> getTransformedFiles(
-      final boolean dry, final ConfigSource source, final Set<File> sourceFiles) {
+  private Set<File> getTransformedFiles(final ConfigSource source, final Set<File> sourceFiles) {
     log.debug("Executing transformations");
     Set<File> transformedFiles = new HashSet<>(sourceFiles);
     for (final var transformerType : source.getTransformers()) {
-      final var transformer = transformerFactory.getInstance(transformerType).setDry(dry);
+      final var transformer = transformerFactory.getInstance(transformerType);
       log.debug("Transforming using '{}' transformer", transformer.getType());
 
       transformedFiles = transformer.transform(source, transformedFiles);
-      log.debug("Transformed to {} files:", transformedFiles.size());
+      log.debug("Transformed {} files:", transformedFiles.size());
       logFiles(transformedFiles);
     }
     return transformedFiles;
   }
 
   private void uploadToRemote(
-      final boolean dry,
-      final BackuprConfig config,
-      final ConfigSource source,
-      final Set<File> remoteFiles) {
+      final BackuprConfig config, final ConfigSource source, final Set<File> remoteFiles) {
     log.debug("Backing up {} files to remotes:", remoteFiles.size());
     logFiles(remoteFiles);
-    source.getRemotes().stream()
-        .filter(Predicate.not(ConfigRemote::isEnabled))
-        .map(ConfigRemote::getName)
-        .forEach(remote -> log.debug("Ignoring remote '{}' because it is disabled", remote));
+    logDisabledSourceRemotes(source.getRemotes());
     source.getRemotes().stream()
         .filter(ConfigRemote::isEnabled)
         .forEach(
             remote -> {
               log.debug("Backing up to {} remote '{}'", remote.getType(), remote.getName());
-              remoteHandlerFactory.getInstance(remote).setDry(dry).upload(source, remoteFiles);
+              final var record =
+                  remoteHandlerFactory.getInstance(remote).upload(source, remoteFiles);
+              backupSession.addBackup(record);
               log.debug("Finished backup to {} remote '{}'", remote.getType(), remote.getName());
             });
+  }
+
+  private void cleanUpRemote(final BackuprConfig config, final ConfigSource source) {
+    log.debug("Cleaning up remotes for source: '{}'", source.getName());
+    final var cleanupRemotes =
+        source.getRemotes().stream().filter(remote -> remote instanceof CleanupRemote).toList();
+    logDisabledSourceRemotes(cleanupRemotes);
+    cleanupRemotes.stream()
+        .filter(ConfigRemote::isEnabled)
+        .forEach(
+            remote -> {
+              log.debug("Cleaning up remote '{}'", remote.getName());
+              remoteHandlerFactory.getInstance(remote).cleanup(source, config.getState());
+              log.debug("Finished cleaning remote '{}'", remote.getName());
+            });
+  }
+
+  private void logDisabledSourceRemotes(final List<ConfigRemote> sourceRemotes) {
+    sourceRemotes.stream()
+        .filter(Predicate.not(ConfigRemote::isEnabled))
+        .map(ConfigRemote::getName)
+        .forEach(remote -> log.debug("Ignoring remote '{}' because it is disabled", remote));
   }
 
   private void logFiles(final Collection<File> files) {

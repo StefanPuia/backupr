@@ -10,13 +10,13 @@ import org.immutables.value.Value;
 @DtoStyle
 @Value.Immutable
 @JsonDeserialize(builder = ImmutableLocalConfigRemoteDto.Builder.class)
-public interface LocalConfigRemoteDto extends ConfigRemoteDto {
+public abstract class LocalConfigRemoteDto implements ConfigRemoteDto, ConfigRemoteWithCleanupDto {
   @NotBlank
   @SupportsTemplate
-  String getLocation();
+  public abstract String getLocation();
 
   @Override
-  default RemoteType getType() {
+  public RemoteType getType() {
     return RemoteType.LOCAL;
   }
 }

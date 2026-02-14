@@ -20,7 +20,8 @@ current machine.
     {
       "name": "myRemote",
       "type": "LOCAL",
-      "location": "/var/backups"
+      "location": "/var/backups",
+      "cleanup": "my-cleanup"
     }
   ],
   "sources": [
@@ -67,3 +68,5 @@ A constant that tells the engine what kind of remote this object is. This **must
 The target directory of the generated backups. This must be an absolute path.
 
 {% include 'partials/remotes/common-configuration-after.md' %}
+
+{% include 'partials/remotes/common-configuration-cleanup.md' %}

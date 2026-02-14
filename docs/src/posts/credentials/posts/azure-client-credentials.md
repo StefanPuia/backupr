@@ -15,7 +15,8 @@ to authenticate to Azure resources.
 
 <div class="alert alert--warning" role="alert">
   <div class="alert__caption">
-    <p>The Service principal must have the relevant permissions to the Azure resources.</p>
+    <p>The Service principal must have the relevant permissions to the Azure resources.
+      <code>Storage Blob Data Owner</code> is recommended.</p>
   </div>
 </div>
 

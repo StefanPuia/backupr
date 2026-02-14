@@ -18,6 +18,12 @@ The structure of the configuration file is as follows:
   // global values to be reused
   "variables": {},
 
+  // backup state persistence
+  "state": {},
+
+  // global cleanup steps to be reused
+  "cleanup": [],
+
   // global credentials to be reused
   "credentials": [],
 
@@ -25,7 +31,7 @@ The structure of the configuration file is as follows:
   // defined inside each remote
   "remotes": [],
 
-  // sources, can have bespoke remotes defined inside each source,
+  // sources can have bespoke remotes defined inside each source,
   // and credentials inside each remote
   "sources": [],
 }

@@ -3,11 +3,14 @@ package co.uk.stefanpuia.backupr.engine.remote;
 import static co.uk.stefanpuia.backupr.test.utils.TestObjects.azureStorageBlobConfigRemote;
 import static co.uk.stefanpuia.backupr.test.utils.TestObjects.configSource;
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.Mockito.doReturn;
 
 import co.uk.stefanpuia.backupr.config.model.remote.AzureStorageBlobConfigRemote;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
+import co.uk.stefanpuia.backupr.engine.BackupSession;
 import co.uk.stefanpuia.backupr.engine.adapters.AzureBlobClientProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.valfirst.slf4jtest.LoggingEvent;
 import com.github.valfirst.slf4jtest.TestLogger;
 import java.io.File;
@@ -28,7 +31,9 @@ public class AzureStorageBlobRemoteHandlerTest {
       (TestLogger) LoggerFactory.getLogger(AzureStorageBlobRemoteHandler.class);
 
   private final AzureStorageBlobConfigRemote remote = azureStorageBlobConfigRemote();
+  private final ObjectMapper jsonMapper = new ObjectMapper();
   @Mock private AzureBlobClientProvider azureBlobClientProvider;
+  @Mock private BackupSession backupSession;
   @InjectMocks private BackupHelper backupHelper;
   @InjectMocks private StringTemplateRenderer stringTemplateRenderer;
   private AzureStorageBlobRemoteHandler handler;
@@ -37,8 +42,13 @@ public class AzureStorageBlobRemoteHandlerTest {
   void setUp() {
     handler =
         new AzureStorageBlobRemoteHandler(
-            remote, azureBlobClientProvider, backupHelper, stringTemplateRenderer);
-    handler.setDry(true);
+            remote,
+            azureBlobClientProvider,
+            backupHelper,
+            stringTemplateRenderer,
+            backupSession,
+            jsonMapper);
+    doReturn(true).when(backupSession).isDry();
   }
 
   @Test

@@ -1,9 +1,11 @@
 package co.uk.stefanpuia.backupr.config.reader;
 
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigCleanupMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigCredentialsMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigDtoMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigRemoteMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigSourceMapperImpl;
+import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigStateMapper;
 import co.uk.stefanpuia.backupr.config.reader.mapper.ConfigTransformerMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.CoreDtoMapperImpl;
 import co.uk.stefanpuia.backupr.config.reader.mapper.VariablesWrapper;
@@ -28,7 +30,9 @@ import org.springframework.test.context.aot.DisabledInAotMode;
       ConfigSourceMapperImpl.class,
       CoreDtoMapperImpl.class,
       ConfigCredentialsMapperImpl.class,
+      ConfigCleanupMapperImpl.class,
       ConfigTransformerMapperImpl.class,
+      ConfigStateMapper.class,
       StringTemplateRenderer.class
     })
 @DisabledInAotMode

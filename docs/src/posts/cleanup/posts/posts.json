@@ -1,0 +1,4 @@
+{
+  "layout": "layouts/post.html",
+  "permalink": "/cleanup/{{ title | slug }}/index.html"
+}

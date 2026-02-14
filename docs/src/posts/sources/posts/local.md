@@ -33,7 +33,8 @@ look up files for backing up.
     ],
     "transformers": [
       // ...
-    ]
+    ],
+    "cleanup": "my-cleanup"
   }
 }
 

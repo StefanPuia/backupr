@@ -40,7 +40,8 @@ capture the standard output as a file to be backed up.
     ],
     "transformers": [
       // ...
-    ]
+    ],
+    "cleanup": "my-cleanup"
   }
 }
 

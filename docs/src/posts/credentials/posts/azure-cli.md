@@ -15,7 +15,8 @@ resources.
 
 <div class="alert alert--warning" role="alert">
   <div class="alert__caption">
-    <p>The Azure CLI logged-in user must have the relevant permissions to the Azure resources.</p>
+    <p>The Azure CLI logged-in user must have the relevant permissions to the Azure resources.
+      <code>Storage Blob Data Owner</code> is recommended.</p>
   </div>
 </div>
 

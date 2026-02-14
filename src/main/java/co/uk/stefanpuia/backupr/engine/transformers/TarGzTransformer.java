@@ -4,6 +4,7 @@ import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.transformer.TarGzConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
+import co.uk.stefanpuia.backupr.engine.BackupSession;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +20,11 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 @Slf4j
 @AllArgsConstructor
-public class TarGzTransformer extends AbstractTransformer {
+public class TarGzTransformer implements Transformer {
   private final TarGzConfigTransformerOptions options;
   private final BackupHelper backupHelper;
   private final StringTemplateRenderer stringTemplateRenderer;
+  private final BackupSession backupSession;
 
   @Override
   public TransformerType getType() {
@@ -57,7 +59,7 @@ public class TarGzTransformer extends AbstractTransformer {
       tarArchiveOutputStream.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
       for (final var file : files) {
         log.debug("Appending file '{}' to archive", file);
-        if (isDryRun()) continue;
+        if (backupSession.isDry()) continue;
         addFilesToTarGz(
             file.toPath(),
             backupHelper.getRelativePathIncludingFilename(source.getBasePath(), file),

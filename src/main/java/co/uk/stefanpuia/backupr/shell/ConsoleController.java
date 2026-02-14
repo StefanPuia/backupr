@@ -2,6 +2,7 @@ package co.uk.stefanpuia.backupr.shell;
 
 import co.uk.stefanpuia.backupr.config.JsonSchemaWriter;
 import co.uk.stefanpuia.backupr.engine.BackupDelegate;
+import co.uk.stefanpuia.backupr.engine.BackupSession;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
@@ -22,6 +23,7 @@ public class ConsoleController {
 
   private final BackupDelegate backupDelegate;
   private final JsonSchemaWriter schemaWriter;
+  private final BackupSession backupSession;
 
   @Command(command = "backup", description = "Start the backup process.")
   public void backup(
@@ -40,7 +42,8 @@ public class ConsoleController {
               longNames = OPTION_VERBOSE_LONG,
               description = OPTION_VERBOSE_DESCRIPTION) boolean verbose) {
     changeLogLevel(verbose);
-    backupDelegate.executeBackup(dry, configPath);
+    backupSession.setDry(dry);
+    backupDelegate.executeBackup(configPath);
   }
 
   @Command(command = "validate", description = "Tries to read and validate the configuration file.")

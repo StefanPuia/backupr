@@ -4,6 +4,7 @@ import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.transformer.ZipConfigTransformerOptions;
 import co.uk.stefanpuia.backupr.core.StringTemplateRenderer;
 import co.uk.stefanpuia.backupr.engine.BackupHelper;
+import co.uk.stefanpuia.backupr.engine.BackupSession;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,10 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class ZipTransformer extends AbstractTransformer {
+public class ZipTransformer implements Transformer {
   private final ZipConfigTransformerOptions options;
   private final BackupHelper backupHelper;
   private final StringTemplateRenderer stringTemplateRenderer;
+  private final BackupSession backupSession;
 
   @Override
   public TransformerType getType() {
@@ -50,7 +52,7 @@ public class ZipTransformer extends AbstractTransformer {
     try (final var out = new ZipOutputStream(new FileOutputStream(zip))) {
       for (final var file : files) {
         log.debug("Appending file '{}' to archive", file);
-        if (isDryRun()) continue;
+        if (backupSession.isDry()) continue;
 
         final var zipEntry =
             new ZipEntry(

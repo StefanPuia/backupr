@@ -5,7 +5,7 @@ import org.immutables.value.Value;
 
 @ModelStyle
 @Value.Immutable
-public abstract class LocalConfigRemote implements ConfigRemote {
+public abstract class LocalConfigRemote implements ConfigRemote, CleanupRemote {
   public abstract String getLocation();
 
   @Override

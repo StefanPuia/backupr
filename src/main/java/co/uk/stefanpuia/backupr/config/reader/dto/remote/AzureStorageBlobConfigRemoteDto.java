@@ -10,29 +10,30 @@ import org.immutables.value.Value;
 @DtoStyle
 @Value.Immutable
 @JsonDeserialize(builder = ImmutableAzureStorageBlobConfigRemoteDto.Builder.class)
-public interface AzureStorageBlobConfigRemoteDto extends ConfigRemoteWithCredentialsDto {
+public abstract class AzureStorageBlobConfigRemoteDto
+    implements ConfigRemoteWithCredentialsDto, ConfigRemoteWithCleanupDto {
   @NotBlank
   @SupportsTemplate
-  String getEndpoint();
+  public abstract String getEndpoint();
 
   @NotBlank
   @SupportsTemplate
-  String getContainer();
+  public abstract String getContainer();
 
   @Value.Default
-  default boolean isOverwrite() {
+  public boolean isOverwrite() {
     return false;
   }
 
   @NotBlank
   @Value.Default
   @SupportsTemplate
-  default String getBlobPrefixPattern() {
+  public String getBlobPrefixPattern() {
     return "<context.sourceName>/<context.nowYear>/<context.nowMonth>/<context.nowDay>";
   }
 
   @Override
-  default RemoteType getType() {
+  public RemoteType getType() {
     return RemoteType.AZURE_STORAGE_BLOB;
   }
 }

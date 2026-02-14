@@ -34,7 +34,8 @@ running or stopped container.
     ],
     "transformers": [
       // ...
-    ]
+    ],
+    "cleanup": "my-cleanup"
   }
 }
 
