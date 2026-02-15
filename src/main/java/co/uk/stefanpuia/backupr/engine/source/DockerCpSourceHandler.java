@@ -46,6 +46,9 @@ public class DockerCpSourceHandler implements SourceHandler {
       FileUtils.iterateFiles(directory.toFile(), TrueFileFilter.TRUE, TrueFileFilter.TRUE)
           .forEachRemaining(sourcedFiles::add);
       return sourcedFiles;
+    } catch (NotFoundException ignored) {
+      log.warn("Container not found: {}", source.getContainer());
+      return Set.of();
     } catch (IOException | DockerException e) {
       throw new SourceHandlerException(e);
     }

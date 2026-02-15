@@ -5,6 +5,7 @@ import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.adapters.DockerAdapter;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.exception.DockerException;
+import com.github.dockerjava.api.exception.NotFoundException;
 import com.github.dockerjava.api.model.Frame;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +43,9 @@ public class DockerExecSourceHandler implements SourceHandler {
       FileUtils.iterateFiles(directory.toFile(), TrueFileFilter.TRUE, TrueFileFilter.TRUE)
           .forEachRemaining(sourcedFiles::add);
       return sourcedFiles;
+    } catch (NotFoundException ignored) {
+      log.warn("Container not found: {}", source.getContainer());
+      return Set.of();
     } catch (DockerException | IOException | InterruptedException e) {
       throw new SourceHandlerException(e);
     }
