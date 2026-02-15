@@ -115,6 +115,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                       "type": "LOCAL",
                       "location": "/var/backups/foo",
                       "cleanup": {
+                        "keepCount": 0,
                         "keepDays": 3,
                         "disabled": true
                       }
@@ -243,6 +244,7 @@ public class ConfigReaderTest extends AbstractConfigReaderTest {
                             ImmutableParameterizedCleanup.builder()
                                 .setEnabled(false)
                                 .setName("inline[inline[null/LOCAL]/PARAMETERIZED]")
+                                .setKeepCount(0)
                                 .setKeepDays(3)
                                 .build())
                         .build(),
