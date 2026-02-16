@@ -13,9 +13,7 @@ public abstract class DockerExecConfigSource implements ConfigSource {
 
   public abstract List<Command> getCommands();
 
-  public Path getBasePath() {
-    return Path.of("");
-  }
+  public abstract Path getBasePath();
 
   public abstract long getTimeoutInSeconds();
 

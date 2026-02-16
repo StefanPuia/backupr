@@ -4,7 +4,6 @@ import co.uk.stefanpuia.backupr.config.model.source.ConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.DockerCpConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.DockerExecConfigSource;
 import co.uk.stefanpuia.backupr.config.model.source.LocalConfigSource;
-import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.adapters.DockerAdapter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,15 +12,14 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class SourceHandlerFactory {
   private final DockerAdapter dockerAdapter;
-  private final BackupHelper backupHelper;
 
   public SourceHandler getInstance(final ConfigSource source) {
     return switch (source) {
       case LocalConfigSource localSource -> new LocalSourceHandler(localSource);
       case DockerCpConfigSource dockerCpSource ->
-          new DockerCpSourceHandler(dockerCpSource, backupHelper, dockerAdapter);
+          new DockerCpSourceHandler(dockerCpSource, dockerAdapter);
       case DockerExecConfigSource dockerExecSource ->
-          new DockerExecSourceHandler(dockerExecSource, backupHelper, dockerAdapter);
+          new DockerExecSourceHandler(dockerExecSource, dockerAdapter);
       default -> throw new IllegalArgumentException("Unsupported config source: " + source);
     };
   }

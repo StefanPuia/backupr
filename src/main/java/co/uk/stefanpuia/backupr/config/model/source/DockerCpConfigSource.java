@@ -15,7 +15,5 @@ public abstract class DockerCpConfigSource implements ConfigSource {
 
   public abstract Boolean isAllowNotFoundPaths();
 
-  public Path getBasePath() {
-    return Path.of("");
-  }
+  public abstract Path getBasePath();
 }

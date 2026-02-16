@@ -28,14 +28,20 @@ public class BackupEngine {
 
   public void execute(final BackuprConfig config) {
     log.info(backupSession.isDry() ? "Beginning backup process (dry)" : "Beginning backup process");
-    config.getSources().stream()
-        .filter(Predicate.not(ConfigSource::isEnabled))
-        .map(ConfigSource::getName)
-        .forEach(source -> log.debug("Ignoring source '{}' because it is disabled", source));
-    config.getSources().stream()
-        .filter(ConfigSource::isEnabled)
+    config
+        .getSources()
         .forEach(
             source -> {
+              if (!source.isEnabled()) {
+                log.debug("Ignoring source '{}' because it is disabled", source.getName());
+                return;
+              }
+              if (source.getRemotes().isEmpty()) {
+                log.debug(
+                    "Ignoring source '{}' because it does not have any remotes", source.getName());
+                return;
+              }
+
               final var sourceFiles = discoverSources(source);
               if (sourceFiles == null) return;
               final var remoteFiles = getTransformedFiles(source, sourceFiles);

@@ -54,6 +54,7 @@ public class BackupEngineTest {
   void shouldNotUploadToRemoteWhenNoFilesFound() {
     // Given
     doReturn(true).when(configSource).isEnabled();
+    doReturn(List.of(configRemote)).when(configSource).getRemotes();
     doReturn(sourceHandler).when(sourceHandlerFactory).getInstance(configSource);
     doReturn(Set.of()).when(sourceHandler).getFiles();
 
@@ -69,6 +70,26 @@ public class BackupEngineTest {
             "Beginning backup process",
             "Backing up source '{}'",
             "No files found for source '{}'",
+            "Backup process completed");
+  }
+
+  @Test
+  void shouldIgnoreWhenNoRemotesDefined() {
+    // Given
+    doReturn(true).when(configSource).isEnabled();
+    doReturn(List.of()).when(configSource).getRemotes();
+
+    // When
+    backupEngine.execute(backuprConfig);
+
+    // Then
+    verifyNoInteractions(remoteHandlerFactory);
+    then(LOGGER.getLoggingEvents())
+        .isNotEmpty()
+        .extracting(LoggingEvent::getMessage)
+        .containsExactly(
+            "Beginning backup process",
+            "Ignoring source '{}' because it does not have any remotes",
             "Backup process completed");
   }
 

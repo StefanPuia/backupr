@@ -1,13 +1,11 @@
 package co.uk.stefanpuia.backupr.engine.source;
 
 import co.uk.stefanpuia.backupr.config.model.source.DockerCpConfigSource;
-import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import co.uk.stefanpuia.backupr.engine.adapters.DockerAdapter;
 import com.github.dockerjava.api.exception.DockerException;
 import com.github.dockerjava.api.exception.NotFoundException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -19,7 +17,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 @AllArgsConstructor
 public class DockerCpSourceHandler implements SourceHandler {
   private final DockerCpConfigSource source;
-  private final BackupHelper backupHelper;
   private final DockerAdapter dockerAdapter;
 
   @Override
@@ -28,7 +25,7 @@ public class DockerCpSourceHandler implements SourceHandler {
     try {
       final var containerId = dockerAdapter.getContainerId(source.getContainer());
 
-      final var directory = createTempTargetDir();
+      final var directory = source.getBasePath();
       for (final var path : source.getPaths()) {
         log.debug("Sourcing path: {}:{}", containerId, path);
 
@@ -52,10 +49,5 @@ public class DockerCpSourceHandler implements SourceHandler {
     } catch (IOException | DockerException e) {
       throw new SourceHandlerException(e);
     }
-  }
-
-  private Path createTempTargetDir() throws IOException {
-    log.debug("Creating temporary directory");
-    return backupHelper.createTempDirectory("docker-cp-source");
   }
 }

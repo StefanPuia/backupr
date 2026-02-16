@@ -18,9 +18,13 @@ import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerCpConfigSourceDto
 import co.uk.stefanpuia.backupr.config.reader.dto.source.DockerExecConfigSourceDto;
 import co.uk.stefanpuia.backupr.config.reader.dto.source.LocalConfigSourceDto;
 import co.uk.stefanpuia.backupr.core.MapstructConfig;
+import co.uk.stefanpuia.backupr.engine.BackupHelper;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Context;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -30,6 +34,7 @@ import org.mapstruct.SubclassExhaustiveStrategy;
 import org.mapstruct.SubclassMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 @Mapper(
     config = MapstructConfig.class,
     uses = {CoreDtoMapper.class, ConfigTransformerMapper.class},
@@ -43,6 +48,7 @@ public abstract class ConfigSourceMapper {
   @Autowired private CoreDtoMapper coreMapper;
   @Autowired private ConfigRemoteMapper remoteMapper;
   @Autowired private ConfigCleanupMapper cleanupMapper;
+  @Autowired private BackupHelper backupHelper;
 
   @SubclassMapping(
       target = LocalConfigSource.class,
@@ -82,6 +88,7 @@ public abstract class ConfigSourceMapper {
   @Mapping(target = "paths", source = "paths", qualifiedByName = "mapFilePaths")
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   @Mapping(target = "container", source = "container", qualifiedByName = "applyTemplateToString")
+  @Mapping(target = "basePath", source = "container", qualifiedByName = "createTempBasePath")
   protected abstract DockerCpConfigSource convertDockerCpConfigSource(
       DockerCpConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
@@ -94,6 +101,7 @@ public abstract class ConfigSourceMapper {
   @Mapping(target = "cleanup", expression = CLEANUP_EXPRESSION)
   @Mapping(target = "enabled", source = "disabled", qualifiedByName = "mapDisabledToEnabled")
   @Mapping(target = "container", source = "container", qualifiedByName = "applyTemplateToString")
+  @Mapping(target = "basePath", source = "container", qualifiedByName = "createTempBasePath")
   protected abstract DockerExecConfigSource convertDockerExecConfigSource(
       DockerExecConfigSourceDto source,
       @Context List<ConfigRemote> remotes,
@@ -180,4 +188,13 @@ public abstract class ConfigSourceMapper {
   @IterableMapping(qualifiedByName = "applyTemplateToString")
   protected abstract String[] mapCommandArgs(
       List<String> source, @Context VariablesWrapper variables);
+
+  @Named("createTempBasePath")
+  protected Path createTempBasePath(
+      final String container, final @Context VariablesWrapper variables) throws IOException {
+    final var tempDirectory =
+        backupHelper.createTempDirectory(coreMapper.applyTemplate(container, variables));
+    log.debug("Created temporary directory: {}", tempDirectory);
+    return tempDirectory;
+  }
 }
