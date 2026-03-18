@@ -2,7 +2,7 @@
 immutables = "2.10.1"
 mapstruct = "1.6.3"
 springShell = "3.4.0"
-dockerApi = "3.5.1"
+dockerApi = "3.7.1"
 
 
 [libraries]
