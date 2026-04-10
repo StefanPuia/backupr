@@ -1,28 +1,28 @@
 [versions]
-immutables = "2.10.1"
+immutables = "2.12.1"
 mapstruct = "1.6.3"
-springShell = "3.4.0"
-dockerApi = "3.5.1"
+springShell = "3.4.2"
+dockerApi = "3.7.1"
 
 
 [libraries]
-azure-bom = { group = "com.azure", name = "azure-sdk-bom", version = "1.2.34" }
+azure-bom = { group = "com.azure", name = "azure-sdk-bom", version = "1.3.5" }
 azure-identity = { group = "com.azure", name = "azure-identity" }
 azure-storage-blob = { group = "com.azure", name = "azure-storage-blob" }
-commons-compress = { group = "org.apache.commons", name = "commons-compress", version = "1.27.1" }
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version = "1.28.0" }
 docker-api = { group = 'com.github.docker-java', name = 'docker-java', version.ref = 'dockerApi' }
 docker-java-transport-zerodep = { group = 'com.github.docker-java', name = 'docker-java-transport-zerodep', version.ref = 'dockerApi' }
 immutables = { group = "org.immutables", name = "value", version.ref = "immutables" }
 jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind" }
 jackson-dataformat-xml = { group = "com.fasterxml.jackson.dataformat", name = "jackson-dataformat-xml" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310" }
-jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "7.2.1.202505142326-r" }
+jgit = { group = "org.eclipse.jgit", name = "org.eclipse.jgit", version = "7.6.0.202603022253-r" }
 junit-pioneer = { group = "org.junit-pioneer", name = "junit-pioneer", version = "2.3.0" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 lombok = { group = "org.projectlombok", name = "lombok" }
 mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
-slf4j-test = { group = "com.github.valfirst", name = "slf4j-test", version = "3.0.1" }
+slf4j-test = { group = "com.github.valfirst", name = "slf4j-test", version = "3.0.3" }
 spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-shell-dependencies = { group = "org.springframework.shell", name = "spring-shell-dependencies", version.ref = "springShell" }
@@ -34,9 +34,9 @@ string-template = { group = "org.antlr", name = "ST4", version = "4.3.4" }
 
 [plugins]
 dotenv = { id = 'co.uzzu.dotenv.gradle', version = '4.0.0' }
-graal-build-tools = { id = 'org.graalvm.buildtools.native', version = '0.10.6' }
-spotless = { id = 'com.diffplug.spotless', version = '7.0.3' }
-spring-boot = { id = "org.springframework.boot", version = "3.4.5" }
+graal-build-tools = { id = 'org.graalvm.buildtools.native', version = '0.11.5' }
+spotless = { id = 'com.diffplug.spotless', version = '7.2.1' }
+spring-boot = { id = "org.springframework.boot", version = "3.5.13" }
 spring-dependency = { id = 'io.spring.dependency-management', version = '1.1.7' }
 
 
