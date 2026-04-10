@@ -38,6 +38,6 @@
     "sprucecss": "^2.3.4",
     "stylelint": "^17.3.0",
     "stylelint-config-sass-guidelines": "^13.0.0",
-    "stylelint-order": "^7.0.1"
+    "stylelint-order": "^8.0.0"
   }
 }
