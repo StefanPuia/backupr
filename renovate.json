@@ -1,14 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ],
-  "packageRules": [
-    {
-      "matchFileNames": [
-        "docs/package.json"
-      ],
-      "enabled": false
-    }
+    "github>stefan-puia/renovate-config"
   ]
 }
