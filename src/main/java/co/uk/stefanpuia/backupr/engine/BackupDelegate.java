@@ -20,12 +20,12 @@ public class BackupDelegate {
   private final BackupStateLoader backupStateLoader;
 
   public String validateConfig(final String configPath) {
+    final var resolvedConfigPath = configFileProvider.resolveConfigPath(configPath);
     try {
-      final var resolvedConfigPath = configFileProvider.resolveConfigPath(configPath);
       configReader.readConfig(new FileInputStream(resolvedConfigPath));
       return resolvedConfigPath;
     } catch (FileNotFoundException e) {
-      throw new ConfigFileNotFoundException(configPath);
+      throw new ConfigFileNotFoundException(resolvedConfigPath);
     }
   }
 

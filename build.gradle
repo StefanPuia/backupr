@@ -1,10 +1,7 @@
-import org.graalvm.buildtools.gradle.tasks.BuildNativeImageTask
-
 plugins {
     id 'java'
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency)
-    alias(libs.plugins.graal.build.tools)
     alias(libs.plugins.dotenv)
     alias(libs.plugins.spotless)
 }
@@ -33,13 +30,14 @@ dependencies {
     implementation libs.spring.web
     implementation libs.mapstruct
     implementation libs.spring.shell.starter
+    implementation libs.spring.boot.starter.validation
     implementation libs.jgit
     implementation libs.commons.compress
     implementation libs.azure.storage.blob
     implementation libs.azure.identity
     implementation libs.bundles.docker
+    implementation libs.string.template
 
-    compileOnly libs.string.template
     compileOnly libs.immutables
 
     annotationProcessor libs.spring.boot.configuration.processor
@@ -81,10 +79,6 @@ tasks.named('test') {
     jvmArgs "-javaagent:${configurations.testRuntimeClasspath.find { it.name.contains('mockito-core') }}", '-Xshare:off'
 }
 
-tasks.withType(BuildNativeImageTask).configureEach {
-    appendJvmArgs(['-Dspring.profiles.active=native'])
-}
-
 bootRun {
     jvmArgs('-Djava.security.properties=' + file("$rootDir/custom.security").absolutePath)
     environment(System.getenv() + env.allVariables())
@@ -99,21 +93,5 @@ spotless {
         googleJavaFormat('1.19.2')
                 .reflowLongStrings()
                 .groupArtifact('com.google.googlejavaformat:google-java-format')
-    }
-}
-
-graalvmNative {
-    binaries.configureEach {
-        resources.autodetect()
-        buildArgs.add('--initialize-at-build-time=ch.qos.logback.core.util.StatusPrinter2')
-        buildArgs.add('--initialize-at-build-time=org.slf4j.helpers.Reporter')
-        buildArgs.add('--initialize-at-build-time=com.ctc.wstx.stax.WstxInputFactory')
-        buildArgs.add('--initialize-at-build-time=com.ctc.wstx.api.ReaderConfig')
-        buildArgs.add('--initialize-at-build-time=com.ctc.wstx.util.DefaultXmlSymbolTable')
-        buildArgs.add('--initialize-at-build-time=com.azure.core.util.logging.ClientLogger')
-        buildArgs.add('--initialize-at-run-time=sun.net.dns.ResolverConfigurationImpl')
-        buildArgs.add('--initialize-at-run-time=com.azure.spring.cloud.autoconfigure.implementation.context.properties.AzureGlobalProperties')
-        buildArgs.add('--initialize-at-run-time=com.azure.spring.cloud.autoconfigure.implementation.aad.configuration.AadPropertiesConfiguration')
-        buildArgs.add('-Djava.security.properties=' + file("$rootDir/custom.security").absolutePath)
     }
 }

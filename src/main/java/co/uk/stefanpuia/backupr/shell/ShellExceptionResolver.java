@@ -6,19 +6,27 @@ import co.uk.stefanpuia.backupr.engine.remote.RemoteHandlerException;
 import co.uk.stefanpuia.backupr.engine.source.SourceHandlerException;
 import com.azure.storage.blob.implementation.models.BlobStorageError;
 import com.azure.storage.blob.models.BlobStorageException;
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jgit.api.errors.TransportException;
-import org.springframework.shell.command.CommandExceptionResolver;
-import org.springframework.shell.command.CommandHandlingResult;
+import org.springframework.shell.core.command.ExitStatus;
+import org.springframework.shell.core.command.exit.ExitStatusExceptionMapper;
 import org.springframework.stereotype.Component;
 
-@Component
-public class ShellExceptionResolver implements CommandExceptionResolver {
+@Component(ShellExceptionResolver.SHELL_EXCEPTION_RESOLVER)
+public class ShellExceptionResolver implements ExitStatusExceptionMapper {
+
+  public static final String SHELL_EXCEPTION_RESOLVER = "shellExceptionResolver";
+
   @Override
-  public CommandHandlingResult resolve(final Exception ex) {
-    return CommandHandlingResult.of("\nERROR: %s\n\n".formatted(getResultMessage(ex)), 1);
+  public ExitStatus apply(final Exception ex) {
+    return new ExitStatus(1, "\nERROR: %s\n\n".formatted(getResultMessage(ex)));
   }
 
   private String getResultMessage(final Throwable ex) {
+
+    if (ex instanceof InvocationTargetException invocationTargetException) {
+      return getResultMessage(invocationTargetException.getTargetException());
+    }
 
     if (ex instanceof ConfigFileReadException || ex instanceof TransportException) {
       return getResultMessage(ex.getCause());

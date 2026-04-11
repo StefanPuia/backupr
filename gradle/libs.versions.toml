@@ -1,7 +1,7 @@
 [versions]
 immutables = "2.12.1"
 mapstruct = "1.6.3"
-springShell = "3.4.2"
+springShell = "4.0.1"
 dockerApi = "3.7.1"
 
 
@@ -25,6 +25,7 @@ mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", v
 slf4j-test = { group = "com.github.valfirst", name = "slf4j-test", version = "3.0.3" }
 spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
 spring-shell-dependencies = { group = "org.springframework.shell", name = "spring-shell-dependencies", version.ref = "springShell" }
 spring-shell-starter = { group = "org.springframework.shell", name = "spring-shell-starter" }
 spring-shell-starter-test = { group = "org.springframework.shell", name = "spring-shell-starter-test" }
@@ -34,9 +35,8 @@ string-template = { group = "org.antlr", name = "ST4", version = "4.3.4" }
 
 [plugins]
 dotenv = { id = 'co.uzzu.dotenv.gradle', version = '4.0.0' }
-graal-build-tools = { id = 'org.graalvm.buildtools.native', version = '1.0.0' }
 spotless = { id = 'com.diffplug.spotless', version = '8.4.0' }
-spring-boot = { id = "org.springframework.boot", version = "3.5.13" }
+spring-boot = { id = "org.springframework.boot", version = "4.0.5" }
 spring-dependency = { id = 'io.spring.dependency-management', version = '1.1.7' }
 
 

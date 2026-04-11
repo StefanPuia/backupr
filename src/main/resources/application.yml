@@ -9,10 +9,11 @@ spring:
   shell:
     interactive:
       enabled: false
-    script:
-      enabled: false
-    noninteractive:
-      primary-command: "${PRIMARY_COMMAND:}"
+    command:
+      script:
+        enabled: false
+      clear:
+        enabled: false
   profiles:
     active: "${SPRING_PROFILES_ACTIVE:}"
 
